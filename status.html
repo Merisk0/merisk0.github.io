@@ -6,10 +6,10 @@ description: "Merisk'B1og 的运行状态与内容数据统计。"
 {% assign latest = site.posts.first %}
 {% assign tagged_posts = site.posts | where_exp: "post", "post.tags.size > 0" %}
 {% assign total_chars = 0 %}
-{% assign now_ts = site.time | date: "%s" %}
+{% assign now_ts = site.time | date: "%s" | plus: 0 %}
 {% assign cutoff_ts = now_ts | minus: 2592000 %}
 {% assign recent_count = 0 %}
-{% for post in site.posts %}{% assign post_ts = post.date | date: "%s" %}{% if post_ts >= cutoff_ts %}{% assign recent_count = recent_count | plus: 1 %}{% endif %}{% endfor %}
+{% for post in site.posts %}{% assign post_ts = post.date | date: "%s" | plus: 0 %}{% if post_ts >= cutoff_ts %}{% assign recent_count = recent_count | plus: 1 %}{% endif %}{% endfor %}
 {% for post in site.posts %}{% assign post_chars = post.content | strip_html | strip_newlines | size %}{% assign total_chars = total_chars | plus: post_chars %}{% endfor %}
 <header class="page-hero status-hero">
   <div class="section-kicker">Status</div>
