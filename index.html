@@ -36,14 +36,14 @@ description: "记录想法、技术、游戏与生活。"
       {% for tag in site.tags %}
       {% assign tag_name = tag[0] %}
       {% assign duplicate_tag = false %}
-      {% if tag_name == '项目' or tag_name == '游戏' or tag_name == '生活' or tag_name == '科技' or tag_name == '文化' %}
+      {% if tag_name == '项目' or tag_name == '游戏' or tag_name == '生活' or tag_name == '科技' or tag_name == '文学' %}
         {% assign duplicate_tag = true %}
       {% endif %}
       {% unless duplicate_tag %}
       <button class="tag-filter" data-tag="{{ tag_name | escape }}">{{ tag_name }}</button>
       {% endunless %}
       {% endfor %}
-      <button class="category" data-filter="culture" role="tab" aria-selected="false">文化</button>
+      <button class="category" data-filter="culture" role="tab" aria-selected="false">文学</button>
     </div>
 
     <div class="grid" id="article-grid">
@@ -54,7 +54,7 @@ description: "记录想法、技术、游戏与生活。"
           {% when 'game' %}{% assign category_label = '游戏' %}
           {% when 'life' %}{% assign category_label = '生活' %}
           {% when 'tech' %}{% assign category_label = '科技' %}
-          {% when 'culture' %}{% assign category_label = '文化' %}
+          {% when 'culture' %}{% assign category_label = '文学' %}
           {% else %}{% assign category_label = category_key %}
         {% endcase %}
         <a class="card{% if forloop.first %} featured{% endif %}" data-category="{{ category_key }}" data-tags="{{ post.tags | join: ',' | escape }}" href="{{ post.url | relative_url }}">

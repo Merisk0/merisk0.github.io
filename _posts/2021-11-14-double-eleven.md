@@ -3,7 +3,6 @@ title: "双十一"
 date: 2021-11-14
 author: "3arrow"
 categories: [life]
-tags: [随笔]
 subcategory: "记录"
 summary: "一篇从过去搬到这里的记录。"
 permalink: /Articles/6.html

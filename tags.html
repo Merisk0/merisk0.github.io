@@ -42,7 +42,7 @@ description: "按标签浏览 Merisk'B1og 的全部文章。"
         {% when 'game' %}{% assign category_label = '游戏' %}
         {% when 'life' %}{% assign category_label = '生活' %}
         {% when 'tech' %}{% assign category_label = '科技' %}
-        {% when 'culture' %}{% assign category_label = '文化' %}
+        {% when 'culture' %}{% assign category_label = '文学' %}
         {% else %}{% assign category_label = category_key %}
       {% endcase %}
       <a class="tag-post" href="{{ post.url | relative_url }}">
