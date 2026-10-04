@@ -40,25 +40,34 @@ layout: default
       {% endif %}
     </nav>
 
-    {% assign related_count = 0 %}
+    {% assign page_tag = page.tags | first %}
+    {% assign related_total = 0 %}
+    {% for post in site.posts %}
+      {% if post.url != page.url and page_tag and post.tags contains page_tag %}
+        {% assign related_total = related_total | plus: 1 %}
+      {% endif %}
+    {% endfor %}
+    {% if related_total > 0 %}
     <section class="related-posts" aria-labelledby="related-posts-title">
       <div class="related-head">
         <div class="section-kicker">Related</div>
         <h2 id="related-posts-title">相关文章</h2>
       </div>
       <div class="related-grid">
+        {% assign related_count = 0 %}
         {% for post in site.posts %}
-        {% if post.url != page.url and related_count < 3 %}
-        <a class="related-card" href="{{ post.url | relative_url }}">
-          <small>{{ post.date | date: "%Y/%m/%d" }}</small>
-          <strong>{{ post.title }}</strong>
-          <span aria-hidden="true">↗</span>
-        </a>
-        {% assign related_count = related_count | plus: 1 %}
-        {% endif %}
+          {% if post.url != page.url and post.tags contains page_tag and related_count < 3 %}
+          <a class="related-card" href="{{ post.url | relative_url }}">
+            <small>{{ post.date | date: "%Y/%m/%d" }}</small>
+            <strong>{{ post.title }}</strong>
+            <span aria-hidden="true">↗</span>
+          </a>
+          {% assign related_count = related_count | plus: 1 %}
+          {% endif %}
         {% endfor %}
       </div>
     </section>
+    {% endif %}
 
     {% if site.giscus.enabled and site.giscus.category_id and site.giscus.category_id != "" %}
     <div class="giscus-wrap">

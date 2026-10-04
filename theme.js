@@ -213,5 +213,71 @@
         }
       });
     }
+
+    const searchOverlay=document.createElement('div');
+    searchOverlay.className='search-overlay';
+    searchOverlay.hidden=true;
+    searchOverlay.innerHTML='<div class="search-panel" role="dialog" aria-modal="true" aria-labelledby="site-search-title"><div class="search-head"><h2 id="site-search-title">搜索文章</h2><button class="search-close" type="button" data-search-close aria-label="关闭搜索">×</button></div><input id="site-search-input" type="search" placeholder="搜索标题、摘要或标签…" autocomplete="off"><div class="search-results" id="site-search-results" aria-live="polite"></div></div>';
+    document.body.append(searchOverlay);
+
+    const searchInput=searchOverlay.querySelector('#site-search-input');
+    const searchResults=searchOverlay.querySelector('#site-search-results');
+    let searchDataPromise=null;
+    const getSearchData=()=>{
+      if(!searchDataPromise)searchDataPromise=fetch('/search.json').then(response=>response.json()).catch(()=>[]);
+      return searchDataPromise;
+    };
+    const escapeSearchValue=value=>String(value||'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+    const renderSearchResults=()=>{
+      const query=searchInput.value.trim().toLowerCase();
+      if(!query){
+        searchResults.innerHTML='<div class="search-hint">输入标题、摘要或标签开始搜索</div>';
+        return;
+      }
+      getSearchData().then(posts=>{
+        const matches=posts.filter(post=>{
+          const haystack=[post.title,post.summary,(post.tags||[]).join(' ')].join(' ').toLowerCase();
+          return haystack.includes(query);
+        }).slice(0,8);
+        if(!matches.length){
+          searchResults.innerHTML='<div class="search-hint">没有找到匹配的文章</div>';
+          return;
+        }
+        searchResults.innerHTML=matches.map(post=>'<a class="search-result" href="'+escapeSearchValue(post.url)+'"><strong>'+escapeSearchValue(post.title)+'</strong><small>'+escapeSearchValue(post.date)+'</small><p>'+escapeSearchValue(post.summary)+'</p><span class="search-result-tags">'+(post.tags||[]).map(tag=>'<span>#'+escapeSearchValue(tag)+'</span>').join('')+'</span></a>').join('');
+      });
+    };
+    const openSearch=()=>{
+      searchOverlay.hidden=false;
+      document.body.classList.add('search-open');
+      searchInput.focus();
+      renderSearchResults();
+    };
+    const closeSearch=()=>{
+      searchOverlay.hidden=true;
+      document.body.classList.remove('search-open');
+    };
+
+    const navLinks=document.querySelector('.navlinks');
+    if(navLinks&&!navLinks.querySelector('[data-search-open]')){
+      const searchButton=document.createElement('button');
+      searchButton.className='nav-search';
+      searchButton.type='button';
+      searchButton.dataset.searchOpen='';
+      searchButton.textContent='搜索';
+      searchButton.addEventListener('click',openSearch);
+      const themeButton=navLinks.querySelector('[data-theme-toggle]');
+      navLinks.insertBefore(searchButton,themeButton||null);
+    }
+    searchOverlay.addEventListener('click',event=>{
+      if(event.target===searchOverlay||event.target.closest('[data-search-close]'))closeSearch();
+    });
+    searchInput.addEventListener('input',renderSearchResults);
+    document.addEventListener('keydown',event=>{
+      if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){
+        event.preventDefault();
+        searchOverlay.hidden?openSearch():closeSearch();
+      }
+      if(event.key==='Escape'&&!searchOverlay.hidden)closeSearch();
+    });
   });
 })();
