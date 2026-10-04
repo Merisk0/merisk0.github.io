@@ -3,7 +3,7 @@ title: "核心观点：快乐生活，享受生活"
 date: 2022-08-03
 author: "3arrow"
 categories: [life]
-tags: [生活随笔]
+tags: [随笔]
 summary: "一些关于生活本身的文字。"
 permalink: /Articles/4.html
 ---
