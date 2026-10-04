@@ -296,5 +296,51 @@
     if('serviceWorker' in navigator){
       window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js').catch(()=>{}));
     }
+
+    const readingProgress=document.getElementById('reading-progress-bar');
+    if(readingProgress){
+      const updateReadingProgress=()=>{
+        const max=document.documentElement.scrollHeight-window.innerHeight;
+        const percent=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):0;
+        readingProgress.style.width=percent+'%';
+      };
+      window.addEventListener('scroll',updateReadingProgress,{passive:true});
+      window.addEventListener('resize',updateReadingProgress);
+      updateReadingProgress();
+    }
+
+    document.querySelectorAll('[data-share]').forEach(button=>button.addEventListener('click',async()=>{
+      const url=window.location.href;
+      const title=document.title;
+      const type=button.dataset.share;
+      if(type==='copy'){
+        try{await navigator.clipboard.writeText(url);button.textContent='已复制';setTimeout(()=>button.textContent='复制链接',1400);}catch{}
+      }else if(type==='native'&&navigator.share){
+        try{await navigator.share({title,url});}catch{}
+      }else if(type==='native'){
+        try{await navigator.clipboard.writeText(url);button.textContent='已复制';setTimeout(()=>button.textContent='分享',1400);}catch{}
+      }else if(type==='weibo'){
+        window.open('https://service.weibo.com/share/share.php?url='+encodeURIComponent(url)+'&title='+encodeURIComponent(title),'_blank','noopener');
+      }else if(type==='qq'){
+        window.open('https://connect.qq.com/widget/shareqq/index.html?url='+encodeURIComponent(url)+'&title='+encodeURIComponent(title),'_blank','noopener');
+      }
+    }));
+
+    const githubStars=document.querySelector('[data-github-stars]');
+    if(githubStars){
+      const repo='Merisk0/merisk0.github.io';
+      fetch('https://api.github.com/repos/'+repo).then(response=>response.json()).then(data=>{
+        const set=(name,value)=>{const node=document.querySelector('[data-github-'+name+']');if(node)node.textContent=value;};
+        if(typeof data.stargazers_count==='number')set('stars',data.stargazers_count);
+        if(typeof data.forks_count==='number')set('forks',data.forks_count);
+        if(typeof data.open_issues_count==='number')set('issues',data.open_issues_count);
+      }).catch(()=>{});
+      fetch('https://api.github.com/repos/'+repo+'/commits/main').then(response=>response.json()).then(data=>{
+        const node=document.querySelector('[data-github-commit]');
+        if(node&&data.commit&&data.commit.committer&&data.commit.committer.date){
+          node.textContent=new Date(data.commit.committer.date).toLocaleDateString('zh-CN');
+        }
+      }).catch(()=>{});
+    }
   });
 })();

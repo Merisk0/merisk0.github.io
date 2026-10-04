@@ -1,6 +1,7 @@
 ---
 layout: default
 ---
+<div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
 <main class="article-shell" id="main-content">
   <a class="back" href="{{ '/#articles' | relative_url }}" data-back data-fallback="{{ '/#articles' | relative_url }}">
     <span class="back-icon" aria-hidden="true">←</span>
@@ -22,6 +23,12 @@ layout: default
         {% for tag in page.tags %}<span>#{{ tag }}</span>{% endfor %}
       </div>
       {% endif %}
+      <div class="article-share" aria-label="分享文章">
+        <button type="button" data-share="copy">复制链接</button>
+        <button type="button" data-share="native">分享</button>
+        <button type="button" data-share="weibo">微博</button>
+        <button type="button" data-share="qq">QQ</button>
+      </div>
     </header>
 
     <div class="article-content">

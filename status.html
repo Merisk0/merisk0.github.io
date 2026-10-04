@@ -5,6 +5,8 @@ description: "Merisk'B1og 的运行状态与内容数据统计。"
 ---
 {% assign latest = site.posts.first %}
 {% assign tagged_posts = site.posts | where_exp: "post", "post.tags.size > 0" %}
+{% assign total_chars = 0 %}
+{% for post in site.posts %}{% assign post_chars = post.content | strip_html | strip_newlines | size %}{% assign total_chars = total_chars | plus: post_chars %}{% endfor %}
 <header class="page-hero status-hero">
   <div class="section-kicker">Status</div>
   <h1>状态</h1>
@@ -88,6 +90,21 @@ description: "Merisk'B1og 的运行状态与内容数据统计。"
   <section class="status-section">
     <div class="section-head">
       <div>
+        <div class="section-kicker">GitHub</div>
+        <h2>仓库数据</h2>
+      </div>
+    </div>
+    <div class="data-list">
+      <div class="data-row"><span>Stars</span><b data-github-stars>—</b></div>
+      <div class="data-row"><span>Forks</span><b data-github-forks>—</b></div>
+      <div class="data-row"><span>Open Issues</span><b data-github-issues>—</b></div>
+      <div class="data-row"><span>最近提交</span><b data-github-commit>—</b></div>
+    </div>
+  </section>
+
+  <section class="status-section">
+    <div class="section-head">
+      <div>
         <div class="section-kicker">System</div>
         <h2>系统信息</h2>
       </div>
@@ -95,6 +112,7 @@ description: "Merisk'B1og 的运行状态与内容数据统计。"
     <div class="data-list">
       <div class="data-row"><span>构建方式</span><b>Jekyll / GitHub Pages</b></div>
       <div class="data-row"><span>主题模式</span><b>Light / Dark</b></div>
+      <div class="data-row"><span>文章总字数</span><b>{{ total_chars }}</b></div>
       <div class="data-row"><span>页面构建时间</span><b>{{ site.time | date: "%Y/%m/%d %H:%M" }}</b></div>
       <div class="data-row"><span>当前状态</span><b class="status-ok"><span class="status-dot" aria-hidden="true"></span>Operational</b></div>
     </div>

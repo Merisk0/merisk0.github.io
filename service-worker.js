@@ -1,10 +1,10 @@
-const CACHE_NAME = 'merisk-blog-v1';
+const CACHE_NAME = 'merisk-blog-v2';
 const APP_SHELL = [
   '/',
   '/index.html',
   '/offline.html',
   '/style.css',
-  '/theme.js?v=6',
+  '/theme.js?v=7',
   '/manifest.webmanifest',
   '/favicon.png',
   '/img/head2.webp',

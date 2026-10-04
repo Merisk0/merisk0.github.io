@@ -4,6 +4,7 @@ date: 2024-01-02
 author: "Merisk"
 tags: [游戏]
 summary: "关于游戏、世界观与那种独特的复古科技美学。"
+image: "/img/og/fallout-4-vacuum-tube-punk.png"
 permalink: /Articles/9.html
 ---
 

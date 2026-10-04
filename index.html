@@ -44,6 +44,7 @@ description: "记录想法、技术、游戏与生活。"
       </a>
       {% endfor %}
     </div>
+    <div class="load-more-wrap"><button class="btn" id="load-more" type="button">加载更多</button></div>
   </section>
 
   <section id="about" class="section">
@@ -89,15 +90,28 @@ description: "记录想法、技术、游戏与生活。"
 
 <script>
 const tagButtons=document.querySelectorAll('.tag-filter');
-const articleCards=document.querySelectorAll('#article-grid .card');
+const articleCards=Array.from(document.querySelectorAll('#article-grid .card'));
+const loadMore=document.getElementById('load-more');
+const pageSize=8;
+let visibleLimit=pageSize;
+let activeTag='all';
+
+function applyArticlePaging(){
+  const matches=articleCards.filter(card=>activeTag==='all'||(card.dataset.tags||'').split(',').filter(Boolean).includes(activeTag));
+  articleCards.forEach(card=>{card.hidden=true});
+  matches.forEach((card,index)=>{card.hidden=index>=visibleLimit});
+  if(loadMore)loadMore.hidden=visibleLimit>=matches.length;
+}
+
 tagButtons.forEach(button=>button.addEventListener('click',()=>{
-  const filter=button.dataset.tag;
+  activeTag=button.dataset.tag;
+  visibleLimit=pageSize;
   tagButtons.forEach(item=>{item.classList.toggle('active',item===button);item.setAttribute('aria-selected',item===button?'true':'false')});
-  articleCards.forEach(card=>{
-    const tags=(card.dataset.tags||'').split(',').filter(Boolean);
-    card.hidden=filter!=='all'&&!tags.includes(filter);
-  });
+  applyArticlePaging();
 }));
+
+if(loadMore)loadMore.addEventListener('click',()=>{visibleLimit+=pageSize;applyArticlePaging()});
+applyArticlePaging();
 </script>
 <script>
 const quotes=['「一生经过彷徨的挣扎 自信可改变未来 问谁又能做到」','你是从什么途径来到我的博客的？','你所热爱的，就是你的生活。','「有时天使的翅膀并不意味着救赎」','「过往的失败是成就未来的蓝图」','「原谅我这一生不羁放纵爱自由，也会怕有一天会跌倒」','「不需要被认可，但想要被关心。」','「平凡人预测未来… 梦想家塑造未来」','「我曾经失落失望失掉所有方向，直到看见平凡才是唯一的答案」','卡门。我找到他了… -《鬼与女武神（上）》'];document.getElementById('quote').textContent=quotes[Math.floor(Math.random()*quotes.length)];
