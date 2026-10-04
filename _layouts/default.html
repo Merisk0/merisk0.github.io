@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="{{ page.description | default: site.description | escape }}">
+  <title>{% if page.title and page.title != site.title %}{{ page.title }} · {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <link rel="icon" href="{{ '/favicon.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/Articles/Articles.css' | relative_url }}">
+  <script src="{{ '/theme.js' | relative_url }}"></script>
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+  <div class="navlinks">
+    <a href="{{ '/#articles' | relative_url }}">文章</a>
+    <a href="{{ '/AboutMe.html' | relative_url }}">关于我</a>
+    <a href="{{ '/#contact' | relative_url }}">联系</a>
+    <button class="theme-btn" data-theme-toggle onclick="toggleTheme()" aria-label="切换主题">☾</button>
+  </div>
+</nav>
+{{ content }}
+<footer>
+  <div class="footer-links">
+    <a href="{{ '/AboutMe.html' | relative_url }}">关于我</a>
+    <a href="{{ '/#articles' | relative_url }}">文章</a>
+    <a href="https://space.bilibili.com/372356105" target="_blank" rel="noopener">Bilibili</a>
+  </div>
+  <div>Copyright © Merisk &amp; Arrowa · 2020–2026</div>
+</footer>
+</body>
+</html>

@@ -1,9 +1,74 @@
-# 这是我个人博客的源码，需要请自取
+# Merisk'B1og
 
-# 学习日志
+这是一个使用 Jekyll 的个人博客，并由 GitHub Pages 自动构建和发布。
 
-## 2022/05/14
+## 新增文章
 
+在 `_posts` 目录中创建 Markdown 文件，文件名格式为：
 
-今日新增如下：更新完善了明暗模式的切换
-            加更:更新了明暗切换按钮的颜色(试试看,是不是不一样了)以及新增一个测试网页
+```text
+YYYY-MM-DD-english-slug.md
+```
+
+例如：
+
+```text
+_posts/2026-10-04-my-new-article.md
+```
+
+文件内容示例：
+
+```markdown
+---
+title: "我的新文章"
+date: 2026-10-04
+author: "Merisk"
+categories: [tech]
+subcategory: "记录"
+summary: "首页显示的文章摘要。"
+---
+
+## 小标题
+
+这里是正文。
+
+- 支持列表
+- 支持 **粗体**
+- 支持 [链接](https://example.com)
+```
+
+首页会自动读取并显示文章。分类可用值：
+
+- `project`：项目
+- `game`：游戏
+- `life`：生活
+- `tech`：科技
+- `culture`：文化
+
+如果要保留自定义文章网址，可以添加：
+
+```yaml
+permalink: /Articles/10.html
+```
+
+## 更新已有文章
+
+直接编辑 `_posts` 中对应的 `.md` 文件，然后提交并推送。
+
+## 发布
+
+```powershell
+cd "D:\Merisk'blog"
+git pull
+git add .
+git commit -m "更新文章"
+git push
+```
+
+GitHub Pages 通常会在推送后自动更新：
+
+https://merisk0.github.io/
+
+## 草稿
+
+未发布的文章可以放在 `_drafts` 目录。Jekyll 默认不会发布草稿。

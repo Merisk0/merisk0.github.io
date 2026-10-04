@@ -1,0 +1,23 @@
+---
+layout: default
+---
+<main class="article-shell">
+  <a class="back" href="{{ '/#articles' | relative_url }}">
+    <span class="back-icon" aria-hidden="true">←</span>
+    <span>返回</span>
+  </a>
+
+  {% assign updated = page.updated | default: page.date %}
+  <article class="article-card">
+    <header class="article-title">
+      <h1>{{ page.title }}</h1>
+      <div class="article-meta">
+        作者:{{ page.author | default: site.author }} 更新时间:{{ updated | date: "%Y/%m/%d" }}
+      </div>
+    </header>
+
+    <div class="article-content">
+      {{ content }}
+    </div>
+  </article>
+</main>

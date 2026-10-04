@@ -1,34 +1,104 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Merisk'B1og — 记录想法、技术、游戏与生活。"><title>Merisk'B1og</title><link rel="icon" href="./favicon.png"><link rel="stylesheet" href="./style.css"><script src="./theme.js"></script></head><body>
-<nav class="nav"><a class="brand" href="./index.html">Merisk'B1og</a><div class="navlinks"><a href="#articles">文章</a><a href="#about">关于我</a><a href="#contact">联系</a><button class="theme-btn" data-theme-toggle onclick="toggleTheme()" aria-label="切换主题">☾</button></div></nav>
+---
+layout: default
+title: ""
+description: "记录想法、技术、游戏与生活。"
+---
 <header class="hero" id="headbanner">
-<div class="hero-bg"></div>
-<div class="hero-shade"></div>
-<div class="hero-content"><div class="eyebrow">PERSONAL BLOG · SINCE 2020</div><h1>Merisk'B1og</h1><p>记录想法、折腾技术，也记录生活。<br>这里放着一些我做过的东西，以及那些值得留下来的瞬间。</p><div id="quote" class="quote"></div><div class="hero-actions"><a class="btn" href="#articles">开始阅读 ↓</a><a class="btn ghost" href="./AboutMe.html">关于我</a></div></div>
+  <div class="hero-bg"></div>
+  <div class="hero-shade"></div>
+  <div class="hero-content">
+    <div class="eyebrow">PERSONAL BLOG · SINCE 2020</div>
+    <h1>Merisk'B1og</h1>
+    <p>记录想法、折腾技术，也记录生活。<br>这里放着一些我做过的东西，以及那些值得留下来的瞬间。</p>
+    <div id="quote" class="quote"></div>
+    <div class="hero-actions">
+      <a class="btn" href="#articles">开始阅读 ↓</a>
+      <a class="btn ghost" href="{{ '/AboutMe.html' | relative_url }}">关于我</a>
+    </div>
+  </div>
 </header>
+
 <main>
-<section id="articles" class="section"><div class="section-head"><div><div class="section-kicker">Writing</div><h2>文章</h2><p class="section-intro">把旧文章重新按主题整理：项目、游戏、生活、科技与文化。点击分类即可快速筛选。</p></div></div>
-<div class="category-bar" role="tablist" aria-label="文章分类">
-<button class="category active" data-filter="all" role="tab" aria-selected="true">全部</button>
-<button class="category" data-filter="project" role="tab" aria-selected="false">项目</button>
-<button class="category" data-filter="game" role="tab" aria-selected="false">游戏</button>
-<button class="category" data-filter="life" role="tab" aria-selected="false">生活</button>
-<button class="category" data-filter="tech" role="tab" aria-selected="false">科技</button>
-<button class="category" data-filter="culture" role="tab" aria-selected="false">文化</button>
-</div>
-<div class="grid" id="article-grid">
-<a class="card featured" data-category="project" href="./Articles/5.html"><span class="card-tag">项目 · Minecraft</span><h3>一个大项目 —— Minecraft Texture Package</h3><p>从纹理包开始，把一个 Minecraft 项目慢慢记录下来。</p><span class="arrow">↗</span></a>
-<a class="card" data-category="game" href="./Articles/9.html"><span class="card-tag">游戏 · Fallout</span><h3>Fallout 4 与 真空管朋克</h3><p>关于游戏、世界观与那种独特的复古科技美学。</p><span class="arrow">↗</span></a>
-<a class="card" data-category="game" href="./Articles/8.html"><span class="card-tag">游戏 · GTA</span><h3>GTA4游玩过程中的一些想法</h3><p>游戏过程中的观察与一些零碎思考。</p><span class="arrow">↗</span></a>
-<a class="card" data-category="game" href="./Articles/7.html"><span class="card-tag">游戏 · Forza</span><h3>睿频地平线4</h3><p>关于 Forza Horizon 4 的记录。</p><span class="arrow">↗</span></a>
-<a class="card" data-category="life" href="./Articles/6.html"><span class="card-tag">生活 · 记录</span><h3>双十一（去年写的现发布于此）</h3><p>一篇从过去搬到这里的记录。</p><span class="arrow">↗</span></a>
-<a class="card" data-category="life" href="./Articles/4.html"><span class="card-tag">生活 · 随笔</span><h3>快乐生活，享受生活</h3><p>一些关于生活本身的文字。</p><span class="arrow">↗</span></a>
-<a class="card" data-category="tech" href="./Articles/1.html"><span class="card-tag">科技</span><h3>23333</h3><p>科技分类下的一篇旧文章。</p><span class="arrow">↗</span></a>
-<a class="card" data-category="tech" href="./Articles/2.html"><span class="card-tag">科技</span><h3>测试</h3><p>早期测试页面。</p><span class="arrow">↗</span></a>
-<a class="card" data-category="culture" href="./Articles/3.html"><span class="card-tag">文化</span><h3>美神于乱世</h3><p>关于李清照与她所处时代的一些文字。</p><span class="arrow">↗</span></a>
-</div></section>
-<section id="about" class="section"><div class="section-head"><div><div class="section-kicker">About</div><h2>关于我</h2></div><a class="btn" href="./AboutMe.html">查看完整介绍 →</a></div><div class="card about-card"><div><p>这里是我的个人博客。最初的页面比较简单，后来一点点加入了文章、项目、明暗模式以及各种折腾留下来的东西。</p><p>新版保留原来的文章与项目目录，只重新整理了页面结构和视觉，让这个旧博客更像一个现在还在持续更新的个人空间。</p></div><div class="stats"><div class="stat"><b>201? →</b><span>博客与项目持续记录</span></div><div class="stat"><b>Game · Tech</b><span>游戏、技术与个人兴趣</span></div><div class="stat"><b>∞</b><span>还会继续折腾</span></div></div></div></section>
-<section id="contact" class="section"><div class="section-head"><div><div class="section-kicker">Contact</div><h2>联系方式</h2></div></div><div class="contact"><div style="display:flex;align-items:center;gap:16px"><img src="./mail.png" alt="邮箱"><div><strong>wjz99813@outlook.com</strong><p>我会定时回复大部分邮件，也许(?)</p></div></div><a class="btn" href="mailto:wjz99813@outlook.com">发送邮件 →</a></div></section>
-</main><footer><div class="footer-links"><a href="./AboutMe.html">关于我</a><a href="#articles">文章</a><a href="https://space.bilibili.com/372356105" target="_blank" rel="noopener">Bilibili</a></div><div>Copyright © Merisk & Arrowa · 2020–2026</div></footer>
+  <section id="articles" class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Writing</div>
+        <h2>文章</h2>
+        <p class="section-intro">把旧文章重新按主题整理：项目、游戏、生活、科技与文化。点击分类即可快速筛选。</p>
+      </div>
+    </div>
+
+    <div class="category-bar" role="tablist" aria-label="文章分类">
+      <button class="category active" data-filter="all" role="tab" aria-selected="true">全部</button>
+      <button class="category" data-filter="project" role="tab" aria-selected="false">项目</button>
+      <button class="category" data-filter="game" role="tab" aria-selected="false">游戏</button>
+      <button class="category" data-filter="life" role="tab" aria-selected="false">生活</button>
+      <button class="category" data-filter="tech" role="tab" aria-selected="false">科技</button>
+      <button class="category" data-filter="culture" role="tab" aria-selected="false">文化</button>
+    </div>
+
+    <div class="grid" id="article-grid">
+      {% for post in site.posts %}
+        {% assign category_key = post.categories | first %}
+        {% case category_key %}
+          {% when 'project' %}{% assign category_label = '项目' %}
+          {% when 'game' %}{% assign category_label = '游戏' %}
+          {% when 'life' %}{% assign category_label = '生活' %}
+          {% when 'tech' %}{% assign category_label = '科技' %}
+          {% when 'culture' %}{% assign category_label = '文化' %}
+          {% else %}{% assign category_label = category_key %}
+        {% endcase %}
+        <a class="card{% if forloop.first %} featured{% endif %}" data-category="{{ category_key }}" href="{{ post.url | relative_url }}">
+          <span class="card-tag">{{ category_label }}{% if post.subcategory %} · {{ post.subcategory }}{% endif %}</span>
+          <h3>{{ post.title }}</h3>
+          <p>{{ post.summary | default: post.excerpt | strip_html | truncate: 90 }}</p>
+          <span class="arrow">↗</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">About</div>
+        <h2>关于我</h2>
+      </div>
+      <a class="btn" href="{{ '/AboutMe.html' | relative_url }}">查看完整介绍 →</a>
+    </div>
+    <div class="card about-card">
+      <div>
+        <p>这里是我的个人博客。最初的页面比较简单，后来一点点加入了文章、项目、明暗模式以及各种折腾留下来的东西。</p>
+        <p>新版保留原来的文章与项目目录，只重新整理了页面结构和视觉，让这个旧博客更像一个现在还在持续更新的个人空间。</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>201? →</b><span>博客与项目持续记录</span></div>
+        <div class="stat"><b>Game · Tech</b><span>游戏、技术与个人兴趣</span></div>
+        <div class="stat"><b>∞</b><span>还会继续折腾</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Contact</div>
+        <h2>联系方式</h2>
+      </div>
+    </div>
+    <div class="contact">
+      <div style="display:flex;align-items:center;gap:16px">
+        <img src="{{ '/mail.png' | relative_url }}" alt="邮箱">
+        <div>
+          <strong>wjz99813@outlook.com</strong>
+          <p>我会定时回复大部分邮件，也许(?)</p>
+        </div>
+      </div>
+      <a class="btn" href="mailto:wjz99813@outlook.com">发送邮件 →</a>
+    </div>
+  </section>
+</main>
+
 <script>
 const categoryButtons=document.querySelectorAll('.category');
 const articleCards=document.querySelectorAll('#article-grid .card');
@@ -39,6 +109,5 @@ categoryButtons.forEach(button=>button.addEventListener('click',()=>{
 }));
 </script>
 <script>
-const quotes=['「一生经过彷徨的挣扎 自信可改变未来 问谁又能做到」','你是从什么途径来到我的博客的？','你所热爱的，就是你的生活。','「有时天使的翅膀并不意味着救赎」','「过往的失败是成就未来的蓝图」','「原谅我这一生不羁放纵爱自由，也会怕有一天会跌倒」','「不需要被认可，但想要被关心。」','「平凡人预测未来… 梦想家塑造未来」','「我曾经失落失望失掉所有方向，直到看见平凡才是唯一的答案」','卡门。我找到他了… -《鬼与女武神（上）》'];document.getElementById('quote').textContent=quotes[Math.floor(Math.random()*quotes.length)];</script>
-
-</body></html>
+const quotes=['「一生经过彷徨的挣扎 自信可改变未来 问谁又能做到」','你是从什么途径来到我的博客的？','你所热爱的，就是你的生活。','「有时天使的翅膀并不意味着救赎」','「过往的失败是成就未来的蓝图」','「原谅我这一生不羁放纵爱自由，也会怕有一天会跌倒」','「不需要被认可，但想要被关心。」','「平凡人预测未来… 梦想家塑造未来」','「我曾经失落失望失掉所有方向，直到看见平凡才是唯一的答案」','卡门。我找到他了… -《鬼与女武神（上）》'];document.getElementById('quote').textContent=quotes[Math.floor(Math.random()*quotes.length)];
+</script>
