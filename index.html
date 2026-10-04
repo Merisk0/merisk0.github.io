@@ -34,7 +34,14 @@ description: "记录想法、技术、游戏与生活。"
       <button class="category" data-filter="life" role="tab" aria-selected="false">生活</button>
       <button class="category" data-filter="tech" role="tab" aria-selected="false">科技</button>
       {% for tag in site.tags %}
-      <button class="tag-filter" data-tag="{{ tag[0] | escape }}">{{ tag[0] }}</button>
+      {% assign tag_name = tag[0] %}
+      {% assign duplicate_tag = false %}
+      {% if tag_name == '项目' or tag_name == '游戏' or tag_name == '生活' or tag_name == '科技' or tag_name == '文化' %}
+        {% assign duplicate_tag = true %}
+      {% endif %}
+      {% unless duplicate_tag %}
+      <button class="tag-filter" data-tag="{{ tag_name | escape }}">{{ tag_name }}</button>
+      {% endunless %}
       {% endfor %}
       <button class="category" data-filter="culture" role="tab" aria-selected="false">文化</button>
     </div>
