@@ -121,6 +121,48 @@
     }
 
 
+    document.querySelectorAll('.article-content pre').forEach(pre=>{
+      if(pre.querySelector('.code-copy'))return;
+      const button=document.createElement('button');
+      button.className='code-copy';
+      button.type='button';
+      button.textContent='复制';
+      button.addEventListener('click',async()=>{
+        const code=pre.querySelector('code');
+        const text=code?code.innerText:pre.innerText;
+        try{
+          await navigator.clipboard.writeText(text);
+          button.textContent='已复制';
+          window.setTimeout(()=>button.textContent='复制',1400);
+        }catch{
+          button.textContent='复制失败';
+          window.setTimeout(()=>button.textContent='复制',1400);
+        }
+      });
+      pre.append(button);
+    });
+
+    const articleImages=Array.from(document.querySelectorAll('.article-content img'));
+    if(articleImages.length){
+      const lightbox=document.createElement('div');
+      lightbox.className='lightbox';
+      lightbox.innerHTML='<button class="lightbox-close" type="button" aria-label="关闭图片预览">×</button><img alt="">';
+      document.body.append(lightbox);
+      const lightboxImage=lightbox.querySelector('img');
+      const closeLightbox=()=>lightbox.classList.remove('is-open');
+      articleImages.forEach(image=>image.addEventListener('click',()=>{
+        lightboxImage.src=image.currentSrc||image.src;
+        lightboxImage.alt=image.alt||'';
+        lightbox.classList.add('is-open');
+      }));
+      lightbox.addEventListener('click',event=>{
+        if(event.target===lightbox||event.target.classList.contains('lightbox-close'))closeLightbox();
+      });
+      document.addEventListener('keydown',event=>{
+        if(event.key==='Escape')closeLightbox();
+      });
+    }
+
     const archiveSearch=document.getElementById('archive-search');
     if(archiveSearch){
       const items=Array.from(document.querySelectorAll('.archive-item'));

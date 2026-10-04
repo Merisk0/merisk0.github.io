@@ -1,0 +1,36 @@
+---
+layout: default
+title: "标签"
+description: "按标签浏览 Merisk'B1og 的全部文章。"
+---
+{% assign sorted_tags = site.tags | sort %}
+<header class="page-hero tags-hero">
+  <div class="section-kicker">Tags</div>
+  <h1>标签</h1>
+  <p>按主题浏览全部文章。</p>
+  <div class="tag-overview" aria-label="标签概览">
+    {% for tag in sorted_tags %}
+    <a class="tag-chip" href="#tag-{{ tag[0] }}">{{ tag[0] }} <span>{{ tag[1] | size }}</span></a>
+    {% endfor %}
+  </div>
+</header>
+
+<main class="tags-page">
+  {% for tag in sorted_tags %}
+  <section class="tag-section" id="tag-{{ tag[0] }}">
+    <div class="tag-section-head">
+      <h2>{{ tag[0] }}</h2>
+      <span>{{ tag[1] | size }} 篇</span>
+    </div>
+    <div class="tag-post-list">
+      {% for post in tag[1] %}
+      <a class="tag-post" href="{{ post.url | relative_url }}">
+        <span>{{ post.title }}</span>
+        <small>{{ post.date | date: "%Y/%m/%d" }}</small>
+        <span class="tag-post-arrow" aria-hidden="true">↗</span>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</main>

@@ -40,6 +40,26 @@ layout: default
       {% endif %}
     </nav>
 
+    {% assign related_count = 0 %}
+    <section class="related-posts" aria-labelledby="related-posts-title">
+      <div class="related-head">
+        <div class="section-kicker">Related</div>
+        <h2 id="related-posts-title">相关文章</h2>
+      </div>
+      <div class="related-grid">
+        {% for post in site.posts %}
+        {% if post.url != page.url and related_count < 3 %}
+        <a class="related-card" href="{{ post.url | relative_url }}">
+          <small>{{ post.date | date: "%Y/%m/%d" }}</small>
+          <strong>{{ post.title }}</strong>
+          <span aria-hidden="true">↗</span>
+        </a>
+        {% assign related_count = related_count | plus: 1 %}
+        {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+
     {% if site.giscus.enabled and site.giscus.category_id and site.giscus.category_id != "" %}
     <div class="giscus-wrap">
       <script src="https://giscus.app/client.js"
