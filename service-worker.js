@@ -1,10 +1,10 @@
-const CACHE_NAME = 'merisk-blog-v2';
+const CACHE_NAME = 'merisk-blog-v3';
 const APP_SHELL = [
   '/',
   '/index.html',
   '/offline.html',
   '/style.css',
-  '/theme.js?v=7',
+  '/theme.js',
   '/manifest.webmanifest',
   '/favicon.png',
   '/img/head2.webp',
@@ -36,22 +36,24 @@ self.addEventListener('fetch', event => {
 
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: 'no-store' })
         .then(response => {
           const copy = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
           return response;
         })
-        .catch(() => caches.match(request).then(response => response || caches.match('/offline.html')))
+        .catch(() => caches.match(request, { ignoreSearch: true }).then(response => response || caches.match('/offline.html')))
     );
     return;
   }
 
   event.respondWith(
-    caches.match(request).then(cached => cached || fetch(request).then(response => {
-      const copy = response.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-      return response;
-    }))
+    fetch(request, { cache: 'no-store' })
+      .then(response => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+        return response;
+      })
+      .catch(() => caches.match(request, { ignoreSearch: true }))
   );
 });

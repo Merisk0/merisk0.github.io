@@ -294,7 +294,18 @@
     });
 
     if('serviceWorker' in navigator){
-      window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js').catch(()=>{}));
+      const isLocal=['localhost','127.0.0.1'].includes(location.hostname);
+      if(isLocal){
+        navigator.serviceWorker.getRegistrations().then(registrations=>registrations.forEach(registration=>registration.unregister()));
+      }else{
+        window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js',{updateViaCache:'none'}).catch(()=>{}));
+        let refreshing=false;
+        navigator.serviceWorker.addEventListener('controllerchange',()=>{
+          if(refreshing)return;
+          refreshing=true;
+          window.location.reload();
+        });
+      }
     }
 
     const readingProgress=document.getElementById('reading-progress-bar');
