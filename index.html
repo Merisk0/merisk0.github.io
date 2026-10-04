@@ -44,7 +44,7 @@ description: "记录想法、技术、游戏与生活。"
       </a>
       {% endfor %}
     </div>
-    <div class="load-more-wrap"><button class="btn" id="load-more" type="button">加载更多</button></div>
+    <div class="load-more-wrap"><button class="btn" id="load-more" type="button">加载更多</button><button class="btn" id="load-less" type="button" hidden>加载更少</button></div>
   </section>
 
   <section id="about" class="section">
@@ -92,6 +92,7 @@ description: "记录想法、技术、游戏与生活。"
 const tagButtons=document.querySelectorAll('.tag-filter');
 const articleCards=Array.from(document.querySelectorAll('#article-grid .card'));
 const loadMore=document.getElementById('load-more');
+const loadLess=document.getElementById('load-less');
 const pageSize=8;
 let visibleLimit=pageSize;
 let activeTag='all';
@@ -101,6 +102,7 @@ function applyArticlePaging(){
   articleCards.forEach(card=>{card.hidden=true});
   matches.forEach((card,index)=>{card.hidden=index>=visibleLimit});
   if(loadMore)loadMore.hidden=visibleLimit>=matches.length;
+  if(loadLess)loadLess.hidden=visibleLimit<=pageSize;
 }
 
 tagButtons.forEach(button=>button.addEventListener('click',()=>{
@@ -111,6 +113,7 @@ tagButtons.forEach(button=>button.addEventListener('click',()=>{
 }));
 
 if(loadMore)loadMore.addEventListener('click',()=>{visibleLimit+=pageSize;applyArticlePaging()});
+if(loadLess)loadLess.addEventListener('click',()=>{visibleLimit=Math.max(pageSize,visibleLimit-pageSize);applyArticlePaging()});
 applyArticlePaging();
 </script>
 <script>
