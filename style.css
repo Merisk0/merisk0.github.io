@@ -289,3 +289,16 @@ body.search-open{overflow:hidden}
 .now-section h2{margin:0 0 10px;font-size:22px;line-height:1.3;letter-spacing:-.035em}
 .now-section p{margin:0;color:var(--muted);font-size:16px;line-height:1.9}
 @media(max-width:640px){.now-card{padding:22px}.now-section h2{font-size:20px}.now-section p{font-size:15px}}
+
+/* Content subpages */
+.subpage{width:min(900px,calc(100% - 32px))}
+.subpage .grid{gap:12px}
+.subpage .card{min-height:150px}
+.subpage .card h2,.subpage .card h3{margin:0 0 10px;font-size:22px;line-height:1.3;letter-spacing:-.035em}
+.subpage .card p,.subpage .card li{color:var(--muted);font-size:15px;line-height:1.9}
+.subpage .card p{margin:0 0 .9em}
+.subpage .card ul{margin:.7em 0 1.2em;padding-left:1.25em}
+.subpage .card li{margin:.3em 0}
+.subpage .card-tag{margin-bottom:14px;font-size:11px;letter-spacing:.08em}
+.subpage .card a{color:var(--accent)}
+@media(max-width:640px){.subpage .card{padding:22px}.subpage .card h2,.subpage .card h3{font-size:20px}.subpage .card p,.subpage .card li{font-size:14px}}
