@@ -8,12 +8,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#0e1510">
+  <link rel="manifest" href="{{ '/manifest.webmanifest' | relative_url }}">
   <link rel="icon" href="{{ '/favicon.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/Articles/Articles.css' | relative_url }}">
-  <script src="{{ '/theme.js' | relative_url }}?v=5"></script>
+  <script src="{{ '/theme.js' | relative_url }}?v=6"></script>
 </head>
 <body>
+<a class="skip-link" href="#main-content">跳到主要内容</a>
 <nav class="nav">
   <a class="brand" href="{{ '/' | relative_url }}">{{ site.title }}</a>
   <div class="navlinks">

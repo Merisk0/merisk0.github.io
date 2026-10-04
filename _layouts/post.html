@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-<main class="article-shell">
+<main class="article-shell" id="main-content">
   <a class="back" href="{{ '/#articles' | relative_url }}" data-back data-fallback="{{ '/#articles' | relative_url }}">
     <span class="back-icon" aria-hidden="true">←</span>
     <span>返回</span>
@@ -11,8 +11,11 @@ layout: default
   <article class="article-card">
     <header class="article-title">
       <h1>{{ page.title }}</h1>
+      {% assign content_chars = content | strip_html | strip_newlines | size %}
+      {% assign reading_minutes = content_chars | divided_by: 400.0 | ceil %}
+      {% if reading_minutes < 1 %}{% assign reading_minutes = 1 %}{% endif %}
       <div class="article-meta">
-        作者:{{ page.author | default: site.author }} 更新时间:{{ updated | date: "%Y/%m/%d" }}
+        作者:{{ page.author | default: site.author }} 更新时间:{{ updated | date: "%Y/%m/%d" }} · 约 {{ reading_minutes }} 分钟 · {{ content_chars }} 字
       </div>
       {% if page.tags and page.tags.size > 0 %}
       <div class="article-tags">

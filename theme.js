@@ -146,17 +146,30 @@
     if(articleImages.length){
       const lightbox=document.createElement('div');
       lightbox.className='lightbox';
+      lightbox.setAttribute('role','dialog');
+      lightbox.setAttribute('aria-modal','true');
+      lightbox.setAttribute('aria-label','图片预览');
       lightbox.innerHTML='<button class="lightbox-close" type="button" aria-label="关闭图片预览">×</button><img alt="">';
       document.body.append(lightbox);
       const lightboxImage=lightbox.querySelector('img');
-      const closeLightbox=()=>lightbox.classList.remove('is-open');
+      const closeButton=lightbox.querySelector('.lightbox-close');
+      let lastFocused=null;
+      const closeLightbox=()=>{
+        lightbox.classList.remove('is-open');
+        if(lastFocused)lastFocused.focus();
+      };
       articleImages.forEach(image=>image.addEventListener('click',()=>{
+        lastFocused=document.activeElement;
         lightboxImage.src=image.currentSrc||image.src;
         lightboxImage.alt=image.alt||'';
         lightbox.classList.add('is-open');
+        closeButton.focus();
       }));
       lightbox.addEventListener('click',event=>{
         if(event.target===lightbox||event.target.classList.contains('lightbox-close'))closeLightbox();
+      });
+      lightbox.addEventListener('keydown',event=>{
+        if(event.key==='Tab'){event.preventDefault();closeButton.focus();}
       });
       document.addEventListener('keydown',event=>{
         if(event.key==='Escape')closeLightbox();
@@ -279,5 +292,9 @@
       }
       if(event.key==='Escape'&&!searchOverlay.hidden)closeSearch();
     });
+
+    if('serviceWorker' in navigator){
+      window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js').catch(()=>{}));
+    }
   });
 })();

@@ -237,3 +237,7 @@ body.search-open{overflow:hidden}
 .search-result-tags span{display:inline-flex;padding:3px 7px;border-radius:999px;background:rgba(79,123,89,.12);color:var(--accent);font-size:11px;font-weight:700}
 .search-hint{padding:30px 16px;color:var(--muted);text-align:center;font-size:14px}
 @media(max-width:640px){.search-overlay{padding-top:5vh}.search-panel{border-radius:18px}.nav-search{padding:10px 8px}}
+
+/* Accessibility */
+.skip-link{position:fixed;top:10px;left:16px;z-index:3000;padding:10px 14px;border-radius:10px;background:var(--accent);color:#fff;font-size:13px;font-weight:800;transform:translateY(-150%);transition:transform .2s ease}
+.skip-link:focus{transform:translateY(0)}
