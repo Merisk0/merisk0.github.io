@@ -1,0 +1,24 @@
+backend:
+  name: github
+  repo: Merisk0/merisk0.github.io
+  branch: main
+  # GitHub OAuth proxy must be configured before this works.
+  base_url: ""
+
+media_folder: "img/uploads"
+public_folder: "/img/uploads"
+
+collections:
+  - name: posts
+    label: 文章
+    folder: _posts
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: 标题, name: title, widget: string }
+      - { label: 日期, name: date, widget: datetime, format: YYYY-MM-DD }
+      - { label: 作者, name: author, widget: string, default: Merisk }
+      - { label: 标签, name: tags, widget: list, default: [更新日志] }
+      - { label: 摘要, name: summary, widget: text }
+      - { label: 分享图, name: image, widget: image, required: false }
+      - { label: 正文, name: body, widget: markdown }

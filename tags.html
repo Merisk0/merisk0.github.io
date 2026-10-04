@@ -9,10 +9,12 @@ description: "按标签浏览 Merisk'B1og 的全部文章。"
   <div class="section-kicker">Tags</div>
   <h1>标签</h1>
   <p>按标签浏览全部文章。</p>
+  <label class="tag-search"><span>搜索标签</span><input id="tag-search" type="search" placeholder="输入标签名称…" autocomplete="off"></label>
   <div class="tag-overview" aria-label="标签概览">
     {% for tag in sorted_tags %}
-    <a class="tag-chip" href="#tag-{{ tag[0] }}">
-      <span class="tag-chip-hash">#</span>
+    {% assign tag_meta = site.data.tags[tag[0]] %}
+    <a class="tag-chip" data-tag-name="{{ tag[0] | escape }}" href="#tag-{{ tag[0] }}" style="--tag-color: {{ tag_meta.color | default: '#4f7b59' }}">
+      <span class="tag-chip-hash">{{ tag_meta.icon | default: '#' }}</span>
       <span>{{ tag[0] }}</span>
       <b>{{ tag[1] | size }}</b>
     </a>
@@ -29,9 +31,10 @@ description: "按标签浏览 Merisk'B1og 的全部文章。"
 
   {% if sorted_tags.size > 0 %}
   {% for tag in sorted_tags %}
-  <section class="tag-section" id="tag-{{ tag[0] }}">
+  {% assign tag_meta = site.data.tags[tag[0]] %}
+  <section class="tag-section" id="tag-{{ tag[0] }}" data-tag-name="{{ tag[0] | escape }}" style="--tag-color: {{ tag_meta.color | default: '#4f7b59' }}">
     <div class="tag-section-head">
-      <div class="tag-title-wrap"><span class="tag-hash">#</span><h2>{{ tag[0] }}</h2></div>
+      <div class="tag-title-wrap"><span class="tag-hash">{{ tag_meta.icon | default: '#' }}</span><h2>{{ tag[0] }}</h2></div>
       <span class="tag-count">{{ tag[1] | size }} 篇</span>
     </div>
     <div class="tag-post-list">

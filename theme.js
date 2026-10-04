@@ -333,12 +333,30 @@
         if(typeof data.forks_count==='number')set('forks',data.forks_count);
         if(typeof data.open_issues_count==='number')set('issues',data.open_issues_count);
       }).catch(()=>{});
+      fetch('https://api.github.com/repos/'+repo+'/commits?per_page=1').then(response=>{
+        const link=response.headers.get('link')||'';
+        const match=link.match(/[?&]page=(\d+)>; rel="last"/);
+        const node=document.querySelector('[data-github-commits]');
+        if(node)node.textContent=match?match[1]:'1';
+      }).catch(()=>{});
       fetch('https://api.github.com/repos/'+repo+'/commits/main').then(response=>response.json()).then(data=>{
         const node=document.querySelector('[data-github-commit]');
         if(node&&data.commit&&data.commit.committer&&data.commit.committer.date){
           node.textContent=new Date(data.commit.committer.date).toLocaleDateString('zh-CN');
         }
       }).catch(()=>{});
+    }
+
+    const tagSearch=document.getElementById('tag-search');
+    if(tagSearch){
+      const chips=Array.from(document.querySelectorAll('.tag-chip'));
+      const sections=Array.from(document.querySelectorAll('.tag-section'));
+      const updateTags=()=>{
+        const query=tagSearch.value.trim().toLowerCase();
+        chips.forEach(chip=>{chip.hidden=query&&!(chip.dataset.tagName||'').toLowerCase().includes(query)});
+        sections.forEach(section=>{section.hidden=query&&!(section.dataset.tagName||'').toLowerCase().includes(query)});
+      };
+      tagSearch.addEventListener('input',updateTags);
     }
   });
 })();

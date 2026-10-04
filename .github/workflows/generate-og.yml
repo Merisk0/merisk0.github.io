@@ -1,0 +1,33 @@
+name: Generate OG images
+
+on:
+  push:
+    paths:
+      - '_posts/**.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install fonts
+        run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Generate missing OG images
+        run: python scripts/generate_og_images.py
+      - name: Commit generated images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _posts img/og
+          git diff --cached --quiet || git commit -m "Generate OG images [skip ci]"
+          git push
