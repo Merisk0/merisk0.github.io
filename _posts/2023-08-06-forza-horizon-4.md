@@ -3,6 +3,7 @@ title: "睿频地平线4"
 date: 2023-08-06
 author: "Arrowa"
 categories: [game]
+tags: [游戏]
 subcategory: "Forza"
 summary: "关于 Forza Horizon 4 的记录。"
 permalink: /Articles/7.html
