@@ -319,8 +319,6 @@
         try{await navigator.share({title,url});}catch{}
       }else if(type==='native'){
         try{await navigator.clipboard.writeText(url);button.textContent='已复制';setTimeout(()=>button.textContent='分享',1400);}catch{}
-      }else if(type==='weibo'){
-        window.open('https://service.weibo.com/share/share.php?url='+encodeURIComponent(url)+'&title='+encodeURIComponent(title),'_blank','noopener');
       }else if(type==='qq'){
         window.open('https://connect.qq.com/widget/shareqq/index.html?url='+encodeURIComponent(url)+'&title='+encodeURIComponent(title),'_blank','noopener');
       }
