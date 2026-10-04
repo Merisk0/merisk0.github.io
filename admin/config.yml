@@ -20,5 +20,4 @@ collections:
       - { label: 作者, name: author, widget: string, default: Merisk }
       - { label: 标签, name: tags, widget: list, default: [更新日志] }
       - { label: 摘要, name: summary, widget: text }
-      - { label: 分享图, name: image, widget: image, required: false }
       - { label: 正文, name: body, widget: markdown }

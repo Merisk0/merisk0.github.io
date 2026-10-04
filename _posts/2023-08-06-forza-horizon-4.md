@@ -4,7 +4,6 @@ date: 2023-08-06
 author: "Arrowa"
 tags: [游戏]
 summary: "关于 Forza Horizon 4 的记录。"
-image: "/img/og/forza-horizon-4.png"
 permalink: /Articles/7.html
 ---
 

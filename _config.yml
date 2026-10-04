@@ -36,7 +36,6 @@ plugins:
   - jekyll-sitemap
   - jekyll-feed
 
-logo: "/favicon.png"
 
 analytics:
   provider: ""
