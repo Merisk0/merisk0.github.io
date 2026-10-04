@@ -44,7 +44,7 @@ description: "记录想法、技术、游戏与生活。"
       </a>
       {% endfor %}
     </div>
-    <div class="load-more-wrap"><button class="btn load-control" id="load-more" type="button">加载更多</button><button class="btn load-control" id="load-less" type="button" hidden>加载更少</button></div>
+    <div class="load-more-wrap"><button class="btn load-control" id="load-more" type="button">加载更多</button><button class="btn load-control" id="load-less" type="button" hidden>加载更少</button><span class="load-status" id="load-status" aria-live="polite"></span></div>
   </section>
 
   <section id="about" class="section">
@@ -93,6 +93,7 @@ const tagButtons=document.querySelectorAll('.tag-filter');
 const articleCards=Array.from(document.querySelectorAll('#article-grid .card'));
 const loadMore=document.getElementById('load-more');
 const loadLess=document.getElementById('load-less');
+const loadStatus=document.getElementById('load-status');
 const pageSize=8;
 let visibleLimit=pageSize;
 let activeTag='all';
@@ -103,6 +104,7 @@ function applyArticlePaging(){
   matches.forEach((card,index)=>{card.hidden=index>=visibleLimit});
   if(loadMore)loadMore.hidden=visibleLimit>=matches.length;
   if(loadLess)loadLess.hidden=visibleLimit<=pageSize;
+  if(loadStatus)loadStatus.textContent='已显示 '+Math.min(visibleLimit,matches.length)+' / '+matches.length+' 篇';
 }
 function animateLoadControl(button){
   if(!button)return;
