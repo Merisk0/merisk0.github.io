@@ -25,6 +25,21 @@ layout: default
       {{ content }}
     </div>
 
+    <nav class="post-navigation" aria-label="文章导航">
+      {% if page.previous %}
+      <a class="post-nav-link prev" href="{{ page.previous.url | relative_url }}">
+        <small>上一篇</small>
+        <strong>{{ page.previous.title }}</strong>
+      </a>
+      {% endif %}
+      {% if page.next %}
+      <a class="post-nav-link next" href="{{ page.next.url | relative_url }}">
+        <small>下一篇</small>
+        <strong>{{ page.next.title }}</strong>
+      </a>
+      {% endif %}
+    </nav>
+
     {% if site.giscus.enabled and site.giscus.category_id and site.giscus.category_id != "" %}
     <div class="giscus-wrap">
       <script src="https://giscus.app/client.js"

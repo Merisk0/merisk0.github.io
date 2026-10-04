@@ -30,3 +30,10 @@ giscus:
   input_position: "bottom"
   lang: "zh-CN"
   loading: "lazy"
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+
+logo: "/favicon.png"

@@ -22,11 +22,11 @@ permalink: /Articles/7.html
 
 其实单人模式挺好的，跑一场“永不落幕的嘉年华”
 
-<img src="/img/fh4/  (1).jpg" alt="地平线4截图 1">
-<img src="/img/fh4/  (3).jpg" alt="地平线4截图 2">
-<img src="/img/fh4/  (1).png" alt="地平线4截图 3">
-<img src="/img/fh4/  (2).png" alt="地平线4截图 4">
-<img src="/img/fh4/  (3).png" alt="地平线4截图 5">
-<img src="/img/fh4/  (4).png" alt="地平线4截图 6">
-<img src="/img/fh4/  (5).png" alt="地平线4截图 7">
-<img src="/img/fh4/  (6).png" alt="地平线4截图 8">
+<img src="/img/fh4/  (1).jpg" alt="地平线4截图 1" loading="lazy" decoding="async">
+<img src="/img/fh4/  (3).jpg" alt="地平线4截图 2" loading="lazy" decoding="async">
+<img src="/img/fh4/  (1).png" alt="地平线4截图 3" loading="lazy" decoding="async">
+<img src="/img/fh4/  (2).png" alt="地平线4截图 4" loading="lazy" decoding="async">
+<img src="/img/fh4/  (3).png" alt="地平线4截图 5" loading="lazy" decoding="async">
+<img src="/img/fh4/  (4).png" alt="地平线4截图 6" loading="lazy" decoding="async">
+<img src="/img/fh4/  (5).png" alt="地平线4截图 7" loading="lazy" decoding="async">
+<img src="/img/fh4/  (6).png" alt="地平线4截图 8" loading="lazy" decoding="async">

@@ -1,0 +1,47 @@
+---
+layout: default
+title: "归档"
+description: "按年份浏览 Merisk'B1og 的全部文章。"
+---
+<header class="page-hero archive-hero">
+  <div class="section-kicker">Archive</div>
+  <h1>归档</h1>
+  <p>共 {{ site.posts | size }} 篇文章，按时间倒序排列。</p>
+</header>
+
+<main class="archive-page">
+  <div class="archive-toolbar">
+    <label class="search-box">
+      <span>搜索</span>
+      <input id="archive-search" type="search" placeholder="搜索标题、摘要、分类或标签…" autocomplete="off">
+    </label>
+    <div class="archive-count" id="archive-count">{{ site.posts | size }} 篇文章</div>
+  </div>
+
+  <div class="archive-results">
+    {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+    {% for year in posts_by_year %}
+    <section class="archive-year" data-year="{{ year.name }}">
+      <h2>{{ year.name }}</h2>
+      <div class="archive-list">
+        {% for post in year.items %}
+        {% assign summary_text = post.summary | default: '' %}
+        {% assign category_text = post.categories | join: ' ' %}
+        {% assign tag_text = post.tags | join: ' ' %}
+        {% assign search_text = post.title | append: ' ' | append: summary_text | append: ' ' | append: category_text | append: ' ' | append: tag_text | downcase | escape %}
+        <a class="archive-item" href="{{ post.url | relative_url }}" data-search="{{ search_text }}">
+          <span class="archive-date">{{ post.date | date: "%m/%d" }}</span>
+          <span class="archive-main">
+            <strong>{{ post.title }}</strong>
+            {% if post.summary %}<small>{{ post.summary }}</small>{% endif %}
+          </span>
+          <span class="archive-arrow" aria-hidden="true">↗</span>
+        </a>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+  </div>
+
+  <div class="archive-empty" id="archive-empty" hidden>没有找到匹配的文章。</div>
+</main>

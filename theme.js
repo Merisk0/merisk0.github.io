@@ -97,5 +97,58 @@
     window.addEventListener('scroll',updateBackToTop,{passive:true});
     document.body.append(backToTop);
     updateBackToTop();
+
+    const articleContent=document.querySelector('.article-content');
+    if(articleContent){
+      const headings=Array.from(articleContent.querySelectorAll('h2,h3,h4'));
+      if(headings.length>1){
+        const toc=document.createElement('div');
+        toc.className='article-toc';
+        toc.innerHTML='<div class="article-toc-title">目录</div><ol></ol>';
+        articleContent.parentNode.insertBefore(toc,articleContent);
+        const list=toc.querySelector('ol');
+        headings.forEach((heading,index)=>{
+          if(!heading.id)heading.id='section-'+(index+1);
+          const item=document.createElement('li');
+          item.className='toc-level-'+heading.tagName.slice(1);
+          const link=document.createElement('a');
+          link.href='#'+heading.id;
+          link.textContent=heading.textContent;
+          item.append(link);
+          list.append(item);
+        });
+      }
+    }
+
+
+    const archiveSearch=document.getElementById('archive-search');
+    if(archiveSearch){
+      const items=Array.from(document.querySelectorAll('.archive-item'));
+      const years=Array.from(document.querySelectorAll('.archive-year'));
+      const count=document.getElementById('archive-count');
+      const empty=document.getElementById('archive-empty');
+      const total=items.length;
+      const updateArchive=()=>{
+        const query=archiveSearch.value.trim().toLowerCase();
+        let visible=0;
+        items.forEach(item=>{
+          const match=!query||(item.dataset.search||'').includes(query);
+          item.hidden=!match;
+          if(match)visible++;
+        });
+        years.forEach(year=>{
+          year.hidden=!year.querySelector('.archive-item:not([hidden])');
+        });
+        if(count)count.textContent=query?visible+' / '+total+' 篇文章':total+' 篇文章';
+        if(empty)empty.hidden=visible!==0;
+      };
+      archiveSearch.addEventListener('input',updateArchive);
+      document.addEventListener('keydown',event=>{
+        if(event.key==='/'&&document.activeElement!==archiveSearch&&!event.metaKey&&!event.ctrlKey){
+          event.preventDefault();
+          archiveSearch.focus();
+        }
+      });
+    }
   });
 })();
