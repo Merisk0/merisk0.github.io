@@ -2,7 +2,6 @@
 title: "博客更新日志"
 date: 2026-10-04
 author: "Merisk"
-categories: [tech]
 tags: [更新日志]
 summary: "记录博客功能、样式、文章系统与性能优化。"
 ---

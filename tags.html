@@ -8,7 +8,7 @@ description: "按标签浏览 Merisk'B1og 的全部文章。"
 <header class="page-hero tags-hero">
   <div class="section-kicker">Tags</div>
   <h1>标签</h1>
-  <p>按主题浏览全部文章。</p>
+  <p>按标签浏览全部文章。</p>
   <div class="tag-overview" aria-label="标签概览">
     {% for tag in sorted_tags %}
     <a class="tag-chip" href="#tag-{{ tag[0] }}">
@@ -36,21 +36,11 @@ description: "按标签浏览 Merisk'B1og 的全部文章。"
     </div>
     <div class="tag-post-list">
       {% for post in tag[1] %}
-      {% assign category_key = post.categories | first %}
-      {% case category_key %}
-        {% when 'project' %}{% assign category_label = '项目' %}
-        {% when 'game' %}{% assign category_label = '游戏' %}
-        {% when 'life' %}{% assign category_label = '生活' %}
-        {% when 'tech' %}{% assign category_label = '科技' %}
-        {% when 'culture' %}{% assign category_label = '文学' %}
-        {% else %}{% assign category_label = category_key %}
-      {% endcase %}
       <a class="tag-post" href="{{ post.url | relative_url }}">
         <span class="tag-post-date">{{ post.date | date: "%Y/%m/%d" }}</span>
         <span class="tag-post-main">
           <strong>{{ post.title }}</strong>
           {% if post.summary %}<small>{{ post.summary }}</small>{% endif %}
-          <span class="tag-post-meta"><span>{{ category_label }}</span></span>
         </span>
         <span class="tag-post-arrow" aria-hidden="true">↗</span>
       </a>

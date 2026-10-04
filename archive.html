@@ -4,6 +4,7 @@ title: "归档"
 description: "按年份浏览 Merisk'B1og 的全部文章。"
 ---
 {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+{% assign tagged_posts = site.posts | where_exp: "post", "post.tags.size > 0" %}
 <header class="page-hero archive-hero">
   <div class="section-kicker">Archive</div>
   <h1>归档</h1>
@@ -11,8 +12,8 @@ description: "按年份浏览 Merisk'B1og 的全部文章。"
   <div class="archive-stats" aria-label="归档概览">
     <div class="archive-stat"><strong>{{ site.posts | size }}</strong><span>文章</span></div>
     <div class="archive-stat"><strong>{{ posts_by_year | size }}</strong><span>年份</span></div>
-    <div class="archive-stat"><strong>{{ site.categories | size }}</strong><span>分类</span></div>
     <div class="archive-stat"><strong>{{ site.tags | size }}</strong><span>标签</span></div>
+    <div class="archive-stat"><strong>{{ tagged_posts | size }}</strong><span>已标记</span></div>
   </div>
 </header>
 
@@ -20,15 +21,15 @@ description: "按年份浏览 Merisk'B1og 的全部文章。"
   <div class="archive-toolbar">
     <label class="search-box">
       <span>搜索</span>
-      <input id="archive-search" type="search" placeholder="搜索标题、摘要、分类或标签…" autocomplete="off">
+      <input id="archive-search" type="search" placeholder="搜索标题、摘要或标签…" autocomplete="off">
     </label>
     <div class="archive-count" id="archive-count">{{ site.posts | size }} 篇文章</div>
   </div>
 
   <div class="archive-year-filter" id="archive-year-filter" aria-label="年份筛选">
-    <button class="category year-filter active" type="button" data-year="all">全部</button>
+    <button class="tag-filter year-filter active" type="button" data-year="all">全部</button>
     {% for year in posts_by_year %}
-    <button class="category year-filter" type="button" data-year="{{ year.name }}">{{ year.name }}</button>
+    <button class="tag-filter year-filter" type="button" data-year="{{ year.name }}">{{ year.name }}</button>
     {% endfor %}
   </div>
 
@@ -39,18 +40,8 @@ description: "按年份浏览 Merisk'B1og 的全部文章。"
       <div class="archive-list">
         {% for post in year.items %}
         {% assign summary_text = post.summary | default: '' %}
-        {% assign category_text = post.categories | join: ' ' %}
         {% assign tag_text = post.tags | join: ' ' %}
-        {% assign category_key = post.categories | first %}
-        {% case category_key %}
-          {% when 'project' %}{% assign category_label = '项目' %}
-          {% when 'game' %}{% assign category_label = '游戏' %}
-          {% when 'life' %}{% assign category_label = '生活' %}
-          {% when 'tech' %}{% assign category_label = '科技' %}
-          {% when 'culture' %}{% assign category_label = '文学' %}
-          {% else %}{% assign category_label = category_key %}
-        {% endcase %}
-        {% assign search_text = post.title | append: ' ' | append: summary_text | append: ' ' | append: category_text | append: ' ' | append: tag_text | downcase | escape %}
+        {% assign search_text = post.title | append: ' ' | append: summary_text | append: ' ' | append: tag_text | downcase | escape %}
         <a class="archive-item" href="{{ post.url | relative_url }}" data-year="{{ year.name }}" data-search="{{ search_text }}">
           <span class="archive-date">
             <b>{{ post.date | date: "%d" }}</b>
@@ -60,7 +51,6 @@ description: "按年份浏览 Merisk'B1og 的全部文章。"
             <span class="archive-card-title">{{ post.title }}</span>
             {% if post.summary %}<small>{{ post.summary }}</small>{% endif %}
             <span class="archive-meta">
-              <span class="archive-category">{{ category_label }}</span>
               {% for tag in post.tags %}<span class="archive-tag">#{{ tag }}</span>{% endfor %}
             </span>
           </span>

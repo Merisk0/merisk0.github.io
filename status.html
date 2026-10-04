@@ -3,6 +3,8 @@ layout: default
 title: "状态"
 description: "Merisk'B1og 的运行状态与内容数据统计。"
 ---
+{% assign latest = site.posts.first %}
+{% assign tagged_posts = site.posts | where_exp: "post", "post.tags.size > 0" %}
 <header class="page-hero status-hero">
   <div class="section-kicker">Status</div>
   <h1>状态</h1>
@@ -19,53 +21,23 @@ description: "Merisk'B1og 的运行状态与内容数据统计。"
       <small>已发布文章</small>
     </article>
     <article class="status-card">
-      <span class="status-icon" aria-hidden="true">◇</span>
-      <span class="status-label">分类</span>
-      <strong>{{ site.categories | size }}</strong>
-      <small>内容分类数量</small>
-    </article>
-    <article class="status-card">
       <span class="status-icon" aria-hidden="true">#</span>
       <span class="status-label">标签</span>
       <strong>{{ site.tags | size }}</strong>
       <small>自动生成标签</small>
     </article>
+    <article class="status-card">
+      <span class="status-icon" aria-hidden="true">◇</span>
+      <span class="status-label">已标记</span>
+      <strong>{{ tagged_posts | size }}</strong>
+      <small>带标签的文章</small>
+    </article>
     <article class="status-card status-card-latest">
       <span class="status-icon" aria-hidden="true">↻</span>
       <span class="status-label">最后更新</span>
-      {% assign latest = site.posts.first %}
       <strong>{{ latest.date | date: "%Y/%m/%d" }}</strong>
       <small>{{ latest.title }}</small>
     </article>
-  </section>
-
-  <section class="status-section">
-    <div class="section-head">
-      <div>
-        <div class="section-kicker">Categories</div>
-        <h2>分类统计</h2>
-      </div>
-    </div>
-    <div class="data-list">
-      {% for category in site.categories %}
-        {% assign category_key = category[0] %}
-        {% assign category_count = category[1] | size %}
-        {% assign category_percent = category_count | times: 100.0 | divided_by: site.posts.size %}
-        {% case category_key %}
-          {% when 'project' %}{% assign category_label = '项目' %}
-          {% when 'game' %}{% assign category_label = '游戏' %}
-          {% when 'life' %}{% assign category_label = '生活' %}
-          {% when 'tech' %}{% assign category_label = '科技' %}
-          {% when 'culture' %}{% assign category_label = '文学' %}
-          {% else %}{% assign category_label = category_key %}
-        {% endcase %}
-        <div class="data-row data-row-bar">
-          <div class="data-label"><span>{{ category_label }}</span><small>{{ category_count }} 篇</small></div>
-          <div class="data-bar" aria-hidden="true"><span style="width: {{ category_percent | round: 1 }}%"></span></div>
-          <b>{{ category_count }}</b>
-        </div>
-      {% endfor %}
-    </div>
   </section>
 
   <section class="status-section">
