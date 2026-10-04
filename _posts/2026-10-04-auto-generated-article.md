@@ -39,6 +39,12 @@ summary: "记录博客功能、样式、文章系统与性能优化。"
 - 游戏相关标签统一显示为 `游戏`。
 - 移除旧文章中的 Gitalk 评论配置。
 
+### 当前标签
+
+{% for tag in site.tags %}
+- `{{ tag[0] }}`：{{ tag[1] | size }} 篇
+{% endfor %}
+
 ### 验证
 
 - 完成本地预览和 GitHub Pages 构建验证。
