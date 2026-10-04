@@ -36,4 +36,11 @@ plugins:
   - jekyll-sitemap
   - jekyll-feed
 
-logo: "/favicon.png"
+
+analytics:
+  provider: ""
+  umami:
+    script_url: ""
+    website_id: ""
+  plausible:
+    domain: ""
