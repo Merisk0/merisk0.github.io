@@ -8,7 +8,7 @@
   <link rel="icon" href="{{ '/favicon.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/Articles/Articles.css' | relative_url }}">
-  <script src="{{ '/theme.js' | relative_url }}"></script>
+  <script src="{{ '/theme.js' | relative_url }}?v=3"></script>
 </head>
 <body>
 <nav class="nav">
@@ -16,6 +16,7 @@
   <div class="navlinks">
     <a href="{{ '/#articles' | relative_url }}">文章</a>
     <a href="{{ '/AboutMe.html' | relative_url }}">关于我</a>
+    <a href="{{ '/status.html' | relative_url }}">状态</a>
     <a href="{{ '/#contact' | relative_url }}">联系</a>
     <button class="theme-btn" data-theme-toggle onclick="toggleTheme()" aria-label="切换主题">☾</button>
   </div>

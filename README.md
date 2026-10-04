@@ -24,7 +24,7 @@ title: "我的新文章"
 date: 2026-10-04
 author: "Merisk"
 categories: [tech]
-subcategory: "记录"
+tags: [随笔, Markdown]
 summary: "首页显示的文章摘要。"
 ---
 
@@ -72,3 +72,17 @@ https://merisk0.github.io/
 ## 草稿
 
 未发布的文章可以放在 `_drafts` 目录。Jekyll 默认不会发布草稿。
+
+## 标签
+
+在文章 front matter 中添加 `tags`：
+
+```yaml
+tags: [随笔, Markdown]
+```
+
+首页会自动生成标签筛选按钮，每篇有 `tags` 的文章会显示对应标签。以后新增标签不需要手动修改 `index.html`。
+
+## 状态页
+
+`status.html` 会自动统计文章、分类、标签和最近更新，并在导航栏提供“状态”入口。

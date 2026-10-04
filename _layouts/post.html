@@ -2,7 +2,7 @@
 layout: default
 ---
 <main class="article-shell">
-  <a class="back" href="{{ '/#articles' | relative_url }}">
+  <a class="back" href="{{ '/#articles' | relative_url }}" data-back data-fallback="{{ '/#articles' | relative_url }}">
     <span class="back-icon" aria-hidden="true">←</span>
     <span>返回</span>
   </a>
@@ -14,10 +14,36 @@ layout: default
       <div class="article-meta">
         作者:{{ page.author | default: site.author }} 更新时间:{{ updated | date: "%Y/%m/%d" }}
       </div>
+      {% if page.tags and page.tags.size > 0 %}
+      <div class="article-tags">
+        {% for tag in page.tags %}<span>#{{ tag }}</span>{% endfor %}
+      </div>
+      {% endif %}
     </header>
 
     <div class="article-content">
       {{ content }}
     </div>
+
+    {% if site.giscus.enabled and site.giscus.category_id and site.giscus.category_id != "" %}
+    <div class="giscus-wrap">
+      <script src="https://giscus.app/client.js"
+              data-repo="{{ site.giscus.repo }}"
+              data-repo-id="{{ site.giscus.repo_id }}"
+              data-category="{{ site.giscus.category }}"
+              data-category-id="{{ site.giscus.category_id }}"
+              data-mapping="{{ site.giscus.mapping }}"
+              data-strict="{{ site.giscus.strict }}"
+              data-reactions-enabled="{{ site.giscus.reactions_enabled }}"
+              data-emit-metadata="{{ site.giscus.emit_metadata }}"
+              data-input-position="{{ site.giscus.input_position }}"
+              data-theme="dark"
+              data-lang="{{ site.giscus.lang }}"
+              data-loading="{{ site.giscus.loading }}"
+              crossorigin="anonymous"
+              async>
+      </script>
+    </div>
+    {% endif %}
   </article>
 </main>

@@ -16,3 +16,17 @@ defaults:
     values:
       layout: post
       author: Merisk
+
+giscus:
+  enabled: true
+  repo: "Merisk0/merisk0.github.io"
+  repo_id: "R_kgDOHUYU8Q"
+  category: "General"
+  category_id: "DIC_kwDOHUYU8c4DHAZq"
+  mapping: "pathname"
+  strict: "0"
+  reactions_enabled: "1"
+  emit_metadata: "0"
+  input_position: "bottom"
+  lang: "zh-CN"
+  loading: "lazy"

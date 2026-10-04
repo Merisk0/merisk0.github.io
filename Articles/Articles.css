@@ -12,7 +12,7 @@
   background: rgba(255,255,255,.72);
   color: #182018;
   text-decoration: none;
-  font-size: .92rem;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: .01em;
   box-shadow: 0 8px 24px rgba(20,35,25,.08);
@@ -133,7 +133,7 @@
 }
 
 /* Jekyll Markdown content */
-.article-content h6{font-family:Inter,"Noto Sans SC",sans-serif;line-height:1.4;margin:1.8em 0 .7em;font-size:14px;color:var(--muted)}
+.article-content h6{color:var(--muted)}
 .article-content ul,.article-content ol{margin:0 0 1.35em;padding-left:1.55em}
 .article-content li{margin:.35em 0}
 .article-content pre{overflow:auto;margin:1.5em 0;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:rgba(20,30,22,.06)}
@@ -146,3 +146,18 @@
 .article-content th{background:rgba(79,123,89,.08)}
 .article-content img{display:block;margin:1.5em auto}
 .article-content hr{margin:2.2em 0;border:0;border-top:1px solid var(--line)}
+
+/* Automatic tags */
+.tag-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:-12px 0 24px}
+.tag-bar-label{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.tag-filter{border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:9px 14px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s ease;backdrop-filter:blur(10px)}
+.tag-filter:hover{transform:translateY(-1px);color:var(--text);border-color:rgba(79,123,89,.35)}
+.tag-filter.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.article-tags{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:-28px 0 38px}
+.article-tags span{display:inline-flex;padding:6px 10px;border-radius:999px;background:rgba(79,123,89,.10);color:var(--accent);font-size:12px;font-weight:800}
+@media(max-width:640px){.tag-bar{margin-top:-10px}.tag-filter{padding:7px 11px;font-size:12px}}
+
+/* giscus comments */
+.giscus-wrap{margin-top:48px;padding-top:32px;border-top:1px solid var(--line)}
+.giscus-wrap .giscus{width:100%}
+.giscus-wrap iframe{width:100%}

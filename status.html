@@ -1,0 +1,130 @@
+---
+layout: default
+title: "状态"
+description: "Merisk'B1og 的运行状态与内容数据统计。"
+---
+<header class="page-hero status-hero">
+  <div class="section-kicker">Status</div>
+  <h1>状态</h1>
+  <p>博客运行状态、内容数量与最近更新概览。</p>
+  <div class="status-live"><span class="status-dot" aria-hidden="true"></span>All systems operational</div>
+</header>
+
+<main class="status-page">
+  <section class="status-grid" aria-label="核心数据">
+    <article class="status-card">
+      <span class="status-icon" aria-hidden="true">▤</span>
+      <span class="status-label">文章</span>
+      <strong>{{ site.posts | size }}</strong>
+      <small>已发布文章</small>
+    </article>
+    <article class="status-card">
+      <span class="status-icon" aria-hidden="true">◇</span>
+      <span class="status-label">分类</span>
+      <strong>{{ site.categories | size }}</strong>
+      <small>内容分类数量</small>
+    </article>
+    <article class="status-card">
+      <span class="status-icon" aria-hidden="true">#</span>
+      <span class="status-label">标签</span>
+      <strong>{{ site.tags | size }}</strong>
+      <small>自动生成标签</small>
+    </article>
+    <article class="status-card status-card-latest">
+      <span class="status-icon" aria-hidden="true">↻</span>
+      <span class="status-label">最后更新</span>
+      {% assign latest = site.posts.first %}
+      <strong>{{ latest.date | date: "%Y/%m/%d" }}</strong>
+      <small>{{ latest.title }}</small>
+    </article>
+  </section>
+
+  <section class="status-section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Categories</div>
+        <h2>分类统计</h2>
+      </div>
+    </div>
+    <div class="data-list">
+      {% for category in site.categories %}
+        {% assign category_key = category[0] %}
+        {% assign category_count = category[1] | size %}
+        {% assign category_percent = category_count | times: 100.0 | divided_by: site.posts.size %}
+        {% case category_key %}
+          {% when 'project' %}{% assign category_label = '项目' %}
+          {% when 'game' %}{% assign category_label = '游戏' %}
+          {% when 'life' %}{% assign category_label = '生活' %}
+          {% when 'tech' %}{% assign category_label = '科技' %}
+          {% when 'culture' %}{% assign category_label = '文化' %}
+          {% else %}{% assign category_label = category_key %}
+        {% endcase %}
+        <div class="data-row data-row-bar">
+          <div class="data-label"><span>{{ category_label }}</span><small>{{ category_count }} 篇</small></div>
+          <div class="data-bar" aria-hidden="true"><span style="width: {{ category_percent | round: 1 }}%"></span></div>
+          <b>{{ category_count }}</b>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="status-section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Tags</div>
+        <h2>标签统计</h2>
+      </div>
+    </div>
+    <div class="data-list">
+      {% if site.tags.size > 0 %}
+        {% for tag in site.tags %}
+        {% assign tag_count = tag[1] | size %}
+        {% assign tag_percent = tag_count | times: 100.0 | divided_by: site.posts.size %}
+        <div class="data-row data-row-bar">
+          <div class="data-label"><span>{{ tag[0] }}</span><small>{{ tag_count }} 篇</small></div>
+          <div class="data-bar" aria-hidden="true"><span style="width: {{ tag_percent | round: 1 }}%"></span></div>
+          <b>{{ tag_count }}</b>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="status-empty">暂无标签</div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="status-section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">Recent</div>
+        <h2>最近更新</h2>
+      </div>
+    </div>
+    <div class="data-list">
+      {% for post in site.posts limit:5 %}
+      <a class="data-row status-post" href="{{ post.url | relative_url }}">
+        <span class="status-timeline" aria-hidden="true"></span>
+        <span>
+          <b>{{ post.title }}</b>
+          <small>{{ post.date | date: "%Y/%m/%d" }}</small>
+        </span>
+        <span class="status-arrow" aria-hidden="true">↗</span>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="status-section">
+    <div class="section-head">
+      <div>
+        <div class="section-kicker">System</div>
+        <h2>系统信息</h2>
+      </div>
+    </div>
+    <div class="data-list">
+      <div class="data-row"><span>构建方式</span><b>Jekyll / GitHub Pages</b></div>
+      <div class="data-row"><span>主题模式</span><b>Light / Dark</b></div>
+      <div class="data-row"><span>页面构建时间</span><b>{{ site.time | date: "%Y/%m/%d %H:%M" }}</b></div>
+      <div class="data-row"><span>当前状态</span><b class="status-ok"><span class="status-dot" aria-hidden="true"></span>Operational</b></div>
+    </div>
+  </section>
+</main>
