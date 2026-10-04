@@ -114,24 +114,40 @@ main{width:min(1100px,calc(100% - 32px));margin:0 auto;padding:78px 0 100px}.sec
 @media(max-width:520px){.status-grid{grid-template-columns:1fr}.status-section{border-radius:22px}.data-row-bar{grid-template-columns:1fr 32px;gap:10px}.data-row-bar .data-bar{grid-column:1/-1}.data-row-bar>b{grid-column:2;grid-row:1}}
 
 /* Archive, search, TOC and post navigation */
+.archive-hero .archive-stats{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:26px}
+.archive-stat{min-width:92px;padding:12px 16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:0 10px 28px rgba(20,30,22,.06)}
+.archive-stat strong{display:block;font-size:24px;line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.archive-stat span{display:block;margin-top:6px;color:var(--muted);font-size:12px}
 .archive-page{width:min(1000px,calc(100% - 32px));margin:0 auto 90px}
-.archive-toolbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:28px}
+.archive-toolbar{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
 .search-box{display:flex;align-items:center;gap:10px;flex:1;max-width:620px;padding:0 16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}
 .search-box span{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .search-box input{flex:1;min-width:0;padding:15px 0;border:0;outline:0;background:transparent;color:var(--text);font:inherit}
 .search-box:focus-within{border-color:rgba(79,123,89,.45);box-shadow:0 0 0 4px rgba(79,123,89,.10)}
-.archive-count{color:var(--muted);font-size:13px;white-space:nowrap}
-.archive-year{margin-bottom:32px}
-.archive-year h2{margin:0 0 14px;font-size:clamp(24px,3vw,34px);letter-spacing:-.04em}
-.archive-list{display:grid;gap:10px}
-.archive-item{display:grid;grid-template-columns:58px 1fr 22px;gap:16px;align-items:center;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:0 8px 24px rgba(20,30,22,.05);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.archive-count{color:var(--muted);font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.archive-year-filter{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 30px}
+.archive-year{margin-bottom:34px}
+.archive-year h2{position:sticky;top:92px;z-index:4;display:inline-flex;margin:0 0 15px;padding:8px 12px;border-radius:10px;background:var(--bg);font-size:clamp(22px,3vw,30px);letter-spacing:-.04em}
+.archive-list{position:relative;display:grid;gap:12px;padding-left:20px}
+.archive-list::before{content:"";position:absolute;left:5px;top:8px;bottom:8px;width:1px;background:var(--line)}
+.archive-item{position:relative;display:grid;grid-template-columns:64px 1fr 22px;gap:16px;align-items:center;padding:17px 18px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:0 8px 24px rgba(20,30,22,.05);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.archive-item::before{content:"";position:absolute;left:-19px;top:50%;width:9px;height:9px;border:3px solid var(--bg);border-radius:50%;background:var(--accent);transform:translateY(-50%);box-shadow:0 0 0 3px rgba(79,123,89,.12)}
 .archive-item:hover{transform:translateY(-2px);border-color:rgba(79,123,89,.28);box-shadow:0 14px 32px rgba(20,30,22,.10)}
-.archive-date{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.archive-date{display:grid;gap:2px;text-align:center}
+.archive-date b{font-size:20px;line-height:1;font-variant-numeric:tabular-nums}
+.archive-date small{color:var(--muted);font-size:11px}
 .archive-main{display:grid;gap:4px;min-width:0}
-.archive-main strong{font-size:16px;line-height:1.45}
-.archive-main small{color:var(--muted);font-size:13px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.archive-card-title{font-size:16px;font-weight:800;line-height:1.45}
+.archive-main>small{color:var(--muted);font-size:13px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.archive-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.archive-category,.archive-tag{display:inline-flex;padding:3px 7px;border-radius:999px;font-size:11px;font-weight:700}
+.archive-category{background:rgba(79,123,89,.12);color:var(--accent)}
+.archive-tag{border:1px solid var(--line);background:var(--surface-solid);color:var(--muted)}
 .archive-arrow{color:var(--accent);font-size:18px}
-.archive-empty{padding:26px;border:1px dashed var(--line);border-radius:18px;color:var(--muted);text-align:center}
+.archive-empty{display:grid;place-items:center;gap:8px;padding:46px 22px;border:1px dashed var(--line);border-radius:18px;color:var(--muted);text-align:center}
+.archive-empty strong{color:var(--text);font-size:18px}
+.archive-empty span{font-size:14px}
+.archive-empty .btn{margin-top:8px}
 .article-toc{margin:0 0 38px;padding:18px 22px;border:1px solid var(--line);border-radius:18px;background:rgba(79,123,89,.05)}
 .article-toc[hidden]{display:none}
 .article-toc-title{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
@@ -146,4 +162,4 @@ main{width:min(1100px,calc(100% - 32px));margin:0 auto;padding:78px 0 100px}.sec
 .post-nav-link.next{text-align:right}
 .post-nav-link small{color:var(--muted);font-size:12px;font-weight:700}
 .post-nav-link strong{font-size:15px;line-height:1.5}
-@media(max-width:640px){.archive-toolbar{align-items:stretch;flex-direction:column}.search-box{max-width:none}.archive-item{grid-template-columns:46px 1fr 18px;gap:10px;padding:14px}.archive-main small{white-space:normal}.post-navigation{grid-template-columns:1fr}.post-nav-link.next{text-align:left}}
+@media(max-width:720px){.archive-year h2{top:80px}.archive-toolbar{align-items:stretch;flex-direction:column}.search-box{max-width:none}.archive-item{grid-template-columns:52px 1fr 18px;gap:10px;padding:14px}.archive-main>small{white-space:normal}.post-navigation{grid-template-columns:1fr}.post-nav-link.next{text-align:left}}

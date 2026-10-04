@@ -125,24 +125,45 @@
     if(archiveSearch){
       const items=Array.from(document.querySelectorAll('.archive-item'));
       const years=Array.from(document.querySelectorAll('.archive-year'));
+      const yearButtons=Array.from(document.querySelectorAll('.year-filter'));
       const count=document.getElementById('archive-count');
       const empty=document.getElementById('archive-empty');
+      const reset=document.getElementById('archive-reset');
       const total=items.length;
+      let activeYear='all';
+
       const updateArchive=()=>{
         const query=archiveSearch.value.trim().toLowerCase();
         let visible=0;
         items.forEach(item=>{
-          const match=!query||(item.dataset.search||'').includes(query);
+          const yearMatches=activeYear==='all'||item.dataset.year===activeYear;
+          const queryMatches=!query||(item.dataset.search||'').includes(query);
+          const match=yearMatches&&queryMatches;
           item.hidden=!match;
           if(match)visible++;
         });
         years.forEach(year=>{
           year.hidden=!year.querySelector('.archive-item:not([hidden])');
         });
-        if(count)count.textContent=query?visible+' / '+total+' 篇文章':total+' 篇文章';
+        const filtered=query||activeYear!=='all';
+        if(count)count.textContent=filtered?visible+' / '+total+' 篇文章':total+' 篇文章';
         if(empty)empty.hidden=visible!==0;
       };
+
+      yearButtons.forEach(button=>button.addEventListener('click',()=>{
+        activeYear=button.dataset.year;
+        yearButtons.forEach(item=>item.classList.toggle('active',item===button));
+        updateArchive();
+      }));
+
       archiveSearch.addEventListener('input',updateArchive);
+      if(reset)reset.addEventListener('click',()=>{
+        archiveSearch.value='';
+        activeYear='all';
+        yearButtons.forEach(item=>item.classList.toggle('active',item.dataset.year==='all'));
+        updateArchive();
+        archiveSearch.focus();
+      });
       document.addEventListener('keydown',event=>{
         if(event.key==='/'&&document.activeElement!==archiveSearch&&!event.metaKey&&!event.ctrlKey){
           event.preventDefault();
