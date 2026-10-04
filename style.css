@@ -246,6 +246,14 @@ body.search-open{overflow:hidden}
 .load-more-wrap{display:flex;justify-content:center;margin:26px 0 0}
 .load-more-wrap .btn{border:1px solid var(--line);background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
 .load-more-wrap .btn[hidden]{display:none}
+.load-more-wrap{position:relative;gap:10px}
+.load-control{transition:transform .22s ease,box-shadow .22s ease,opacity .22s ease}
+.load-control:not([hidden]){animation:loadControlIn .3s ease both}
+.load-control:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(20,30,22,.16)}
+.load-control:active{transform:translateY(0) scale(.97)}
+.load-control.is-pulsing{animation:loadControlPulse .46s ease}
+@keyframes loadControlIn{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes loadControlPulse{0%{transform:scale(1)}45%{transform:scale(1.06);box-shadow:0 16px 40px rgba(79,123,89,.22)}100%{transform:scale(1)}}
 .reading-progress{position:fixed;z-index:1500;top:0;left:0;right:0;height:3px;background:transparent;pointer-events:none}
 .reading-progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 12px rgba(79,123,89,.55);transition:width .12s linear}
 .article-share{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:-28px 0 38px}
