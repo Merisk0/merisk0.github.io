@@ -4,5 +4,6 @@ date: 2023-12-08
 author: "Merisk"
 tags: [游戏]
 summary: "游戏过程中的观察与一些零碎思考。"
+image: "/img/og/gta-4-thoughts.png"
 permalink: /Articles/8.html
 ---
