@@ -303,7 +303,7 @@ body.search-open{overflow:hidden}
 .subpage .card a{color:var(--accent)}
 @media(max-width:640px){.subpage .card{padding:22px}.subpage .card h2,.subpage .card h3{font-size:20px}.subpage .card p,.subpage .card li{font-size:14px}}
 /* Unified search positioning */
-.archive-page,.tags-page{padding-top:20px}
+.archive-page,.tags-page{padding-top:0}
 
 /* Unified search style */
 .search-toolbar{display:grid;grid-template-columns:1fr;justify-items:center;gap:8px;margin-bottom:24px}
