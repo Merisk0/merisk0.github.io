@@ -309,3 +309,4 @@ body.search-open{overflow:hidden}
 .search-toolbar{display:grid;grid-template-columns:1fr;justify-items:center;gap:8px;margin-bottom:24px}
 .search-toolbar .search-box{width:min(520px,100%);max-width:520px;margin:0 auto}
 .search-toolbar .search-count{text-align:center}
+.archive-page .search-toolbar,.tags-page .search-toolbar{margin-top:-36px}
