@@ -304,3 +304,8 @@ body.search-open{overflow:hidden}
 @media(max-width:640px){.subpage .card{padding:22px}.subpage .card h2,.subpage .card h3{font-size:20px}.subpage .card p,.subpage .card li{font-size:14px}}
 /* Unified search positioning */
 .archive-page,.tags-page{padding-top:42px}
+
+/* Unified search style */
+.search-toolbar{display:grid;grid-template-columns:1fr;justify-items:center;gap:8px;margin-bottom:24px}
+.search-toolbar .search-box{width:min(520px,100%);max-width:520px;margin:0 auto}
+.search-toolbar .search-count{text-align:center}
