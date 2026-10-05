@@ -362,10 +362,18 @@
     if(tagSearch){
       const chips=Array.from(document.querySelectorAll('.tag-chip'));
       const sections=Array.from(document.querySelectorAll('.tag-section'));
+      const tagCount=document.getElementById('tag-count');
+      const totalTags=sections.length;
       const updateTags=()=>{
         const query=tagSearch.value.trim().toLowerCase();
+        let visibleTags=0;
         chips.forEach(chip=>{chip.hidden=query&&!(chip.dataset.tagName||'').toLowerCase().includes(query)});
-        sections.forEach(section=>{section.hidden=query&&!(section.dataset.tagName||'').toLowerCase().includes(query)});
+        sections.forEach(section=>{
+          const match=!query||(section.dataset.tagName||'').toLowerCase().includes(query);
+          section.hidden=!match;
+          if(match)visibleTags++;
+        });
+        if(tagCount)tagCount.textContent=query?visibleTags+' / '+totalTags+' 个标签':totalTags+' 个标签';
       };
       tagSearch.addEventListener('input',updateTags);
     }

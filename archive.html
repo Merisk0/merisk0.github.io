@@ -18,12 +18,12 @@ description: "按年份浏览 Merisk'B1og 的全部文章。"
 </header>
 
 <main id="main-content" class="archive-page">
-  <div class="archive-toolbar">
+  <div class="search-toolbar">
     <label class="search-box">
       <span>搜索</span>
       <input id="archive-search" type="search" placeholder="搜索标题、摘要或标签…" autocomplete="off">
     </label>
-    <div class="archive-count" id="archive-count">{{ site.posts | size }} 篇文章</div>
+    <div class="archive-count search-count" id="archive-count">{{ site.posts | size }} 篇文章</div>
   </div>
 
   <div class="archive-year-filter" id="archive-year-filter" aria-label="年份筛选">

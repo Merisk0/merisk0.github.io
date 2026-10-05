@@ -9,7 +9,6 @@ description: "按标签浏览 Merisk'B1og 的全部文章。"
   <div class="section-kicker">Tags</div>
   <h1>标签</h1>
   <p>按标签浏览全部文章。</p>
-  <label class="tag-search"><span>搜索标签</span><input id="tag-search" type="search" placeholder="输入标签名称…" autocomplete="off"></label>
   <div class="tag-overview" aria-label="标签概览">
     {% for tag in sorted_tags %}
     {% assign tag_meta = site.data.tags[tag[0]] %}
@@ -23,6 +22,10 @@ description: "按标签浏览 Merisk'B1og 的全部文章。"
 </header>
 
 <main id="main-content" class="tags-page">
+  <div class="search-toolbar">
+    <label class="search-box"><span>搜索</span><input id="tag-search" type="search" placeholder="搜索标签…" autocomplete="off"></label>
+    <div class="archive-count search-count" id="tag-count">{{ site.tags | size }} 个标签</div>
+  </div>
   <section class="tag-stats" aria-label="标签数据">
     <div class="tag-stat"><strong>{{ site.tags | size }}</strong><span>标签</span></div>
     <div class="tag-stat"><strong>{{ tagged_posts | size }}</strong><span>已标记文章</span></div>
