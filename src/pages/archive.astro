@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPosts, postUrl, formatDay, formatMonth, formatYear } from '../utils';
+
+const posts = await getPosts();
+const yearNames = [...new Set(posts.map((post) => formatYear(post.data.date)))];
+const postsByYear = yearNames.map((year) => ({
+  year,
+  items: posts.filter((post) => formatYear(post.data.date) === year),
+}));
+const taggedCount = posts.filter((post) => post.data.tags.length > 0).length;
+---
+<BaseLayout title="归档" description="按年份浏览 Merisk'B1og 的全部文章。">
+  <header class="page-hero archive-hero">
+    <div class="section-kicker">Archive</div>
+    <h1>归档</h1>
+    <p>共 {posts.length} 篇文章，按时间倒序排列。</p>
+    <div class="archive-stats" aria-label="归档概览">
+      <div class="archive-stat"><strong>{posts.length}</strong><span>文章</span></div>
+      <div class="archive-stat"><strong>{postsByYear.length}</strong><span>年份</span></div>
+      <div class="archive-stat"><strong>{new Set(posts.flatMap((p) => p.data.tags)).size}</strong><span>标签</span></div>
+      <div class="archive-stat"><strong>{taggedCount}</strong><span>已标记</span></div>
+    </div>
+  </header>
+
+  <main id="main-content" class="archive-page">
+    <div class="search-toolbar">
+      <label class="search-box">
+        <span>搜索</span>
+        <input id="archive-search" type="search" placeholder="搜索标题、摘要或标签…" autocomplete="off">
+      </label>
+      <div class="archive-count search-count" id="archive-count">{posts.length} 篇文章</div>
+    </div>
+
+    <div class="archive-year-filter" id="archive-year-filter" aria-label="年份筛选">
+      <button class="tag-filter year-filter active" type="button" data-year="all">全部</button>
+      {postsByYear.map((group) => (
+        <button class="tag-filter year-filter" type="button" data-year={group.year}>{group.year}</button>
+      ))}
+    </div>
+
+    <div class="archive-results">
+      {postsByYear.map((group) => (
+        <section class="archive-year" data-year={group.year}>
+          <h2>{group.year}</h2>
+          <div class="archive-list">
+            {group.items.map((post) => (
+              <a
+                class="archive-item"
+                href={postUrl(post)}
+                data-year={group.year}
+                data-search={`${post.data.title} ${post.data.summary ?? ''} ${post.data.tags.join(' ')}`.toLowerCase()}
+              >
+                <span class="archive-date">
+                  <b>{formatDay(post.data.date)}</b>
+                  <small>{formatMonth(post.data.date)}</small>
+                </span>
+                <span class="archive-main">
+                  <span class="archive-card-title">{post.data.title}</span>
+                  {post.data.summary && <small>{post.data.summary}</small>}
+                  <span class="archive-meta">
+                    {post.data.tags.map((tag) => <span class="archive-tag">#{tag}</span>)}
+                  </span>
+                </span>
+                <span class="archive-arrow" aria-hidden="true">↗</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <div class="archive-empty" id="archive-empty" hidden>
+      <strong>没有找到匹配的文章</strong>
+      <span>试试更换关键词或选择其他年份。</span>
+      <button class="btn" id="archive-reset" type="button">重置筛选</button>
+    </div>
+  </main>
+</BaseLayout>

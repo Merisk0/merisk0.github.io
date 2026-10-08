@@ -9,26 +9,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
+      - uses: actions/setup-node@v4
         with:
-          ruby-version: '3.2'
-      - name: Install Jekyll
-        run: |
-          gem install bundler
-          gem install jekyll jekyll-seo-tag jekyll-sitemap jekyll-feed
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
       - name: Build site
-        run: jekyll build
+        run: npm run build
       - name: Verify generated files
         run: |
-          test -f _site/index.html
-          test -f _site/archive.html
-          test -f _site/tags.html
-          test -f _site/status.html
-          test -f _site/search.json
-          test -f _site/sitemap.xml
-          test -f _site/feed.xml
+          test -f dist/index.html
+          test -f dist/archive.html
+          test -f dist/tags.html
+          test -f dist/status.html
+          test -f dist/search.json
+          test -f dist/sitemap.xml
+          test -f dist/feed.xml
+          test -f dist/Articles/1.html
+          test -f dist/Articles/auto-generated-article.html
       - name: Check links
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress --max-concurrency 4 --exclude 'giscus.app' '_site/**/*.html'
+          args: --no-progress --max-concurrency 4 --exclude 'giscus.app' 'dist/**/*.html'
           fail: false

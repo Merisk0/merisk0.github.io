@@ -1,0 +1,68 @@
+---
+import { SITE, NAV_LINKS, FOOTER_LINKS } from '../site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  type?: string;
+  noindex?: boolean;
+}
+
+const { title, description, type = 'website', noindex = false } = Astro.props;
+const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
+const desc = description ?? SITE.description;
+const canonical = new URL(Astro.url.pathname, SITE.url).href;
+const buildVersion = Date.now().toString(36);
+---
+<!doctype html>
+<html lang={SITE.lang}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{pageTitle}</title>
+  <meta name="description" content={desc}>
+  <link rel="canonical" href={canonical}>
+  {noindex && <meta name="robots" content="noindex">}
+  <meta property="og:type" content={type}>
+  <meta property="og:title" content={pageTitle}>
+  <meta property="og:description" content={desc}>
+  <meta property="og:url" content={canonical}>
+  <meta property="og:site_name" content={SITE.title}>
+  <meta name="twitter:card" content="summary">
+  <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/feed.xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#0e1510">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href={`/style.css?v=${buildVersion}`}>
+  <link rel="stylesheet" href={`/Articles/Articles.css?v=${buildVersion}`}>
+  <script is:inline src={`/theme.js?v=${buildVersion}`}></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">跳到主要内容</a>
+<nav class="nav">
+  <a class="brand" href="/">{SITE.title}</a>
+  <div class="navlinks">
+    {NAV_LINKS.map((link) => (
+      <a href={link.href}>{link.label}</a>
+    ))}
+    <button class="theme-btn" data-theme-toggle onclick="toggleTheme()" aria-label="切换主题">☾</button>
+  </div>
+</nav>
+<slot />
+<footer>
+  <div class="footer-links">
+    {FOOTER_LINKS.map((link) => (
+      <a
+        href={link.href}
+        target={link.external ? '_blank' : undefined}
+        rel={link.external ? 'noopener' : undefined}
+      >{link.label}</a>
+    ))}
+  </div>
+  <div>Copyright © Merisk &amp; Arrowa · 2020–2026</div>
+</footer>
+</body>
+</html>

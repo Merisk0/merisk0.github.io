@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPosts, postUrl, excerpt, groupByTag } from '../utils';
+
+const posts = await getPosts();
+const tags = groupByTag(posts).map(([tag]) => tag);
+---
+<BaseLayout title="" description="记录想法、技术、游戏与生活。">
+  <header class="hero" id="headbanner">
+    <div class="hero-bg"></div>
+    <div class="hero-shade"></div>
+    <div class="hero-content">
+      <div class="eyebrow">PERSONAL BLOG · SINCE 2020</div>
+      <h1>Merisk'B1og</h1>
+      <div id="quote" class="quote"></div>
+      <div class="hero-actions">
+        <a class="btn" href="#articles">开始阅读 ↓</a>
+        <a class="btn ghost" href="/AboutMe.html">关于我</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section id="articles" class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Writing</div>
+          <h2>文章</h2>
+          <p class="section-intro">所有文章按标签统一整理。点击标签即可快速筛选。</p>
+        </div>
+      </div>
+
+      <div class="category-bar" role="tablist" aria-label="文章标签">
+        <button class="tag-filter active" data-tag="all" role="tab" aria-selected="true">全部</button>
+        {tags.map((tag) => (
+          <button class="tag-filter" data-tag={tag} role="tab" aria-selected="false">{tag}</button>
+        ))}
+      </div>
+
+      <div class="grid" id="article-grid">
+        {posts.map((post, index) => (
+          <a class={`card${index === 0 ? ' featured' : ''}`} data-tags={post.data.tags.join(',')} href={postUrl(post)}>
+            <span class="card-tag">{post.data.tags[0] ?? '未分类'}</span>
+            <h3>{post.data.title}</h3>
+            <p>{excerpt(post)}</p>
+            <span class="arrow">↗</span>
+          </a>
+        ))}
+      </div>
+      <div class="load-more-wrap"><button class="btn load-control" id="load-more" type="button">加载更多</button><button class="btn load-control" id="load-less" type="button" hidden>加载更少</button><span class="load-status" id="load-status" aria-live="polite"></span></div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">About</div>
+          <h2>关于我</h2>
+        </div>
+        <a class="btn" href="/AboutMe.html">查看完整介绍 →</a>
+      </div>
+      <div class="card about-card">
+        <div>
+          <p>这里是我的个人博客。最初的页面比较简单，后来一点点加入了文章、项目、明暗模式以及各种折腾留下来的东西。</p>
+          <p>新版保留原来的文章与项目目录，只重新整理了页面结构和视觉，让这个旧博客更像一个现在还在持续更新的个人空间。</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>201? →</b><span>博客与项目持续记录</span></div>
+          <div class="stat"><b>Game · Tech</b><span>游戏、技术与个人兴趣</span></div>
+          <div class="stat"><b>∞</b><span>还会继续折腾</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Contact</div>
+          <h2>联系方式</h2>
+        </div>
+      </div>
+      <div class="contact">
+        <div style="display:flex;align-items:center;gap:16px">
+          <img src="/mail.png" alt="邮箱">
+          <div>
+            <strong>wjz99813@outlook.com</strong>
+            <p>我会定时回复大部分邮件，也许(?)</p>
+          </div>
+        </div>
+        <a class="btn" href="mailto:wjz99813@outlook.com">发送邮件 →</a>
+      </div>
+    </section>
+  </main>
+
+  <script is:inline>
+  const tagButtons=document.querySelectorAll('.tag-filter');
+  const articleCards=Array.from(document.querySelectorAll('#article-grid .card'));
+  const loadMore=document.getElementById('load-more');
+  const loadLess=document.getElementById('load-less');
+  const loadStatus=document.getElementById('load-status');
+  const pageSize=8;
+  let visibleLimit=pageSize;
+  let activeTag='all';
+
+  function applyArticlePaging(){
+    const matches=articleCards.filter(card=>activeTag==='all'||(card.dataset.tags||'').split(',').filter(Boolean).includes(activeTag));
+    articleCards.forEach(card=>{card.hidden=true});
+    matches.forEach((card,index)=>{card.hidden=index>=visibleLimit});
+    if(loadMore)loadMore.hidden=visibleLimit>=matches.length;
+    if(loadLess)loadLess.hidden=visibleLimit<=pageSize;
+    if(loadStatus)loadStatus.textContent='已显示 '+Math.min(visibleLimit,matches.length)+' / '+matches.length+' 篇';
+  }
+  function animateLoadControl(button){
+    if(!button)return;
+    button.classList.remove('is-pulsing');
+    void button.offsetWidth;
+    button.classList.add('is-pulsing');
+    window.setTimeout(()=>button.classList.remove('is-pulsing'),460);
+  }
+
+  tagButtons.forEach(button=>button.addEventListener('click',()=>{
+    activeTag=button.dataset.tag;
+    visibleLimit=pageSize;
+    tagButtons.forEach(item=>{item.classList.toggle('active',item===button);item.setAttribute('aria-selected',item===button?'true':'false')});
+    applyArticlePaging();
+  }));
+
+  if(loadMore)loadMore.addEventListener('click',()=>{visibleLimit+=pageSize;applyArticlePaging();animateLoadControl(loadMore)});
+  if(loadLess)loadLess.addEventListener('click',()=>{visibleLimit=Math.max(pageSize,visibleLimit-pageSize);applyArticlePaging();animateLoadControl(loadLess)});
+  applyArticlePaging();
+  </script>
+  <script is:inline>
+  const quotes=['「一生经过彷徨的挣扎 自信可改变未来 问谁又能做到」','你是从什么途径来到我的博客的？','你所热爱的，就是你的生活。','「有时天使的翅膀并不意味着救赎」','「过往的失败是成就未来的蓝图」','「原谅我这一生不羁放纵爱自由，也会怕有一天会跌倒」','「不需要被认可，但想要被关心。」','「平凡人预测未来… 梦想家塑造未来」','「我曾经失落失望失掉所有方向，直到看见平凡才是唯一的答案」','卡门。我找到他了… -《鬼与女武神（上）》'];document.getElementById('quote').textContent=quotes[Math.floor(Math.random()*quotes.length)];
+  </script>
+</BaseLayout>

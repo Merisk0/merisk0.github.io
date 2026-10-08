@@ -1,4 +1,4 @@
-const CACHE_NAME = 'merisk-blog-v3';
+const CACHE_NAME = 'merisk-blog-v4';
 const APP_SHELL = [
   '/',
   '/index.html',

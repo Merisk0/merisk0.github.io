@@ -5,13 +5,13 @@ backend:
   # GitHub OAuth proxy must be configured before this works.
   base_url: ""
 
-media_folder: "img/uploads"
+media_folder: "public/img/uploads"
 public_folder: "/img/uploads"
 
 collections:
   - name: posts
     label: 文章
-    folder: _posts
+    folder: "src/content/posts"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
@@ -20,4 +20,5 @@ collections:
       - { label: 作者, name: author, widget: string, default: Merisk }
       - { label: 标签, name: tags, widget: list, default: [更新日志] }
       - { label: 摘要, name: summary, widget: text }
+      - { label: 自定义地址, name: permalink, widget: string, required: false, hint: "留空则自动使用 /Articles/<文件名去掉日期>.html" }
       - { label: 正文, name: body, widget: markdown }

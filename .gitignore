@@ -1,7 +1,12 @@
-_site/
-.jekyll-cache/
-.jekyll-metadata
-.sass-cache/
+# Astro
+dist/
+.astro/
+node_modules/
 
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Python (旧脚本遗留)
 __pycache__/
 *.pyc

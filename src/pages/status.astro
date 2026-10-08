@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPosts, postUrl, formatDate, groupByTag } from '../utils';
+
+const posts = await getPosts();
+const latest = posts[0];
+const taggedCount = posts.filter((post) => post.data.tags.length > 0).length;
+const tagGroups = groupByTag(posts);
+const totalChars = posts.reduce(
+  (sum, post) => sum + (post.body ?? '').replace(/<[^>]*>/g, '').replace(/\n/g, '').length,
+  0,
+);
+const nowDate = new Date();
+const cutoff = nowDate.valueOf() - 30 * 24 * 60 * 60 * 1000;
+const recentCount = posts.filter((post) => post.data.date.valueOf() >= cutoff).length;
+const pad = (n: number) => String(n).padStart(2, '0');
+const buildVersion = `${nowDate.getFullYear()}${pad(nowDate.getMonth() + 1)}${pad(nowDate.getDate())}${pad(nowDate.getHours())}${pad(nowDate.getMinutes())}`;
+const buildTime = `${formatDate(nowDate)} ${pad(nowDate.getHours())}:${pad(nowDate.getMinutes())}`;
+---
+<BaseLayout title="状态" description="Merisk'B1og 的运行状态与内容数据统计。">
+  <header class="page-hero status-hero">
+    <div class="section-kicker">Status</div>
+    <h1>状态</h1>
+    <p>博客运行状态、内容数量与最近更新概览。</p>
+    <div class="status-live"><span class="status-dot" aria-hidden="true"></span>All systems operational</div>
+  </header>
+
+  <main id="main-content" class="status-page">
+    <section class="status-grid" aria-label="核心数据">
+      <article class="status-card">
+        <span class="status-icon" aria-hidden="true">▤</span>
+        <span class="status-label">文章</span>
+        <strong>{posts.length}</strong>
+        <small>已发布文章</small>
+      </article>
+      <article class="status-card">
+        <span class="status-icon" aria-hidden="true">#</span>
+        <span class="status-label">标签</span>
+        <strong>{tagGroups.length}</strong>
+        <small>自动生成标签</small>
+      </article>
+      <article class="status-card">
+        <span class="status-icon" aria-hidden="true">◇</span>
+        <span class="status-label">已标记</span>
+        <strong>{taggedCount}</strong>
+        <small>带标签的文章</small>
+      </article>
+      <article class="status-card status-card-latest">
+        <span class="status-icon" aria-hidden="true">↻</span>
+        <span class="status-label">最后更新</span>
+        <strong>{formatDate(latest.data.date)}</strong>
+        <small>{latest.data.title}</small>
+      </article>
+    </section>
+
+    <section class="status-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Tags</div>
+          <h2>标签统计</h2>
+        </div>
+      </div>
+      <div class="data-list">
+        {tagGroups.length > 0 ? tagGroups.map(([tag, items]) => {
+          const percent = (items.length * 100) / posts.length;
+          return (
+            <div class="data-row data-row-bar">
+              <div class="data-label"><span>{tag}</span><small>{items.length} 篇</small></div>
+              <div class="data-bar" aria-hidden="true"><span style={`width: ${percent.toFixed(1)}%`}></span></div>
+              <b>{items.length}</b>
+            </div>
+          );
+        }) : <div class="status-empty">暂无标签</div>}
+      </div>
+    </section>
+
+    <section class="status-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">Recent</div>
+          <h2>最近更新</h2>
+        </div>
+      </div>
+      <div class="data-list">
+        {posts.slice(0, 5).map((post) => (
+          <a class="data-row status-post" href={postUrl(post)}>
+            <span class="status-timeline" aria-hidden="true"></span>
+            <span>
+              <b>{post.data.title}</b>
+              <small>{formatDate(post.data.date)}</small>
+            </span>
+            <span class="status-arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="status-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">GitHub</div>
+          <h2>仓库数据</h2>
+        </div>
+      </div>
+      <div class="data-list">
+        <div class="data-row"><span>Stars</span><b data-github-stars>—</b></div>
+        <div class="data-row"><span>Forks</span><b data-github-forks>—</b></div>
+        <div class="data-row"><span>Open Issues</span><b data-github-issues>—</b></div>
+        <div class="data-row"><span>提交数</span><b data-github-commits>—</b></div>
+        <div class="data-row"><span>最近提交</span><b data-github-commit>—</b></div>
+      </div>
+    </section>
+
+    <section class="status-section">
+      <div class="section-head">
+        <div>
+          <div class="section-kicker">System</div>
+          <h2>系统信息</h2>
+        </div>
+      </div>
+      <div class="data-list">
+        <div class="data-row"><span>构建方式</span><b>Astro / GitHub Pages</b></div>
+        <div class="data-row"><span>主题模式</span><b>Light / Dark</b></div>
+        <div class="data-row"><span>近30天更新</span><b>{recentCount}</b></div>
+        <div class="data-row"><span>评论系统</span><b>giscus</b></div>
+        <div class="data-row"><span>PWA 缓存</span><b>merisk-blog-v4</b></div>
+        <div class="data-row"><span>构建版本</span><b>{buildVersion}</b></div>
+        <div class="data-row"><span>文章总字数</span><b>{totalChars}</b></div>
+        <div class="data-row"><span>页面构建时间</span><b>{buildTime}</b></div>
+        <div class="data-row"><span>当前状态</span><b class="status-ok"><span class="status-dot" aria-hidden="true"></span>Operational</b></div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
