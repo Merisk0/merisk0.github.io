@@ -1,10 +1,39 @@
 ---
 title: "博客更新日志"
-date: 2026-10-04
+date: 2026-10-09
 author: "Merisk"
 tags: [更新日志]
-summary: "记录博客功能、样式、文章系统与性能优化。"
+summary: "记录博客功能、样式、文章系统与性能优化，以及从 Jekyll 迁移到 Astro 的变更。"
 ---
+
+## 2026-10-09
+
+### 迁移
+
+- 博客从 Jekyll 迁移到 Astro，改由 GitHub Actions 构建并发布到 GitHub Pages。
+- 所有旧地址保持不变：首页、归档、标签、状态、更多等页面，以及 `/Articles/1.html` 至 `/Articles/9.html`。
+- 文章改用 Astro 内容集合（Content Collections）管理，正文仍是 Markdown，front matter 基本不变。
+- 搜索、RSS、Sitemap 改为构建时生成，地址仍为 `/search.json`、`/feed.xml`、`/sitemap.xml`。
+- 保留深色/浅色主题、文章目录、代码复制、图片灯箱、阅读进度、分享、giscus 评论与 PWA。
+
+### 优化
+
+- 文章地址通过 `build.format: 'file'` 输出为 `xxx.html`，与旧站保持一致。
+- 构建流程改为 Node 环境（`npm ci && npm run build`），产物目录为 `dist/`。
+- Decap CMS 配置指向新的文章目录 `src/content/posts`。
+- 状态页「构建方式」更新为 Astro / GitHub Pages，PWA 缓存升级到 `merisk-blog-v4`。
+
+### 调整
+
+- 写作目录由 `_posts` 改为 `src/content/posts`，新增文章仍用 `YYYY-MM-DD-slug.md` 命名。
+- 未发布的草稿继续放在 `_drafts`，也可以在 front matter 里用 `draft: true` 标记。
+- 需要固定地址时，在 front matter 里加 `permalink`。
+
+### 验证
+
+- 本地 `astro check` 与 `npm run build` 通过（0 错误 / 0 警告）。
+- 逐个请求全部路由，首页、文章页、归档、标签、状态、搜索、RSS、Sitemap 等均返回 200。
+- GitHub Actions 构建与部署成功，线上站点已更新为 Astro 版本。
 
 ## 2026-10-04
 
