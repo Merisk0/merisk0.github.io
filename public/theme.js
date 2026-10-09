@@ -270,6 +270,14 @@
         relockTimer=window.setTimeout(relock,Math.max(1000,data.exp-Date.now()));
       };
 
+      // 有操作就把有效期往后推（滑动窗口）
+      const extendUnlock=()=>{
+        const data=readUnlock();
+        if(!data)return;
+        try{sessionStorage.setItem(storeKey,JSON.stringify({pw:data.pw,exp:Date.now()+UNLOCK_TTL}))}catch{}
+        scheduleRelock();
+      };
+
       const reveal=html=>{
         contentEl.innerHTML=html;
         contentEl.hidden=false;
@@ -285,9 +293,20 @@
         contentEl.innerHTML='';
         contentEl.hidden=true;
         lockEl.hidden=false;
-        showError('已超过 10 分钟，请重新输入密码');
+        showError('已超过 10 分钟无操作，请重新输入密码');
         if(inputEl){inputEl.value='';inputEl.focus()}
       }
+
+      let lastActivity=0;
+      const onActivity=()=>{
+        const now=Date.now();
+        if(now-lastActivity<15000)return;
+        lastActivity=now;
+        extendUnlock();
+      };
+      ['scroll','click','keydown','pointerdown','mousemove','touchstart'].forEach(type=>{
+        window.addEventListener(type,onActivity,{passive:true});
+      });
 
       if(!payload){
         showError('这篇文章的密文损坏，无法解锁。');
