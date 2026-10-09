@@ -2,7 +2,7 @@ export const SITE = {
   title: "Merisk'B1og",
   shortName: 'Merisk',
   description: "Merisk'B1og — 记录想法、技术、游戏与生活。",
-  url: 'https://merisk0.github.io',
+  url: 'https://merisk.top',
   author: 'Merisk',
   lang: 'zh-CN',
   since: '2020',

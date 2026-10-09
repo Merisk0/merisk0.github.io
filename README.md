@@ -132,4 +132,4 @@ git push
 
 GitHub Pages 通常会在推送后自动更新：
 
-https://merisk0.github.io/
+https://merisk.top/

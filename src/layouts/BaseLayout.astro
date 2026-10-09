@@ -11,7 +11,10 @@ interface Props {
 const { title, description, type = 'website', noindex = false } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const desc = description ?? SITE.description;
-const canonical = new URL(Astro.url.pathname, SITE.url).href;
+const rawPath = Astro.url.pathname;
+// 首页规范化：/index.html -> /
+const canonicalPath = rawPath.endsWith('/index.html') ? rawPath.slice(0, -'index.html'.length) : rawPath;
+const canonical = new URL(canonicalPath, SITE.url).href;
 const buildVersion = Date.now().toString(36);
 ---
 <!doctype html>
