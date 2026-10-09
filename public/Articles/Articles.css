@@ -134,6 +134,11 @@
   background: rgba(154,195,162,.06);
 }
 
+.article-lock[hidden],
+.article-content[hidden] {
+  display: none;
+}
+
 .article-lock-icon {
   display: grid;
   place-items: center;

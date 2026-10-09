@@ -204,7 +204,8 @@
 
     enhanceArticle();
 
-    // ---- 加密文章：浏览器端解密 ----
+    // ---- 加密文章：浏览器端解密（解锁 10 分钟后需重新输入）----
+    const UNLOCK_TTL=10*60*1000; // 解锁有效期（毫秒），改这里即可调整
     const lockEl=document.getElementById('article-lock');
     if(lockEl){
       const payloadEl=document.getElementById('article-lock-payload');
@@ -212,8 +213,9 @@
       const formEl=document.getElementById('article-lock-form');
       const inputEl=document.getElementById('article-lock-password');
       const errorEl=document.getElementById('article-lock-error');
-      const cacheKey='merisk-unlocked:'+location.pathname;
+      const storeKey='merisk-unlock';
       let payload=null;
+      let relockTimer=null;
       try{payload=JSON.parse(payloadEl.textContent||'')}catch{payload=null}
 
       const fromB64=value=>{
@@ -236,34 +238,74 @@
         return new TextDecoder().decode(plain);
       };
 
+      const readUnlock=()=>{
+        try{
+          const raw=sessionStorage.getItem(storeKey);
+          if(!raw)return null;
+          const data=JSON.parse(raw);
+          if(!data||!data.pw||!data.exp||data.exp<=Date.now()){
+            sessionStorage.removeItem(storeKey);
+            return null;
+          }
+          return data;
+        }catch{return null}
+      };
+
+      const saveUnlock=password=>{
+        try{sessionStorage.setItem(storeKey,JSON.stringify({pw:password,exp:Date.now()+UNLOCK_TTL}))}catch{}
+      };
+
+      const clearUnlock=()=>{try{sessionStorage.removeItem(storeKey)}catch{}};
+
+      const showError=message=>{
+        if(!errorEl)return;
+        errorEl.textContent=message;
+        errorEl.hidden=false;
+      };
+
+      const scheduleRelock=()=>{
+        if(relockTimer)window.clearTimeout(relockTimer);
+        const data=readUnlock();
+        if(!data)return;
+        relockTimer=window.setTimeout(relock,Math.max(1000,data.exp-Date.now()));
+      };
+
       const reveal=html=>{
         contentEl.innerHTML=html;
         contentEl.hidden=false;
-        lockEl.remove();
+        lockEl.hidden=true;
+        if(errorEl)errorEl.hidden=true;
         enhanceArticle();
+        scheduleRelock();
       };
 
+      function relock(){
+        clearUnlock();
+        if(relockTimer){window.clearTimeout(relockTimer);relockTimer=null}
+        contentEl.innerHTML='';
+        contentEl.hidden=true;
+        lockEl.hidden=false;
+        showError('已超过 10 分钟，请重新输入密码');
+        if(inputEl){inputEl.value='';inputEl.focus()}
+      }
+
       if(!payload){
-        if(errorEl)errorEl.textContent='这篇文章的密文损坏，无法解锁。';
-        if(errorEl)errorEl.hidden=false;
+        showError('这篇文章的密文损坏，无法解锁。');
       }else if(!window.crypto||!window.crypto.subtle){
-        if(errorEl)errorEl.textContent='当前环境不支持解密，请使用 HTTPS 访问。';
-        if(errorEl)errorEl.hidden=false;
+        showError('当前环境不支持解密，请使用 HTTPS 访问。');
       }else{
-        try{
-          const cached=sessionStorage.getItem(cacheKey);
-          if(cached)decrypt(cached).then(reveal).catch(()=>sessionStorage.removeItem(cacheKey));
-        }catch{}
+        const saved=readUnlock();
+        if(saved)decrypt(saved.pw).then(reveal).catch(()=>clearUnlock());
         formEl.addEventListener('submit',event=>{
           event.preventDefault();
-          errorEl.hidden=true;
+          if(errorEl)errorEl.hidden=true;
           const password=inputEl.value;
           if(!password)return;
           decrypt(password).then(html=>{
-            try{sessionStorage.setItem(cacheKey,password)}catch{}
+            saveUnlock(password);
             reveal(html);
           }).catch(()=>{
-            errorEl.hidden=false;
+            showError('密码不正确，请重试');
             inputEl.select();
           });
         });
