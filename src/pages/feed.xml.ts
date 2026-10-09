@@ -13,7 +13,7 @@ export const GET: APIRoute = async (context) => {
     items: posts.map((post) => ({
       title: post.data.title,
       pubDate: post.data.date,
-      description: post.data.summary ?? excerpt(post, 200),
+      description: post.data.protected ? '🔒 已加密，需要密码查看' : (post.data.summary ?? excerpt(post, 200)),
       link: postUrl(post),
       categories: post.data.tags,
     })),

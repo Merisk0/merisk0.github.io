@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPosts, postUrl, formatDay, formatMonth, formatYear } from '../utils';
+import { getPosts, postUrl, formatDay, formatMonth, formatYear, listingSummary } from '../utils';
 
 const posts = await getPosts();
 const yearNames = [...new Set(posts.map((post) => formatYear(post.data.date)))];
@@ -49,7 +49,7 @@ const taggedCount = posts.filter((post) => post.data.tags.length > 0).length;
                 class="archive-item"
                 href={postUrl(post)}
                 data-year={group.year}
-                data-search={`${post.data.title} ${post.data.summary ?? ''} ${post.data.tags.join(' ')}`.toLowerCase()}
+                data-search={`${post.data.title} ${listingSummary(post)} ${post.data.tags.join(' ')}`.toLowerCase()}
               >
                 <span class="archive-date">
                   <b>{formatDay(post.data.date)}</b>
@@ -57,7 +57,7 @@ const taggedCount = posts.filter((post) => post.data.tags.length > 0).length;
                 </span>
                 <span class="archive-main">
                   <span class="archive-card-title">{post.data.title}</span>
-                  {post.data.summary && <small>{post.data.summary}</small>}
+                  {(post.data.summary || post.data.protected) && <small>{listingSummary(post)}</small>}
                   <span class="archive-meta">
                     {post.data.tags.map((tag) => <span class="archive-tag">#{tag}</span>)}
                   </span>

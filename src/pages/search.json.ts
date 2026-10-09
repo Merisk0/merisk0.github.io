@@ -6,7 +6,7 @@ export const GET: APIRoute = async () => {
   const data = posts.map((post) => ({
     title: post.data.title,
     url: postUrl(post),
-    summary: post.data.summary ?? excerpt(post, Number.MAX_SAFE_INTEGER),
+    summary: post.data.protected ? '🔒 已加密，需要密码查看' : (post.data.summary ?? excerpt(post, Number.MAX_SAFE_INTEGER)),
     tags: post.data.tags,
     date: formatDate(post.data.date),
   }));

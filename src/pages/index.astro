@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPosts, postUrl, excerpt, groupByTag } from '../utils';
+import { getPosts, postUrl, listingSummary, groupByTag } from '../utils';
 
 const posts = await getPosts();
 const tags = groupByTag(posts).map(([tag]) => tag);
@@ -40,9 +40,9 @@ const tags = groupByTag(posts).map(([tag]) => tag);
       <div class="grid" id="article-grid">
         {posts.map((post, index) => (
           <a class={`card${index === 0 ? ' featured' : ''}`} data-tags={post.data.tags.join(',')} href={postUrl(post)}>
-            <span class="card-tag">{post.data.tags[0] ?? '未分类'}</span>
+            <span class="card-tag">{post.data.protected ? '🔒 ' : ''}{post.data.tags[0] ?? '未分类'}</span>
             <h3>{post.data.title}</h3>
-            <p>{excerpt(post)}</p>
+            <p>{listingSummary(post)}</p>
             <span class="arrow">↗</span>
           </a>
         ))}

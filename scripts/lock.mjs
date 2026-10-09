@@ -31,6 +31,15 @@ function readPassword() {
   throw new Error('未提供密码：用 `node scripts/lock.mjs <密码>`，或写入 _private/password.txt');
 }
 
+/** 给 front matter 的 tags 列表补上「加密」标签 */
+function withLockTag(front) {
+  const m = /^tags:\s*\[(.*?)\]\s*$/m.exec(front);
+  if (!m) return `${front}\ntags: [加密]`;
+  const tags = m[1].split(',').map((s) => s.trim()).filter(Boolean);
+  if (!tags.includes('加密')) tags.push('加密');
+  return front.replace(m[0], `tags: [${tags.join(', ')}]`);
+}
+
 function splitFrontMatter(raw) {
   const m = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(raw);
   if (!m) throw new Error('缺少 front matter（文件必须以 --- 开头）');
@@ -90,7 +99,7 @@ for (const file of files) {
   const payload = await encrypt(html, password);
   const name = file.replace(/\.md$/, '');
 
-  fs.writeFileSync(path.join(OUT_POSTS, file), `---\n${front}\nprotected: true\n---\n`, 'utf8');
+  fs.writeFileSync(path.join(OUT_POSTS, file), `---\n${withLockTag(front)}\nprotected: true\n---\n`, 'utf8');
   fs.writeFileSync(path.join(OUT_DATA, `${name}.json`), JSON.stringify(payload), 'utf8');
   console.log(`locked  ${file}   html ${html.length}B -> ct ${payload.ct.length}B`);
 }

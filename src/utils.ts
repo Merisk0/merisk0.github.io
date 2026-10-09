@@ -49,6 +49,11 @@ export function excerpt(entry: PostEntry, max = 90): string {
   return text.length > max ? `${text.slice(0, max)}…` : text;
 }
 
+/** 列表用的摘要：加密文章不暴露摘要文案。 */
+export function listingSummary(entry: PostEntry): string {
+  if (entry.data.protected) return '🔒 已加密，需要密码查看';
+  return excerpt(entry);
+}
 /** 所有已发布文章，按时间倒序（新 → 旧）。 */
 export async function getPosts(): Promise<PostEntry[]> {
   const posts = await getCollection('posts', ({ data }) => !data.draft);

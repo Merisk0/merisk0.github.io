@@ -7,6 +7,7 @@ export const TAG_META: Record<string, TagMeta> = {
   文学: { icon: '文', color: '#d19a66' },
   游戏: { icon: '◈', color: '#6fb1fc' },
   更新日志: { icon: '↻', color: '#9ac3a2' },
+  加密: { icon: '🔒', color: '#d0a24c' },
 };
 
 export const DEFAULT_TAG_COLOR = '#4f7b59';
