@@ -55,27 +55,44 @@
       }
     });
 
-    document.querySelectorAll('[data-back]').forEach(link=>{
-      link.addEventListener('click',event=>{
-        const fallback=link.dataset.fallback||link.href;
-        const stored=readState(backStateKey);
-        const referrer=document.referrer;
+    function navigateBack(link,event){
+      const fallback=link.dataset.fallback||link.getAttribute('href')||'/#articles';
+      const stored=readState(backStateKey);
+      const referrer=document.referrer;
 
-        if(stored&&pageUrl(stored.url)!==pageUrl(window.location.href)){
-          event.preventDefault();
-          localStorage.setItem(restoreStateKey,JSON.stringify(stored));
-          window.location.href=stored.url;
-        }else if(window.history.length>1){
-          event.preventDefault();
-          window.history.back();
-        }else if(referrer){
-          event.preventDefault();
-          window.location.href=referrer;
-        }else{
-          window.location.href=fallback;
-        }
-      });
+      if(stored&&pageUrl(stored.url)!==pageUrl(window.location.href)){
+        event.preventDefault();
+        localStorage.setItem(restoreStateKey,JSON.stringify(stored));
+        window.location.href=stored.url;
+      }else if(window.history.length>1){
+        event.preventDefault();
+        window.history.back();
+      }else if(referrer&&pageUrl(referrer)!==pageUrl(window.location.href)){
+        event.preventDefault();
+        window.location.href=referrer;
+      }else if(fallback){
+        event.preventDefault();
+        window.location.href=fallback;
+      }
+    }
+
+    document.querySelectorAll('[data-back]').forEach(link=>{
+      link.addEventListener('click',event=>navigateBack(link,event));
     });
+
+    const backPath=window.location.pathname.replace(/index\.html$/,'');
+    const isHomePage=backPath===''||backPath==='/';
+    if(!isHomePage){
+      const siteBack=document.createElement('button');
+      siteBack.className='site-back';
+      siteBack.type='button';
+      siteBack.setAttribute('aria-label','返回上一页');
+      siteBack.title='返回上一页';
+      siteBack.innerHTML='<span aria-hidden="true">←</span>';
+      siteBack.addEventListener('click',event=>navigateBack(siteBack,event));
+      document.body.append(siteBack);
+      requestAnimationFrame(()=>siteBack.classList.add('is-visible'));
+    }
 
     const backToTop=document.createElement('button');
     backToTop.className='back-to-top';

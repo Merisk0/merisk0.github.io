@@ -32,11 +32,6 @@ const readingMinutes = Math.max(1, Math.ceil(contentChars / 400));
 <BaseLayout title={entry.data.title} description={entry.data.summary ?? SITE.description} type="article">
   <div class="reading-progress" aria-hidden="true"><span id="reading-progress-bar"></span></div>
   <main class="article-shell" id="main-content">
-    <a class="back" href="/#articles" data-back data-fallback="/#articles">
-      <span class="back-icon" aria-hidden="true">←</span>
-      <span>返回</span>
-    </a>
-
     <article class="article-card">
       <header class="article-title">
         <h1>{entry.data.title}</h1>
