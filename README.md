@@ -71,6 +71,51 @@ permalink: /Articles/10.html
 
 也可以在 front matter 里写 `draft: true`，这样即使放在 `src/content/posts/` 中也不会被构建。
 
+## 加密文章
+
+部分文章可以加密：正文以 **AES-256-GCM** 密文形式存放在仓库中，读者在浏览器里输入密码后**本地解密**。GitHub Pages 是静态站点，所以解密完全在前端完成。
+
+### 文件分工
+
+```text
+_private/posts/<name>.md        # 明文（gitignore，绝不提交）
+_private/password.txt           # 密码（gitignore）
+src/content/posts/<name>.md     # 仓库里只留 front matter + protected: true
+src/data/protected/<name>.json  # 密文
+```
+
+### 编辑一篇已加密的文章
+
+```powershell
+# 1. 编辑明文
+code _private/posts/2021-11-14-double-eleven.md
+
+# 2. 重新加密（写入壳文件与密文）
+npm run lock
+
+# 3. 提交
+git add . && git commit -m "更新文章" && git push
+```
+
+### 换密码
+
+```powershell
+npm run lock -- 新密码
+```
+
+> 换密码后需要把新密码重新分发给读者。密码只存在 `_private/password.txt`，**不会进入仓库**。
+
+### 加密一篇新文章
+
+1. 把文章放进 `_private/posts/`（文件名 `YYYY-MM-DD-slug.md`，需带 front matter）
+2. 跑 `npm run lock`
+3. 提交 `src/content/posts/` 与 `src/data/protected/` 的变化
+
+### 注意
+
+- 仓库是**公开**的，加密之前提交过的明文仍存在于 git 历史里；若要彻底清除需改写历史并强推。
+- 加锁只保护**正文**，标题、摘要、标签仍会出现在首页、归档、RSS 和搜索里。
+- 浏览器需支持 `WebCrypto`（HTTPS 或 localhost 环境）。
 ## 标签
 
 标签是唯一的内容分类系统。在 front matter 中写：

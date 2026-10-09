@@ -117,6 +117,108 @@
     height: 44px;
   }
 }
+/* Encrypted article lock */
+.article-lock {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin: 4px 0 10px;
+  padding: clamp(30px, 6vw, 54px) 24px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(79,123,89,.05);
+  text-align: center;
+}
+
+.dark-mode .article-lock {
+  background: rgba(154,195,162,.06);
+}
+
+.article-lock-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 8px;
+  border-radius: 18px;
+  background: rgba(79,123,89,.12);
+  color: var(--accent);
+}
+
+.article-lock-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.article-lock h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: -.02em;
+}
+
+.article-lock p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.article-lock-form {
+  display: flex;
+  gap: 10px;
+  width: min(360px, 100%);
+  margin-top: 14px;
+}
+
+.article-lock-form input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-solid);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.article-lock-form input:focus-visible {
+  outline: 3px solid rgba(80,145,100,.35);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+.article-lock-form button {
+  flex: 0 0 auto;
+  padding: 11px 22px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.article-lock-form button:hover {
+  transform: translateY(-2px);
+}
+
+.article-lock p.article-lock-error {
+  margin-top: 10px;
+  color: #d9736f;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .article-lock-form {
+    flex-direction: column;
+  }
+  .article-lock-form button {
+    width: 100%;
+  }
+}
 /* Jekyll Markdown content */
 .article-content h6{color:var(--muted)}
 .article-content ul,.article-content ol{margin:0 0 1.35em;padding-left:1.55em}

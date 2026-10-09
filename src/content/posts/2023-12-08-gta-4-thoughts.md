@@ -5,4 +5,5 @@ author: "Merisk"
 tags: [游戏]
 summary: "游戏过程中的观察与一些零碎思考。"
 permalink: /Articles/8.html
+protected: true
 ---

@@ -13,6 +13,8 @@ const posts = defineCollection({
     // 旧 Jekyll 站点的自定义地址，如 /Articles/6.html
     permalink: z.string().optional(),
     draft: z.boolean().default(false),
+    // 加密文章：正文以密文形式存放，浏览器端凭密码解密
+    protected: z.boolean().default(false),
   }),
 });
 

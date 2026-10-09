@@ -5,6 +5,5 @@ author: "Merisk"
 tags: [游戏]
 summary: "关于游戏、世界观与那种独特的复古科技美学。"
 permalink: /Articles/9.html
+protected: true
 ---
-
-又开新坑...(* ￣︿￣)

@@ -115,8 +115,39 @@
     document.body.append(backToTop);
     updateBackToTop();
 
-    const articleContent=document.querySelector('.article-content');
-    if(articleContent){
+    let lightboxNode=null;
+    let lightboxLastFocused=null;
+
+    function createLightbox(){
+      lightboxNode=document.createElement('div');
+      lightboxNode.className='lightbox';
+      lightboxNode.setAttribute('role','dialog');
+      lightboxNode.setAttribute('aria-modal','true');
+      lightboxNode.setAttribute('aria-label','图片预览');
+      lightboxNode.innerHTML='<button class="lightbox-close" type="button" aria-label="关闭图片预览">×</button><img alt="">';
+      document.body.append(lightboxNode);
+      const closeButton=lightboxNode.querySelector('.lightbox-close');
+      const closeLightbox=()=>{
+        lightboxNode.classList.remove('is-open');
+        if(lightboxLastFocused)lightboxLastFocused.focus();
+      };
+      lightboxNode.addEventListener('click',event=>{
+        if(event.target===lightboxNode||event.target.classList.contains('lightbox-close'))closeLightbox();
+      });
+      lightboxNode.addEventListener('keydown',event=>{
+        if(event.key==='Tab'){event.preventDefault();closeButton.focus();}
+      });
+      document.addEventListener('keydown',event=>{
+        if(event.key==='Escape')closeLightbox();
+      });
+    }
+
+    function enhanceArticle(){
+      const articleContent=document.querySelector('.article-content');
+      if(!articleContent)return;
+
+      const oldToc=document.querySelector('.article-toc');
+      if(oldToc)oldToc.remove();
       const headings=Array.from(articleContent.querySelectorAll('h2,h3,h4'));
       if(headings.length>1){
         const toc=document.createElement('div');
@@ -135,62 +166,108 @@
           list.append(item);
         });
       }
+
+      articleContent.querySelectorAll('pre').forEach(pre=>{
+        if(pre.querySelector('.code-copy'))return;
+        const button=document.createElement('button');
+        button.className='code-copy';
+        button.type='button';
+        button.textContent='复制';
+        button.addEventListener('click',async()=>{
+          const code=pre.querySelector('code');
+          const text=code?code.innerText:pre.innerText;
+          try{
+            await navigator.clipboard.writeText(text);
+            button.textContent='已复制';
+          }catch{
+            button.textContent='复制失败';
+          }
+          window.setTimeout(()=>button.textContent='复制',1400);
+        });
+        pre.append(button);
+      });
+
+      articleContent.querySelectorAll('img').forEach(image=>{
+        if(image.dataset.lightboxReady)return;
+        image.dataset.lightboxReady='1';
+        image.addEventListener('click',()=>{
+          if(!lightboxNode)createLightbox();
+          const box=lightboxNode.querySelector('img');
+          lightboxLastFocused=document.activeElement;
+          box.src=image.currentSrc||image.src;
+          box.alt=image.alt||'';
+          lightboxNode.classList.add('is-open');
+          lightboxNode.querySelector('.lightbox-close').focus();
+        });
+      });
     }
 
+    enhanceArticle();
 
-    document.querySelectorAll('.article-content pre').forEach(pre=>{
-      if(pre.querySelector('.code-copy'))return;
-      const button=document.createElement('button');
-      button.className='code-copy';
-      button.type='button';
-      button.textContent='复制';
-      button.addEventListener('click',async()=>{
-        const code=pre.querySelector('code');
-        const text=code?code.innerText:pre.innerText;
-        try{
-          await navigator.clipboard.writeText(text);
-          button.textContent='已复制';
-          window.setTimeout(()=>button.textContent='复制',1400);
-        }catch{
-          button.textContent='复制失败';
-          window.setTimeout(()=>button.textContent='复制',1400);
-        }
-      });
-      pre.append(button);
-    });
+    // ---- 加密文章：浏览器端解密 ----
+    const lockEl=document.getElementById('article-lock');
+    if(lockEl){
+      const payloadEl=document.getElementById('article-lock-payload');
+      const contentEl=document.getElementById('article-content');
+      const formEl=document.getElementById('article-lock-form');
+      const inputEl=document.getElementById('article-lock-password');
+      const errorEl=document.getElementById('article-lock-error');
+      const cacheKey='merisk-unlocked:'+location.pathname;
+      let payload=null;
+      try{payload=JSON.parse(payloadEl.textContent||'')}catch{payload=null}
 
-    const articleImages=Array.from(document.querySelectorAll('.article-content img'));
-    if(articleImages.length){
-      const lightbox=document.createElement('div');
-      lightbox.className='lightbox';
-      lightbox.setAttribute('role','dialog');
-      lightbox.setAttribute('aria-modal','true');
-      lightbox.setAttribute('aria-label','图片预览');
-      lightbox.innerHTML='<button class="lightbox-close" type="button" aria-label="关闭图片预览">×</button><img alt="">';
-      document.body.append(lightbox);
-      const lightboxImage=lightbox.querySelector('img');
-      const closeButton=lightbox.querySelector('.lightbox-close');
-      let lastFocused=null;
-      const closeLightbox=()=>{
-        lightbox.classList.remove('is-open');
-        if(lastFocused)lastFocused.focus();
+      const fromB64=value=>{
+        const binary=atob(value);
+        const bytes=new Uint8Array(binary.length);
+        for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+        return bytes;
       };
-      articleImages.forEach(image=>image.addEventListener('click',()=>{
-        lastFocused=document.activeElement;
-        lightboxImage.src=image.currentSrc||image.src;
-        lightboxImage.alt=image.alt||'';
-        lightbox.classList.add('is-open');
-        closeButton.focus();
-      }));
-      lightbox.addEventListener('click',event=>{
-        if(event.target===lightbox||event.target.classList.contains('lightbox-close'))closeLightbox();
-      });
-      lightbox.addEventListener('keydown',event=>{
-        if(event.key==='Tab'){event.preventDefault();closeButton.focus();}
-      });
-      document.addEventListener('keydown',event=>{
-        if(event.key==='Escape')closeLightbox();
-      });
+
+      const decrypt=async password=>{
+        const baseKey=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveKey']);
+        const key=await crypto.subtle.deriveKey(
+          {name:'PBKDF2',salt:fromB64(payload.salt),iterations:payload.iter,hash:'SHA-256'},
+          baseKey,
+          {name:'AES-GCM',length:256},
+          false,
+          ['decrypt']
+        );
+        const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:fromB64(payload.iv)},key,fromB64(payload.ct));
+        return new TextDecoder().decode(plain);
+      };
+
+      const reveal=html=>{
+        contentEl.innerHTML=html;
+        contentEl.hidden=false;
+        lockEl.remove();
+        enhanceArticle();
+      };
+
+      if(!payload){
+        if(errorEl)errorEl.textContent='这篇文章的密文损坏，无法解锁。';
+        if(errorEl)errorEl.hidden=false;
+      }else if(!window.crypto||!window.crypto.subtle){
+        if(errorEl)errorEl.textContent='当前环境不支持解密，请使用 HTTPS 访问。';
+        if(errorEl)errorEl.hidden=false;
+      }else{
+        try{
+          const cached=sessionStorage.getItem(cacheKey);
+          if(cached)decrypt(cached).then(reveal).catch(()=>sessionStorage.removeItem(cacheKey));
+        }catch{}
+        formEl.addEventListener('submit',event=>{
+          event.preventDefault();
+          errorEl.hidden=true;
+          const password=inputEl.value;
+          if(!password)return;
+          decrypt(password).then(html=>{
+            try{sessionStorage.setItem(cacheKey,password)}catch{}
+            reveal(html);
+          }).catch(()=>{
+            errorEl.hidden=false;
+            inputEl.select();
+          });
+        });
+      }
     }
 
     const archiveSearch=document.getElementById('archive-search');

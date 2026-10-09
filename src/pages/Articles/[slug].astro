@@ -1,4 +1,6 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { SITE } from '../../site';
@@ -6,6 +8,14 @@ import { getPosts, postSlug, postUrl, formatDate } from '../../utils';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
+  const protectedDir = path.join(process.cwd(), 'src', 'data', 'protected');
+
+  const readPayload = (id: string) => {
+    const file = path.join(protectedDir, `${id}.json`);
+    if (!fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  };
+
   return posts.map((entry, index) => {
     const pageTag = entry.data.tags[0];
     const related = pageTag
@@ -18,13 +28,15 @@ export async function getStaticPaths() {
         previous: posts[index + 1] ?? null,
         next: posts[index - 1] ?? null,
         related,
+        payload: entry.data.protected ? readPayload(entry.id) : null,
       },
     };
   });
 }
 
-const { entry, previous, next, related } = Astro.props;
-const { Content } = await render(entry);
+const { entry, previous, next, related, payload } = Astro.props;
+const isProtected = Boolean(entry.data.protected);
+const Content = isProtected ? null : (await render(entry)).Content;
 const author = entry.data.author ?? SITE.author;
 const contentChars = (entry.body ?? '').replace(/<[^>]*>/g, '').replace(/\n/g, '').length;
 const readingMinutes = Math.max(1, Math.ceil(contentChars / 400));
@@ -35,7 +47,11 @@ const readingMinutes = Math.max(1, Math.ceil(contentChars / 400));
     <article class="article-card">
       <header class="article-title">
         <h1>{entry.data.title}</h1>
-        <div class="article-meta">作者:{author} 更新时间:{formatDate(entry.data.date)} · 约 {readingMinutes} 分钟 · {contentChars} 字</div>
+        {isProtected ? (
+          <div class="article-meta">作者:{author} 更新时间:{formatDate(entry.data.date)} · 🔒 已加密</div>
+        ) : (
+          <div class="article-meta">作者:{author} 更新时间:{formatDate(entry.data.date)} · 约 {readingMinutes} 分钟 · {contentChars} 字</div>
+        )}
         {entry.data.tags.length > 0 && (
           <div class="article-tags">
             {entry.data.tags.map((tag) => <span>#{tag}</span>)}
@@ -48,9 +64,32 @@ const readingMinutes = Math.max(1, Math.ceil(contentChars / 400));
         </div>
       </header>
 
-      <div class="article-content">
-        <Content />
-      </div>
+      {isProtected ? (
+        <>
+          <div class="article-lock" id="article-lock">
+            <div class="article-lock-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="10.5" width="16" height="10" rx="2.6"></rect>
+                <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"></path>
+                <circle cx="12" cy="15.6" r="1.25"></circle>
+              </svg>
+            </div>
+            <h2>这篇文章已加密</h2>
+            <p>请输入访问密码查看正文</p>
+            <form class="article-lock-form" id="article-lock-form">
+              <input id="article-lock-password" type="password" autocomplete="current-password" placeholder="输入密码" aria-label="访问密码" required>
+              <button type="submit">解锁</button>
+            </form>
+            <p class="article-lock-error" id="article-lock-error" hidden>密码不正确，请重试</p>
+          </div>
+          <div class="article-content" id="article-content" hidden></div>
+          <script type="application/json" id="article-lock-payload" set:html={JSON.stringify(payload)}></script>
+        </>
+      ) : (
+        <div class="article-content">
+          {Content && <Content />}
+        </div>
+      )}
 
       <nav class="post-navigation" aria-label="文章导航">
         {previous && (

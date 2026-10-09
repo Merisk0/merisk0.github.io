@@ -10,3 +10,6 @@ Thumbs.db
 # Python (旧脚本遗留)
 __pycache__/
 *.pyc
+
+# 加密文章的明文与密码（绝不提交）
+_private/
