@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>对称表情包生成器 · 在线版</title>
+<meta name="description" content="把图片或 GIF 从中间镜像成对称表情包，纯浏览器本地处理，不上传服务器。">
+<link rel="icon" href="/favicon.png">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="26" height="26"><rect width="32" height="32" rx="9" fill="#6C5CE7"/><path d="M14 8v16l-6-16z" fill="#fff"/><path d="M18 8v16l6-16z" fill="#fff"/><path d="M16 5v22" stroke="#fff" stroke-width="1.6" stroke-dasharray="2.6 2.2"/></svg>
+      </span>
+      <div>
+        <h1>对称表情包生成器 <em>在线版</em></h1>
+        <p class="sub">Mirror Symmetry Studio · Web</p>
+      </div>
+    </div>
+    <div class="bar-actions">
+      <button id="langBtn" class="ghost" type="button">English</button>
+      <button id="demoBtn" class="ghost" type="button" data-i18n="demo">示例</button>
+      <button id="openBtn" class="ghost" type="button" data-i18n="open">打开图片</button>
+      <button id="pasteBtn" class="ghost" type="button" data-i18n="paste">粘贴</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel">
+    <div class="card">
+      <h2 data-i18n="modeTitle">对称方式</h2>
+      <div class="modes" id="modes"></div>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="axisTitle">对称轴位置</h2>
+      <input id="axis" type="range" min="10" max="90" value="50" step="1">
+      <div class="row">
+        <span class="chip" id="axisValue">正中 50%</span>
+        <button id="axisReset" class="ghost small" type="button" data-i18n="centre">回到正中</button>
+      </div>
+      <p class="hint" data-i18n="axisHint">偏离正中时，图案会平铺成万花筒效果。</p>
+      <label class="switch-row">
+        <input id="centerAxis" type="checkbox" checked>
+        <span class="switch"></span>
+        <span data-i18n="centerAxis">对称轴居中输出</span>
+      </label>
+      <p class="hint" data-i18n="centerAxisHint">偏心时自动裁成对称尺寸，让对称轴落在正中间。</p>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="animTitle">动图</h2>
+      <label class="switch-row">
+        <input id="play" type="checkbox" checked>
+        <span class="switch"></span>
+        <span data-i18n="play">播放动画预览</span>
+      </label>
+      <p class="hint" id="frameInfo" data-i18n="staticImage">当前是静态图</p>
+    </div>
+
+    <div class="card">
+      <h2 data-i18n="exportTitle">导出</h2>
+      <p class="hint" id="sizeInfo">—</p>
+      <div class="row">
+        <button id="pngBtn" class="primary" type="button" disabled data-i18n="downloadPng">下载 PNG</button>
+        <button id="gifBtn" class="primary" type="button" disabled data-i18n="downloadGif">下载 GIF</button>
+      </div>
+    </div>
+
+    <div class="card about">
+      <p class="hint" data-i18n="privacy">所有处理都在你的浏览器里完成，图片不会上传到任何服务器。</p>
+      <p class="hint"><a href="/Articles/mirror-symmetry-sticker.html" data-i18n="article">阅读实现笔记 →</a></p>
+    </div>
+  </section>
+
+  <section class="stage">
+    <div class="preview-card">
+      <div class="preview-head"><h2 data-i18n="source">原图</h2><span class="chip" id="srcChip">—</span></div>
+      <div class="canvas-box"><canvas id="srcCanvas"></canvas><div class="empty" id="srcEmpty" data-i18n="dropHint">拖入图片 / GIF<br>或按 Ctrl+V 粘贴</div></div>
+    </div>
+    <div class="preview-card">
+      <div class="preview-head"><h2 data-i18n="result">对称结果</h2><span class="chip" id="resChip">—</span></div>
+      <div class="canvas-box"><canvas id="resCanvas"></canvas><div class="empty" id="resEmpty" data-i18n="resultHint">对称结果会显示在这里</div></div>
+    </div>
+    <p class="status" id="status" data-i18n="ready">拖入图片或 GIF，或者点右上角「打开图片」开始。</p>
+  </section>
+</main>
+
+<input id="fileInput" type="file" accept="image/*,.gif" hidden>
+<script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -114,6 +114,14 @@ save_gif("out.gif", results, durations, loop)              # 时长 / 循环原�
 
 <img src="/img/mirror-symmetry/ui-en-1320.webp" srcset="/img/mirror-symmetry/ui-en-900.webp 900w, /img/mirror-symmetry/ui-en-1320.webp 1320w" sizes="(max-width: 720px) calc(100vw - 64px), 900px" alt="English UI" loading="lazy" decoding="async" width="1320" height="860">
 
+## 在线版
+
+不想装软件的话，还有网页版：把图片或 GIF 拖进浏览器就能对称，全程在本地处理，不会上传：
+
+**https://merisk.top/tools/mirror-symmetry/**
+
+网页版和桌面版用的是同一套镜像算法——我用同一组数据把两者逐像素比对过一遍，结果完全一致。
+
 ## 下载和源码
 
 - 源码（MIT 协议）：[github.com/Merisk0/mirror-symmetry](https://github.com/Merisk0/mirror-symmetry)
