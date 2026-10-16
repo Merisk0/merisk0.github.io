@@ -6,6 +6,47 @@ tags: [更新日志]
 summary: "记录博客功能、样式与文章系统的变更（Astro 迁移、自定义域名、文章加密等）。"
 ---
 
+## 2026-10-16
+
+### 新增
+
+- **整套版式重写**，参考 [chen-yingfa.github.io](https://chen-yingfa.github.io/) 的 PaperMod 风格：细边框代替阴影、直角小圆角、无衬线正文配衬线标题、全站胶囊扁平化。
+- 首页改成 **profile 页**：顶部横幅 + 压边头像 + 名字 + 随机引用 + 简介 + 按钮 + 站点数据 + 社交链接。
+- 新增 **`/posts.html`** 文章列表页（结构对齐参考站的 Blog 页）：面包屑 + 标题 + 条目 + 加载更多。
+- 新增 **`/search.html`** 站内搜索页，替换原来的导航搜索浮层。
+- 状态页重构为 **Google Scholar 风格**：纯文本键值表、细线分隔、蓝链接配灰元信息；「构成」用两个手写 SVG 环形图（加密占比 / 年份分布），鼠标悬浮显示更详细的数据。
+- 归档页把月日做成条目右侧的大号半透明水印；标签页条目不再显示日期。
+- 导航新增搜索图标与汉堡菜单（≤640px 竖屏展开）。
+
+### 优化
+
+- 文章目录改为**构建时**渲染进 `<details>`，不再由前端脚本拼装。
+- 代码块改为双主题高亮（`github-light` / `github-dark`），跟随 `body.dark` 切换。
+- 修掉深色模式头像被挡住的问题：横幅的 `filter` 会生成层叠上下文，反过来盖住了压边上来的头像。
+- 链接蓝降饱和：`#0b57d0` → `#416b8f`（深色 `#8ab4ff` → `#9bb6d0`）。
+- 标签页去掉彩色的标签图标与专属颜色（`TAG_META` 暂时不再渲染），并清掉全站的彩色 emoji。
+- 归档 / 标签两页收紧行距，条目内边距从 `0.85rem` 收到 `0.5rem`。
+- 首页文案收成一栏（`max-width: 40rem`），引用移到名字下方并缩小字号。
+
+### 调整
+
+- **移除 RSS**：删除 `src/pages/feed.xml.ts`、`<link rel="alternate">`、页脚与关于页的入口，并卸载 `@astrojs/rss`；`/feed.xml` 现在 404（Sitemap 保留）。
+- 加密文章不再显示 🔒 emoji，统一为纯文字「已加密，需要密码查看」。
+- 删除 `public/Articles/Articles.css`，样式合并进 `public/style.css`。
+- 新增头像 `public/img/portrait.webp`（由 `head.jpg` 居中裁切为 420×420）。
+- PWA 缓存版本升级到 `merisk-blog-v8`，预缓存加入 `/posts.html` 与头像。
+
+### 安全
+
+- 全仓扫描：已跟踪文件中**没有** API key、访问令牌、私钥或 `.env`；`_private/` 从未进入 git 历史；Decap CMS 配置里没有凭据；GitHub Actions 使用 OIDC 与内置 `GITHUB_TOKEN`，无 Personal Access Token。
+- 已确认**加密文章的旧明文仍留在迁移前的 git 历史里**（受影响的提交与篇目不在这里列出，说明见 README「加密文章 → 注意」）。要彻底清除需改写历史并强推，之后让读者重新克隆；若担心密码外泄，可 `npm run lock -- 新密码` 轮换。
+- `_drafts/` 目录会被提交（其中的 `114514.md` 是空的文章模板），后续不要把敏感草稿放在这里。
+
+### 验证
+
+- `npm run build` 通过，共 26 个页面；`/`、`/posts.html`、`/archive.html`、`/tags.html`、`/status.html`、`/search.html`、`/Articles/1.html` 全部 200。
+- 无头 Chrome 截图核对浅色 / 深色 / 431px 移动端；交互回归覆盖列表分页、归档年份筛选、标签搜索、站内搜索、目录展开、代码复制、汉堡菜单、主题持久化与状态页悬浮气泡。
+
 ## 2026-10-10
 
 ### 新增

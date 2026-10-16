@@ -1,17 +1,41 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../site';
 ---
-<BaseLayout title="关于我" description="关于 3arrow / Merisk。">
-  <header class="page-hero"><div class="section-kicker">About Me</div><h1>关于我</h1><p>3arrow / Merisk</p></header>
-  <main class="profile" id="main-content">
-    <div class="profile-card">
-      <h2>你好。</h2>
-      <p>这里是我的个人主页。博客最初只是一个很简单的静态页面，后来慢慢加入了文章、项目和一些个人记录。</p>
-      <h3>个人社媒</h3>
-      <div class="social"><a href="https://space.bilibili.com/372356105" target="_blank" rel="noopener">Bilibili · Merisk ↗</a></div>
-      <h3>一些旧页面里留下的记录</h3>
-      <p>2008年《感动中国》年度人物特别奖获奖人<br>2019年联合国年度“地球卫士奖”联合获奖人<br>2022年奥林匹克奖杯获奖人</p>
-      <p style="margin-top:30px"><a class="btn" href="/">← 返回首页</a></p>
-    </div>
+
+<BaseLayout title="关于我" description="关于 3arrow / Merisk。" bodyClass="single">
+  <main class="main container" id="main-content">
+    <article class="post-single">
+      <header class="post-header">
+        <div class="breadcrumbs">
+          <a href="/">首页</a>
+          <span class="crumb-separator" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"></path></svg>
+          </span>
+          <span>关于我</span>
+        </div>
+        <h1 class="post-title">关于我</h1>
+      </header>
+
+      <div class="post-content">
+        <h2>你好。</h2>
+        <p>我是 Merisk（也用 3arrow 这个名字）。这里是我的个人博客，最初只是一个很简单的静态页面，后来慢慢加入了文章、项目、明暗模式，以及各种折腾留下来的东西。</p>
+        <p>现在这个版本重写了整套版式：单栏阅读流、细边框、近零阴影，标题用衬线字体，正文保持无衬线。文章仍然按标签整理，旧站的文章地址（<code>/Articles/1.html</code> 这类）也保持原样。</p>
+
+        <h3>个人社媒</h3>
+        <ul>
+          <li><a href={SITE.github} target="_blank" rel="noopener noreferrer">GitHub · Merisk0</a></li>
+          <li><a href={SITE.bilibili} target="_blank" rel="noopener noreferrer">Bilibili · Merisk</a></li>
+        </ul>
+
+        <h3>联系方式</h3>
+        <p>Email：<a href={`mailto:${SITE.email}`}>{SITE.email}</a><br>我会定时回复大部分邮件，也许(?)</p>
+
+        <h3>一些旧页面里留下的记录</h3>
+        <p>2008年《感动中国》年度人物特别奖获奖人<br>2019年联合国年度“地球卫士奖”联合获奖人<br>2022年奥林匹克奖杯获奖人</p>
+
+        <p><a href="/">← 返回首页</a></p>
+      </div>
+    </article>
   </main>
 </BaseLayout>

@@ -31,6 +31,11 @@ export function formatMonth(date: Date): string {
   return `${pad(date.getMonth() + 1)}月`;
 }
 
+/** 10/11 这类月日格式（年份由归档页的分组标题给出，避免重复） */
+export function formatMonthDay(date: Date): string {
+  return `${pad(date.getMonth() + 1)}/${pad(date.getDate())}`;
+}
+
 export function formatYear(date: Date): string {
   return String(date.getFullYear());
 }
@@ -51,7 +56,7 @@ export function excerpt(entry: PostEntry, max = 90): string {
 
 /** 列表用的摘要：加密文章不暴露摘要文案。 */
 export function listingSummary(entry: PostEntry): string {
-  if (entry.data.protected) return '🔒 已加密，需要密码查看';
+  if (entry.data.protected) return '已加密，需要密码查看';
   return excerpt(entry);
 }
 /** 所有已发布文章，按时间倒序（新 → 旧）。 */

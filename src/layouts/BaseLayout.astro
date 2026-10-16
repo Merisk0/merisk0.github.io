@@ -6,9 +6,11 @@ interface Props {
   description?: string;
   type?: string;
   noindex?: boolean;
+  /** body 上的语义类名：profile（首页）/ list（列表页）/ single（文章页） */
+  bodyClass?: string;
 }
 
-const { title, description, type = 'website', noindex = false } = Astro.props;
+const { title, description, type = 'website', noindex = false, bodyClass = 'list' } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const desc = description ?? SITE.description;
 const rawPath = Astro.url.pathname;
@@ -16,7 +18,17 @@ const rawPath = Astro.url.pathname;
 const canonicalPath = rawPath.endsWith('/index.html') ? rawPath.slice(0, -'index.html'.length) : rawPath;
 const canonical = new URL(canonicalPath, SITE.url).href;
 const buildVersion = Date.now().toString(36);
+
+const path = rawPath.endsWith('/index.html') ? rawPath.slice(0, -'index.html'.length) : rawPath;
+const isActive = (href: string) => {
+  // 带 # 的锚点是首页内部跳转，不参与 active 判定，避免同时高亮两项
+  if (href.includes('#')) return false;
+  if (href === '/') return path === '/' || path === '';
+  const clean = href.replace(/\.html$/, '');
+  return path === href || path === clean || path.startsWith(`${clean}/`);
+};
 ---
+
 <!doctype html>
 <html lang={SITE.lang}>
 <head>
@@ -32,30 +44,65 @@ const buildVersion = Date.now().toString(36);
   <meta property="og:url" content={canonical}>
   <meta property="og:site_name" content={SITE.title}>
   <meta name="twitter:card" content="summary">
-  <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <meta name="theme-color" content="#0e1510">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap"
+    rel="stylesheet"
+  >
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#151415" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/favicon.png">
   <link rel="stylesheet" href={`/style.css?v=${buildVersion}`}>
-  <link rel="stylesheet" href={`/Articles/Articles.css?v=${buildVersion}`}>
   <script is:inline src={`/theme.js?v=${buildVersion}`}></script>
 </head>
-<body>
+<body class={bodyClass} id="top">
 <a class="skip-link" href="#main-content">跳到主要内容</a>
-<nav class="nav">
-  <a class="brand" href="/">{SITE.title}</a>
-  <div class="navlinks">
-    {NAV_LINKS.map((link) => (
-      <a href={link.href}>{link.label}</a>
-    ))}
-    <button class="theme-btn" data-theme-toggle onclick="toggleTheme()" aria-label="切换主题">☾</button>
-  </div>
-</nav>
+<script is:inline>
+  // 尽早决定主题，避免首屏闪白：localStorage 优先，其次跟随系统
+  try {
+    var saved = localStorage.getItem('pref-theme');
+    if (saved === 'dark') document.body.classList.add('dark');
+    else if (saved === 'light') document.body.classList.remove('dark');
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.body.classList.add('dark');
+  } catch (e) {}
+</script>
+<header class="header">
+  <nav class="nav" aria-label="站点导航">
+    <div class="logo">
+      <a href="/" accesskey="h" title={`${SITE.title} (Alt + H)`}>{SITE.title}</a>
+    </div>
+    <div class="nav-right">
+      <ul id="menu">
+        {NAV_LINKS.map((link) => (
+          <li>
+            <a href={link.href} class="menu-link" aria-label={link.label} title={link.label}>
+              <span class={isActive(link.href) ? 'active' : ''}>{link.label}</span>
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href="/search.html" class="menu-link menu-link-icon" aria-label="搜索" title="搜索">
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
+              <span class="sr-only">搜索</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+      <button id="theme-toggle" type="button" aria-label="切换深浅色" aria-pressed="false" title="切换深浅色">
+        <svg id="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79"></path></svg>
+        <svg id="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      </button>
+      <button id="menu-toggle" class="menu-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
+  </nav>
+</header>
 <slot />
-<footer>
+<footer class="footer">
   <div class="footer-links">
     {FOOTER_LINKS.map((link) => (
       <a
@@ -65,7 +112,12 @@ const buildVersion = Date.now().toString(36);
       >{link.label}</a>
     ))}
   </div>
-  <div>Copyright © Merisk &amp; Arrowa · 2020–2026</div>
+  <div>
+    <span>© 2020–2026 <a href="/">{SITE.title}</a></span>&nbsp;·&nbsp;<span>Powered by <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a></span>
+  </div>
 </footer>
+<a href="#top" id="top-link" class="top-link" aria-label="回到顶部" title="回到顶部 (Alt + G)" accesskey="g">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V5"></path><path d="m5 12 7-7 7 7"></path></svg>
+</a>
 </body>
 </html>

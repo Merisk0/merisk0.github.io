@@ -27,18 +27,19 @@ export const SITE = {
 };
 
 export const NAV_LINKS = [
-  { href: '/#articles', label: '文章' },
+  { href: '/', label: '首页' },
+  { href: '/posts.html', label: '文章' },
   { href: '/archive.html', label: '归档' },
   { href: '/tags.html', label: '标签' },
   { href: '/AboutMe.html', label: '关于我' },
   { href: '/status.html', label: '状态' },
   { href: '/pages.html', label: '更多' },
-  { href: '/#contact', label: '联系' },
 ];
 
 export const FOOTER_LINKS = [
-  { href: '/AboutMe.html', label: '关于我' },
   { href: '/archive.html', label: '归档' },
-  { href: '/#articles', label: '文章' },
+  { href: '/tags.html', label: '标签' },
+  { href: '/search.html', label: '搜索' },
+  { href: '/pages.html', label: '更多' },
   { href: 'https://space.bilibili.com/372356105', label: 'Bilibili', external: true },
 ];

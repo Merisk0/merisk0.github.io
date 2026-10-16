@@ -1,65 +1,70 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPosts, postUrl, formatDate, groupByTag, listingSummary } from '../utils';
-import { tagMeta } from '../data/tags';
+import { getPosts, postUrl, groupByTag, listingSummary } from '../utils';
 
 const posts = await getPosts();
 const tagGroups = groupByTag(posts);
 const taggedCount = posts.filter((post) => post.data.tags.length > 0).length;
 ---
-<BaseLayout title="标签" description="按标签浏览 Merisk'B1og 的全部文章。">
-  <header class="page-hero tags-hero">
-    <div class="section-kicker">Tags</div>
-    <h1>标签</h1>
-    <p>按标签浏览全部文章。</p>
-    <div class="tag-overview" aria-label="标签概览">
-      {tagGroups.map(([tag, items]) => (
-        <a
-          class="tag-chip"
-          data-tag-name={tag}
-          href={`#tag-${tag}`}
-          style={`--tag-color: ${tagMeta(tag).color}`}
-        >
-          <span class="tag-chip-hash">{tagMeta(tag).icon}</span>
-          <span>{tag}</span>
-          <b>{items.length}</b>
-        </a>
-      ))}
-    </div>
-  </header>
 
-  <main id="main-content" class="tags-page">
-    <div class="search-toolbar">
-      <label class="search-box"><span>搜索</span><input id="tag-search" type="search" placeholder="搜索标签…" autocomplete="off"></label>
-      <div class="archive-count search-count" id="tag-count">{tagGroups.length} 个标签</div>
-    </div>
-    <section class="tag-stats" aria-label="标签数据">
-      <div class="tag-stat"><strong>{tagGroups.length}</strong><span>标签</span></div>
-      <div class="tag-stat"><strong>{taggedCount}</strong><span>已标记文章</span></div>
-      <div class="tag-stat"><strong>{posts.length}</strong><span>全部文章</span></div>
-    </section>
-
-    {tagGroups.length > 0 ? tagGroups.map(([tag, items]) => (
-      <section class="tag-section" id={`tag-${tag}`} data-tag-name={tag} style={`--tag-color: ${tagMeta(tag).color}`}>
-        <div class="tag-section-head">
-          <div class="tag-title-wrap"><span class="tag-hash">{tagMeta(tag).icon}</span><h2>{tag}</h2></div>
-          <span class="tag-count">{items.length} 篇</span>
+<BaseLayout title="标签" description="按标签浏览 Merisk'B1og 的全部文章。" bodyClass="single">
+  <main class="main container" id="main-content">
+    <article class="post-single">
+      <header class="post-header">
+        <div class="breadcrumbs">
+          <a href="/">首页</a>
+          <span class="crumb-separator" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"></path></svg>
+          </span>
+          <span>标签</span>
         </div>
-        <div class="tag-post-list">
-          {items.map((post) => (
-            <a class="tag-post" href={postUrl(post)}>
-              <span class="tag-post-date">{formatDate(post.data.date)}</span>
-              <span class="tag-post-main">
-                <strong>{post.data.title}</strong>
-                {(post.data.summary || post.data.protected) && <small>{listingSummary(post)}</small>}
-              </span>
-              <span class="tag-post-arrow" aria-hidden="true">↗</span>
+        <h1 class="post-title">标签</h1>
+        <div class="post-meta">
+          <span>{tagGroups.length} 个标签</span>
+          &nbsp;·&nbsp;<span>{taggedCount} 篇已标记</span>
+          &nbsp;·&nbsp;<span>{posts.length} 篇文章</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+        <div class="search-toolbar">
+          <label class="search-box">
+            <span>搜索</span>
+            <input id="tag-search" type="search" placeholder="搜索标签…" autocomplete="off">
+          </label>
+          <div class="search-count" id="tag-count">{tagGroups.length} 个标签</div>
+        </div>
+
+        <div class="tag-overview" aria-label="标签概览">
+          {tagGroups.map(([tag, items]) => (
+            <a class="tag-chip" data-tag-name={tag} href={`#tag-${tag}`}>
+              <span>{tag}</span>
+              <b>{items.length}</b>
             </a>
           ))}
         </div>
-      </section>
-    )) : (
-      <div class="archive-empty"><strong>暂无标签</strong><span>给文章添加 tags 后会自动显示。</span></div>
-    )}
+
+        {tagGroups.length > 0 ? tagGroups.map(([tag, items]) => (
+          <section class="tag-section" id={`tag-${tag}`} data-tag-name={tag}>
+            <div class="tag-section-head">
+              <h2>{tag}</h2>
+              <span class="tag-count">{items.length} 篇</span>
+            </div>
+            <div class="tag-post-list">
+              {items.map((post) => (
+                <a class="tag-post" href={postUrl(post)}>
+                  <span class="tag-post-main">
+                    <strong>{post.data.title}</strong>
+                    {(post.data.summary || post.data.protected) && <small>{listingSummary(post)}</small>}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )) : (
+          <div class="archive-empty"><strong>暂无标签</strong><span>给文章添加 tags 后会自动显示。</span></div>
+        )}
+      </div>
+    </article>
   </main>
 </BaseLayout>

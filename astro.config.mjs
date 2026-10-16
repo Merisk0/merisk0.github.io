@@ -9,4 +9,13 @@ export default defineConfig({
   build: {
     format: 'file',
   },
+  // 代码块同时输出浅色/深色两套高亮，配色变量由 style.css 按 body.dark 切换
+  markdown: {
+    shikiConfig: {
+      themes: {
+        light: 'github-light',
+        dark: 'github-dark',
+      },
+    },
+  },
 });

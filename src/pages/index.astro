@@ -1,138 +1,75 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getPosts, postUrl, listingSummary, groupByTag } from '../utils';
+import { SITE } from '../site';
+import { getPosts, postUrl, groupByTag, formatDate, formatYear } from '../utils';
 
 const posts = await getPosts();
-const tags = groupByTag(posts).map(([tag]) => tag);
+const tagGroups = groupByTag(posts);
+const yearCount = new Set(posts.map((post) => formatYear(post.data.date))).size;
+const latest = posts[0];
+const postPool = JSON.stringify(posts.map((post) => postUrl(post)));
 ---
-<BaseLayout title="" description="记录想法、技术、游戏与生活。">
-  <header class="hero" id="headbanner">
-    <div class="hero-bg"></div>
-    <div class="hero-shade"></div>
-    <div class="hero-content">
-      <div class="eyebrow">PERSONAL BLOG · SINCE 2020</div>
-      <h1>Merisk'B1og</h1>
-      <div id="quote" class="quote"></div>
-      <div class="hero-actions">
-        <a class="btn" href="#articles">开始阅读 ↓</a>
-        <a class="btn ghost" href="/AboutMe.html">关于我</a>
+
+<BaseLayout title="" description={SITE.description} bodyClass="profile">
+  <div class="home-banner">
+    <img src="/img/head2.webp" alt="" width="1600" height="900" fetchpriority="high" draggable="false">
+  </div>
+
+  <main class="main container" id="main-content">
+    <div class="profile">
+      <div class="profile_inner">
+        <img class="profile-avatar" draggable="false" src="/img/portrait.webp" alt={`${SITE.author} 的头像`} width="180" height="180">
+        <h1>Merisk</h1>
+        <div class="profile-quote" id="quote"></div>
+        <span>
+          这里记录想法、技术、游戏与生活。文章按标签整理，也可以直接搜索；旧站的文章地址保持原样。
+          <br>
+          <strong>Email:</strong> <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </span>
+
+        <div class="buttons">
+          <a class="button" href="/posts.html">全部文章 →</a>
+          <button class="button" type="button" id="random-post" data-posts={postPool}>随机逛一篇</button>
+          <a class="button" href="/AboutMe.html">关于我</a>
+        </div>
+
+        <div class="profile-stats" aria-label="站点概览">
+          <span><b>{posts.length}</b> 篇文章</span>
+          <span><b>{tagGroups.length}</b> 个标签</span>
+          <span><b>{yearCount}</b> 个年份</span>
+          <span>更新至 <b>{formatDate(latest.data.date)}</b></span>
+        </div>
+
+        <div class="social-icons">
+          <a href={SITE.github} target="_blank" rel="noopener noreferrer me" title="GitHub" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49 0-.24-.01-1.04-.01-1.89-2.78.62-3.37-1.21-3.37-1.21-.45-1.19-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.4 9.4 0 0 1 2.5-.34c.85 0 1.71.12 2.5.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.59.69.49A10.06 10.06 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z"></path></svg>
+            <span>GitHub</span>
+          </a>
+          <a href={SITE.bilibili} target="_blank" rel="noopener noreferrer me" title="Bilibili" aria-label="Bilibili">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6.5" width="19" height="13" rx="3.2"></rect><path d="M7 3.5 9.6 6.5"></path><path d="M17 3.5 14.4 6.5"></path><path d="M8.2 11.4v3"></path><path d="M15.8 11.4v3"></path></svg>
+            <span>Bilibili</span>
+          </a>
+          <a class="icon-only" href={`mailto:${SITE.email}`} title="Email" aria-label="Email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.4"></rect><path d="m4 7.5 8 5.6 8-5.6"></path></svg>
+          </a>
+        </div>
       </div>
     </div>
-  </header>
-
-  <main id="main-content">
-    <section id="articles" class="section">
-      <div class="section-head">
-        <div>
-          <div class="section-kicker">Writing</div>
-          <h2>文章</h2>
-          <p class="section-intro">所有文章按标签统一整理。点击标签即可快速筛选。</p>
-        </div>
-      </div>
-
-      <div class="category-bar" role="tablist" aria-label="文章标签">
-        <button class="tag-filter active" data-tag="all" role="tab" aria-selected="true">全部</button>
-        {tags.map((tag) => (
-          <button class="tag-filter" data-tag={tag} role="tab" aria-selected="false">{tag}</button>
-        ))}
-      </div>
-
-      <div class="grid" id="article-grid">
-        {posts.map((post, index) => (
-          <a class={`card${index === 0 ? ' featured' : ''}`} data-tags={post.data.tags.join(',')} href={postUrl(post)}>
-            <span class="card-tag">{post.data.protected ? '🔒 ' : ''}{post.data.tags[0] ?? '未分类'}</span>
-            <h3>{post.data.title}</h3>
-            <p>{listingSummary(post)}</p>
-            <span class="arrow">↗</span>
-          </a>
-        ))}
-      </div>
-      <div class="load-more-wrap"><button class="btn load-control" id="load-more" type="button">加载更多</button><button class="btn load-control" id="load-less" type="button" hidden>加载更少</button><span class="load-status" id="load-status" aria-live="polite"></span></div>
-    </section>
-
-    <section id="about" class="section">
-      <div class="section-head">
-        <div>
-          <div class="section-kicker">About</div>
-          <h2>关于我</h2>
-        </div>
-        <a class="btn" href="/AboutMe.html">查看完整介绍 →</a>
-      </div>
-      <div class="card about-card">
-        <div>
-          <p>这里是我的个人博客。最初的页面比较简单，后来一点点加入了文章、项目、明暗模式以及各种折腾留下来的东西。</p>
-          <p>新版保留原来的文章与项目目录，只重新整理了页面结构和视觉，让这个旧博客更像一个现在还在持续更新的个人空间。</p>
-        </div>
-        <div class="stats">
-          <div class="stat"><b>201? →</b><span>博客与项目持续记录</span></div>
-          <div class="stat"><b>Game · Tech</b><span>游戏、技术与个人兴趣</span></div>
-          <div class="stat"><b>∞</b><span>还会继续折腾</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="contact" class="section">
-      <div class="section-head">
-        <div>
-          <div class="section-kicker">Contact</div>
-          <h2>联系方式</h2>
-        </div>
-      </div>
-      <div class="contact">
-        <div style="display:flex;align-items:center;gap:16px">
-          <svg class="contact-icon" viewBox="0 0 48 48" role="img" aria-label="邮箱" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0" y="0" width="48" height="48" rx="15" fill="currentColor" opacity="0.12"></rect>
-            <rect x="11" y="15" width="26" height="18" rx="3.5" fill="none" stroke="currentColor" stroke-width="2.4"></rect>
-            <path d="M12.8 16.9 24 26.3 35.2 16.9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-          <div>
-            <strong>wjz99813@outlook.com</strong>
-            <p>我会定时回复大部分邮件，也许(?)</p>
-          </div>
-        </div>
-        <a class="btn" href="mailto:wjz99813@outlook.com">发送邮件 →</a>
-      </div>
-    </section>
   </main>
 
   <script is:inline>
-  const tagButtons=document.querySelectorAll('.tag-filter');
-  const articleCards=Array.from(document.querySelectorAll('#article-grid .card'));
-  const loadMore=document.getElementById('load-more');
-  const loadLess=document.getElementById('load-less');
-  const loadStatus=document.getElementById('load-status');
-  const pageSize=8;
-  let visibleLimit=pageSize;
-  let activeTag='all';
+  const quotes = ['「一生经过彷徨的挣扎 自信可改变未来 问谁又能做到」','你是从什么途径来到我的博客的？','你所热爱的，就是你的生活。','「有时天使的翅膀并不意味着救赎」','「过往的失败是成就未来的蓝图」','「原谅我这一生不羁放纵爱自由，也会怕有一天会跌倒」','「不需要被认可，但想要被关心。」','「平凡人预测未来… 梦想家塑造未来」','「我曾经失落失望失掉所有方向，直到看见平凡才是唯一的答案」','卡门。我找到他了… -《鬼与女武神（上）》'];
+  const quoteNode = document.getElementById('quote');
+  if(quoteNode) quoteNode.textContent = quotes[Math.floor(Math.random() * quotes.length)];
 
-  function applyArticlePaging(){
-    const matches=articleCards.filter(card=>activeTag==='all'||(card.dataset.tags||'').split(',').filter(Boolean).includes(activeTag));
-    articleCards.forEach(card=>{card.hidden=true});
-    matches.forEach((card,index)=>{card.hidden=index>=visibleLimit});
-    if(loadMore)loadMore.hidden=visibleLimit>=matches.length;
-    if(loadLess)loadLess.hidden=visibleLimit<=pageSize;
-    if(loadStatus)loadStatus.textContent='已显示 '+Math.min(visibleLimit,matches.length)+' / '+matches.length+' 篇';
+  const randomButton = document.getElementById('random-post');
+  if(randomButton){
+    randomButton.addEventListener('click', () => {
+      try{
+        const pool = JSON.parse(randomButton.dataset.posts || '[]');
+        if(pool.length) window.location.href = pool[Math.floor(Math.random() * pool.length)];
+      }catch(e){}
+    });
   }
-  function animateLoadControl(button){
-    if(!button)return;
-    button.classList.remove('is-pulsing');
-    void button.offsetWidth;
-    button.classList.add('is-pulsing');
-    window.setTimeout(()=>button.classList.remove('is-pulsing'),460);
-  }
-
-  tagButtons.forEach(button=>button.addEventListener('click',()=>{
-    activeTag=button.dataset.tag;
-    visibleLimit=pageSize;
-    tagButtons.forEach(item=>{item.classList.toggle('active',item===button);item.setAttribute('aria-selected',item===button?'true':'false')});
-    applyArticlePaging();
-  }));
-
-  if(loadMore)loadMore.addEventListener('click',()=>{visibleLimit+=pageSize;applyArticlePaging();animateLoadControl(loadMore)});
-  if(loadLess)loadLess.addEventListener('click',()=>{visibleLimit=Math.max(pageSize,visibleLimit-pageSize);applyArticlePaging();animateLoadControl(loadLess)});
-  applyArticlePaging();
-  </script>
-  <script is:inline>
-  const quotes=['「一生经过彷徨的挣扎 自信可改变未来 问谁又能做到」','你是从什么途径来到我的博客的？','你所热爱的，就是你的生活。','「有时天使的翅膀并不意味着救赎」','「过往的失败是成就未来的蓝图」','「原谅我这一生不羁放纵爱自由，也会怕有一天会跌倒」','「不需要被认可，但想要被关心。」','「平凡人预测未来… 梦想家塑造未来」','「我曾经失落失望失掉所有方向，直到看见平凡才是唯一的答案」','卡门。我找到他了… -《鬼与女武神（上）》'];document.getElementById('quote').textContent=quotes[Math.floor(Math.random()*quotes.length)];
   </script>
 </BaseLayout>

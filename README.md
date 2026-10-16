@@ -3,6 +3,8 @@
 这是一个使用 [Astro](https://astro.build/) 构建的个人博客，并由 GitHub Pages 自动构建和发布。
 
 > 本仓库原先使用 Jekyll，现已迁移到 Astro。站点地址（`/Articles/1.html`、`/archive.html` 等）保持与旧站完全一致。
+>
+> 版式参考 [chen-yingfa.github.io](https://chen-yingfa.github.io/) 的 PaperMod 风格，已于 2026-10-16 整体重写；细节见下面「版式」一节，变更记录见[更新日志](/Articles/auto-generated-article.html)。
 
 ## 环境要求
 
@@ -18,6 +20,8 @@ npm run dev        # 启动本地预览，默认 http://localhost:4321
 npm run build      # 构建到 dist/
 npm run preview    # 预览构建产物
 ```
+
+提交前建议跑一次 `npm run build` 自检：约 1 秒，输出 26 个页面，有任何模板或内容错误都会在这里报出来。
 
 ## 新增文章
 
@@ -53,7 +57,7 @@ summary: "首页显示的文章摘要。"
 - 支持 [链接](https://example.com)
 ```
 
-保存后首页、归档、标签、状态、搜索和 RSS 都会自动更新。
+保存后首页、`/posts.html`、归档、标签、状态和搜索页都会自动更新。
 
 ### 固定文章地址
 
@@ -113,9 +117,11 @@ npm run lock -- 新密码
 
 ### 注意
 
-- 仓库是**公开**的，加密之前提交过的明文仍存在于 git 历史里；若要彻底清除需改写历史并强推。
-- 加锁只保护**正文**，标题、摘要、标签仍会出现在首页、归档、RSS 和搜索里。
+- ⚠️ 仓库是**公开**的，而且**加密之前的明文确实还留在 git 历史里**（2026-10-16 已核实）：要彻底清除必须改写历史（`git filter-repo`）后强推，并让读者重新克隆——旧的 clone 里依然能读到。受影响的提交与文章**不在此处公开**。
+- 加锁只保护**正文**，标题、摘要、标签仍会出现在首页、归档和搜索里。
 - 浏览器需支持 `WebCrypto`（HTTPS 或 localhost 环境）。
+- `_drafts/` 里的文件**会被提交**（现在放的是空文章模板），不要把敏感草稿放在那里。
+
 ## 标签
 
 标签是唯一的内容分类系统。在 front matter 中写：
@@ -126,32 +132,47 @@ tags: [随笔, Markdown]
 
 首页、归档页、标签页和状态页都会自动读取 `tags`，新增标签无需修改任何代码。
 
-如果想让某个标签在标签页有专属的图标和颜色，在 `src/data/tags.ts` 的 `TAG_META` 里补一项即可。
+标签页目前只渲染**标签名 + 篇数**，不显示图标和颜色。`src/data/tags.ts` 里的 `TAG_META`（每个标签的图标 / 颜色）暂时没有被引用，想恢复彩色图标可以在 `tags.astro` 里重新取用。
+
+## 版式
+
+- **设计令牌**集中在 `public/style.css` 顶部的 `:root` 与 `body.dark` 两组变量里（背景 / 表面 / 文字 / 分隔线 / 链接蓝 / 站点绿 / 圆角）。换配色只改这里。
+- **主题**：`body.dark` class + `localStorage['pref-theme']`，默认跟随系统；`<body>` 之后有一段内联脚本先定色，避免首屏闪白。
+- **页面骨架**统一为 `main.container` + 标题区 + `.post-content`；首页例外，是「横幅 + profile」。
+- **站点绿** `--brand` 只在三处点缀：导航站名后的小圆点、首页引用条的左边框、状态页的环形图与「最新」标记。
+- 首页横幅里的头像靠 `margin-top: -4rem` 压边；它必须带 `position: relative; z-index: 1`，否则深色下会被横幅 `img` 的 `filter` 生成的层叠上下文盖住。
+- 归档页那条大号月日水印是 `.archive-date`（绝对定位 + 低透明度 + `pointer-events: none`）。
+- 状态页的环形图是构建期算好的 SVG 路径（`status.astro` 顶部的 `arcPath`），悬浮气泡逻辑在 `theme.js` 的「悬浮详情气泡」一段。
 
 ## 目录结构
 
 ```text
 ├─ public/                 # 静态资源（原样复制到 dist/）
-│  ├─ style.css            # 全站样式
-│  ├─ theme.js             # 主题切换、目录、灯箱、搜索等前端脚本
-│  ├─ Articles/Articles.css
-│  ├─ img/                 # 图片
+│  ├─ style.css            # 全站样式（含各页面级样式）
+│  ├─ theme.js             # 主题切换、菜单、灯箱、搜索、悬浮气泡等
+│  ├─ img/                 # 图片（portrait.webp 为首页头像）
 │  ├─ admin/               # Decap CMS 配置
+│  ├─ CNAME                # 自定义域名
 │  ├─ manifest.webmanifest
 │  ├─ service-worker.js    # PWA
 │  └─ robots.txt
+├─ scripts/lock.mjs        # 加密文章：明文 → 壳文件 + 密文
 ├─ src/
-│  ├─ content/posts/       # 文章 Markdown
-│  ├─ data/tags.ts         # 标签图标/颜色
+│  ├─ content/posts/       # 文章 Markdown（加密文章只留 front matter）
+│  ├─ data/tags.ts         # 标签图标/颜色（当前未渲染）
+│  ├─ data/protected/      # 加密文章的密文 JSON
 │  ├─ layouts/BaseLayout.astro
 │  ├─ pages/               # 页面与路由
-│  │  ├─ index.astro
+│  │  ├─ index.astro       # 首页（profile）
+│  │  ├─ posts.astro       # → /posts.html 文章列表
 │  │  ├─ archive.astro     # → /archive.html
 │  │  ├─ tags.astro        # → /tags.html
+│  │  ├─ status.astro      # → /status.html
+│  │  ├─ search.astro      # → /search.html
+│  │  ├─ AboutMe.astro     # → /AboutMe.html
 │  │  ├─ Articles/[slug].astro  # 文章详情 → /Articles/<slug>.html
 │  │  ├─ search.json.ts    # → /search.json
-│  │  ├─ feed.xml.ts       # → /feed.xml
-│  │  └─ sitemap.xml.ts    # → /sitemap.xml
+│  │  └─ sitemap.xml.ts    # → /sitemap.xml（RSS 已移除）
 │  ├─ site.ts              # 站点信息、导航、giscus 配置
 │  └─ utils.ts             # 文章排序、URL、日期等工具函数
 ├─ astro.config.mjs
