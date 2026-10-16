@@ -526,31 +526,71 @@
       });
     });
 
-    /* ---- 状态页：GitHub 数据 ---- */
-    const githubStars = document.querySelector('[data-github-stars]');
-    if (githubStars) {
-      const repo = 'Merisk0/merisk0.github.io';
-      fetch('https://api.github.com/repos/' + repo).then(function (response) { return response.json(); }).then(function (data) {
-        const set = function (name, value) {
-          const node = document.querySelector('[data-github-' + name + ']');
-          if (node) node.textContent = value;
-        };
-        if (typeof data.stargazers_count === 'number') set('stars', data.stargazers_count);
-        if (typeof data.forks_count === 'number') set('forks', data.forks_count);
-        if (typeof data.open_issues_count === 'number') set('issues', data.open_issues_count);
-      }).catch(function () {});
-      fetch('https://api.github.com/repos/' + repo + '/commits?per_page=1').then(function (response) {
-        const link = response.headers.get('link') || '';
-        const match = link.match(/[?&]page=(\d+)>; rel="last"/);
-        const node = document.querySelector('[data-github-commits]');
-        if (node) node.textContent = match ? match[1] : '1';
-      }).catch(function () {});
-      fetch('https://api.github.com/repos/' + repo + '/commits/main').then(function (response) { return response.json(); }).then(function (data) {
-        const node = document.querySelector('[data-github-commit]');
-        if (node && data.commit && data.commit.committer && data.commit.committer.date) {
-          node.textContent = new Date(data.commit.committer.date).toLocaleDateString('zh-CN');
+    /* ---- 状态页：GitHub 数据（延后到页面空闲再拉，别和首屏抢带宽）---- */
+    if (document.querySelector('[data-github-stars]')) {
+      const loadGitHubStats = function () {
+        const repo = 'Merisk0/merisk0.github.io';
+        fetch('https://api.github.com/repos/' + repo).then(function (response) { return response.json(); }).then(function (data) {
+          const set = function (name, value) {
+            const node = document.querySelector('[data-github-' + name + ']');
+            if (node) node.textContent = value;
+          };
+          if (typeof data.stargazers_count === 'number') set('stars', data.stargazers_count);
+          if (typeof data.forks_count === 'number') set('forks', data.forks_count);
+          if (typeof data.open_issues_count === 'number') set('issues', data.open_issues_count);
+        }).catch(function () {});
+        fetch('https://api.github.com/repos/' + repo + '/commits?per_page=1').then(function (response) {
+          const link = response.headers.get('link') || '';
+          const match = link.match(/[?&]page=(\d+)>; rel="last"/);
+          const node = document.querySelector('[data-github-commits]');
+          if (node) node.textContent = match ? match[1] : '1';
+        }).catch(function () {});
+        fetch('https://api.github.com/repos/' + repo + '/commits/main').then(function (response) { return response.json(); }).then(function (data) {
+          const node = document.querySelector('[data-github-commit]');
+          if (node && data.commit && data.commit.committer && data.commit.committer.date) {
+            node.textContent = new Date(data.commit.committer.date).toLocaleDateString('zh-CN');
+          }
+        }).catch(function () {});
+      };
+      if ('requestIdleCallback' in window) window.requestIdleCallback(loadGitHubStats, { timeout: 4000 });
+      else window.addEventListener('load', function () { window.setTimeout(loadGitHubStats, 1000); });
+    }
+
+    /* ---- 评论：滚到评论区附近才注入 giscus（giscus.app 在国内可能很慢/不通）---- */
+    const giscusHost = document.querySelector('[data-giscus]');
+    if (giscusHost) {
+      const loadGiscus = function () {
+        if (giscusHost.dataset.giscusReady) return;
+        giscusHost.dataset.giscusReady = '1';
+        const script = document.createElement('script');
+        script.src = 'https://giscus.app/client.js';
+        script.async = true;
+        script.crossOrigin = 'anonymous';
+        Object.keys(giscusHost.dataset).forEach(function (key) {
+          if (key === 'giscus' || key === 'giscusReady') return;
+          const name = key
+            .slice('giscus'.length)
+            .replace(/^[A-Z]/, function (char) { return char.toLowerCase(); })
+            .replace(/[A-Z]/g, function (char) { return '-' + char.toLowerCase(); });
+          if (name) script.setAttribute('data-' + name, giscusHost.dataset[key]);
+        });
+        script.setAttribute('data-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        giscusHost.append(script);
+      };
+
+      // 只判断「离视口还有多远」，不依赖 IntersectionObserver，便于测试且够用
+      const maybeLoadGiscus = function () {
+        if (giscusHost.dataset.giscusReady) return;
+        if (giscusHost.getBoundingClientRect().top < window.innerHeight + 500) {
+          window.removeEventListener('scroll', maybeLoadGiscus);
+          window.removeEventListener('resize', maybeLoadGiscus);
+          loadGiscus();
         }
-      }).catch(function () {});
+      };
+      window.addEventListener('scroll', maybeLoadGiscus, { passive: true });
+      window.addEventListener('resize', maybeLoadGiscus);
+      window.addEventListener('load', maybeLoadGiscus);
+      maybeLoadGiscus();
     }
 
     /* ---- Service Worker ---- */

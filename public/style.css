@@ -2,14 +2,33 @@
    Merisk'B1og — 主题样式表
    视觉语言参考 https://chen-yingfa.github.io/ （PaperMod 风格：纯扁平、细边框、
    近零阴影、无衬线正文 + 衬线标题、正文左侧留白、圆形胶囊导航）
+   字体自托管，不依赖 Google Fonts（国内不可达且会阻塞首屏）
    ========================================================================== */
+
+/* 0. 字体（两个 variable 文件，共约 84 KB）--------------------------------- */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./fonts/inter-latin-var.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url('./fonts/cormorant-garamond-latin-var.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 /* 1. 设计令牌 ------------------------------------------------------------- */
 :root {
   color-scheme: light;
 
   --font-sans: Inter, "SF Pro Text", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --font-serif: "Cormorant Garamond", "Noto Serif SC", "Times New Roman", Georgia, serif;
+  --font-serif: "Cormorant Garamond", "PingFang SC", "HarmonyOS Sans SC", "Hiragino Sans GB", "Microsoft YaHei", serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
   --bg: #ffffff;

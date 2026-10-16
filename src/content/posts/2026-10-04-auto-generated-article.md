@@ -28,6 +28,14 @@ summary: "记录博客功能、样式与文章系统的变更（Astro 迁移、�
 - 归档 / 标签两页收紧行距，条目内边距从 `0.85rem` 收到 `0.5rem`。
 - 首页文案收成一栏（`max-width: 40rem`），引用移到名字下方并缩小字号。
 
+### 性能
+
+- **字体改为自托管**：去掉 Google Fonts 的 `<link>`（国内基本不可达，而且它是渲染阻塞资源，会让首屏一直等），改用两个 variable woff2（Inter、Cormorant Garamond，共约 84 KB）放在 `public/fonts/`。首页的第三方字体请求从 2 个变成 **0 个**，整页资源请求只剩 6 个。
+- `theme.js` 加 `defer`，不再阻塞 HTML 解析。
+- Service Worker 从「每次导航都强制走网络」改为 **stale-while-revalidate**：有缓存就先出页面、同时后台更新，回访基本瞬开（缓存版本升到 `merisk-blog-v9`，预缓存加入两个字体文件）。
+- 状态页的 GitHub API 请求延后到页面空闲（`requestIdleCallback`）再发，不再和首屏抢带宽。
+- 文章页的 giscus 评论改为**滚到评论区附近才注入**，不再一进文章页就请求 `giscus.app`。
+
 ### 调整
 
 - **移除 RSS**：删除 `src/pages/feed.xml.ts`、`<link rel="alternate">`、页脚与关于页的入口，并卸载 `@astrojs/rss`；`/feed.xml` 现在 404（Sitemap 保留）。

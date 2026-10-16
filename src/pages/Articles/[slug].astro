@@ -186,26 +186,21 @@ for (const heading of headings) {
       )}
 
       {SITE.giscus.enabled && SITE.giscus.categoryId && (
-        <div class="giscus-wrap">
-          <script
-            is:inline
-            src="https://giscus.app/client.js"
-            data-repo={SITE.giscus.repo}
-            data-repo-id={SITE.giscus.repoId}
-            data-category={SITE.giscus.category}
-            data-category-id={SITE.giscus.categoryId}
-            data-mapping={SITE.giscus.mapping}
-            data-strict={SITE.giscus.strict}
-            data-reactions-enabled={SITE.giscus.reactionsEnabled}
-            data-emit-metadata={SITE.giscus.emitMetadata}
-            data-input-position={SITE.giscus.inputPosition}
-            data-theme="light"
-            data-lang={SITE.giscus.lang}
-            data-loading={SITE.giscus.loading}
-            crossorigin="anonymous"
-            async
-          ></script>
-        </div>
+        <div
+          class="giscus-wrap"
+          data-giscus="1"
+          data-giscus-repo={SITE.giscus.repo}
+          data-giscus-repo-id={SITE.giscus.repoId}
+          data-giscus-category={SITE.giscus.category}
+          data-giscus-category-id={SITE.giscus.categoryId}
+          data-giscus-mapping={SITE.giscus.mapping}
+          data-giscus-strict={SITE.giscus.strict}
+          data-giscus-reactions-enabled={SITE.giscus.reactionsEnabled}
+          data-giscus-emit-metadata={SITE.giscus.emitMetadata}
+          data-giscus-input-position={SITE.giscus.inputPosition}
+          data-giscus-lang={SITE.giscus.lang}
+          data-giscus-loading={SITE.giscus.loading}
+        ></div>
       )}
     </article>
   </main>

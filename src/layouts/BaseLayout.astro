@@ -44,18 +44,12 @@ const isActive = (href: string) => {
   <meta property="og:url" content={canonical}>
   <meta property="og:site_name" content={SITE.title}>
   <meta name="twitter:card" content="summary">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap"
-    rel="stylesheet"
-  >
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#151415" media="(prefers-color-scheme: dark)">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" href="/favicon.png">
   <link rel="stylesheet" href={`/style.css?v=${buildVersion}`}>
-  <script is:inline src={`/theme.js?v=${buildVersion}`}></script>
+  <script defer is:inline src={`/theme.js?v=${buildVersion}`}></script>
 </head>
 <body class={bodyClass} id="top">
 <a class="skip-link" href="#main-content">跳到主要内容</a>

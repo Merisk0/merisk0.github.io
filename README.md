@@ -140,6 +140,7 @@ tags: [随笔, Markdown]
 - **主题**：`body.dark` class + `localStorage['pref-theme']`，默认跟随系统；`<body>` 之后有一段内联脚本先定色，避免首屏闪白。
 - **页面骨架**统一为 `main.container` + 标题区 + `.post-content`；首页例外，是「横幅 + profile」。
 - **站点绿** `--brand` 只在三处点缀：导航站名后的小圆点、首页引用条的左边框、状态页的环形图与「最新」标记。
+- **字体自托管**在 `public/fonts/`：Inter 与 Cormorant Garamond 各一个 variable woff2（共约 84 KB），由 `style.css` 顶部的 `@font-face` 引用。**不要改回 Google Fonts**——国内不可达，而且 `<link rel="stylesheet">` 是渲染阻塞的，会让首屏一直卡在等字体。中文标题走系统无衬线（见 `--font-serif` 里的 PingFang / 鸿蒙 / 雅黑）。
 - 首页横幅里的头像靠 `margin-top: -4rem` 压边；它必须带 `position: relative; z-index: 1`，否则深色下会被横幅 `img` 的 `filter` 生成的层叠上下文盖住。
 - 归档页那条大号月日水印是 `.archive-date`（绝对定位 + 低透明度 + `pointer-events: none`）。
 - 状态页的环形图是构建期算好的 SVG 路径（`status.astro` 顶部的 `arcPath`），悬浮气泡逻辑在 `theme.js` 的「悬浮详情气泡」一段。
@@ -149,6 +150,7 @@ tags: [随笔, Markdown]
 ```text
 ├─ public/                 # 静态资源（原样复制到 dist/）
 │  ├─ style.css            # 全站样式（含各页面级样式）
+│  ├─ fonts/               # 自托管字体（Inter / Cormorant Garamond variable woff2）
 │  ├─ theme.js             # 主题切换、菜单、灯箱、搜索、悬浮气泡等
 │  ├─ img/                 # 图片（portrait.webp 为首页头像）
 │  ├─ admin/               # Decap CMS 配置
