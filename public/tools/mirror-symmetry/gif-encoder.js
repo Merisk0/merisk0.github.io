@@ -52,7 +52,7 @@ function buildPalette(frames, limit = MAX_COLORS) {
 }
 
 /** 把一帧 RGBA 转成调色板索引数组；透明像素用 transparentIndex。 */
-function quantizeFrame(frame, lookup, transparentIndex) {
+function quantizeFrame(frame, lookup, palette, transparentIndex) {
   const d = frame.data;
   const out = new Uint8Array(d.length / 4);
   for (let i = 0, p = 0; i < d.length; i += 4, p++) {
@@ -64,23 +64,24 @@ function quantizeFrame(frame, lookup, transparentIndex) {
     let idx = lookup.get(key);
     if (idx === undefined) {
       // 该 5bit 桶没进调色板（被截断），找最接近的颜色
-      idx = nearestIndex(lookup, d[i], d[i + 1], d[i + 2]);
+      idx = nearestIndex(palette, d[i], d[i + 1], d[i + 2]);
     }
     out[p] = idx;
   }
   return out;
 }
 
-function nearestIndex(lookup, r, g, b) {
+function nearestIndex(palette, r, g, b) {
   let best = 0;
   let bestDist = Infinity;
-  for (const idx of lookup.values()) {
-    const d = Math.abs((idx & 31) - (r >> 3)) + Math.abs(((idx >> 5) & 31) - (g >> 3)) + Math.abs(((idx >> 10) & 31) - (b >> 3));
+  for (let i = 0; i < palette.length; i++) {
+    const c = palette[i];
+    const d = Math.abs(c[0] - r) + Math.abs(c[1] - g) + Math.abs(c[2] - b);
     if (d < bestDist) {
       bestDist = d;
-      best = idx;
+      best = i;
+      if (d === 0) break;
     }
-    if (d === 0) break;
   }
   return best;
 }
@@ -174,7 +175,9 @@ export function encodeGIF(options) {
   });
 
   const { palette, lookup } = buildPalette(frames, hasAlpha ? MAX_COLORS : MAX_COLORS + 1);
-  const transparentIndex = 255;
+  // 透明色占用调色板里紧邻的下一个空位：写死 255 时，
+  // 色表可能只有 2/4/8… 项，索引越界会让整个 GIF 变成坏文件。
+  const transparentIndex = hasAlpha ? palette.length : 0;
   const colorCount = Math.max(2, palette.length + (hasAlpha ? 1 : 0));
   let bitsPerPixel = 1;
   while (1 << bitsPerPixel < colorCount) bitsPerPixel++;
@@ -210,7 +213,8 @@ export function encodeGIF(options) {
   for (const frame of frames) {
     const delay = Math.max(2, Math.round((frame.delay || 100) / 10)); // GIF 单位 1/100 秒
     out.push(0x21, 0xf9, 0x04);
-    out.push(0x08 | (hasAlpha ? 0x01 : 0x00) | 0x04); // disposal=2（还原背景）
+    // 位0 = 透明色标志，位2~4 = disposal 方式（2 = 还原成背景，透明区不会残留上一帧）
+    out.push(0x08 | (hasAlpha ? 0x01 : 0x00));
     pushShort(out, delay);
     out.push(hasAlpha ? transparentIndex : 0);
     out.push(0x00);
@@ -222,7 +226,7 @@ export function encodeGIF(options) {
     pushShort(out, height);
     out.push(0x00); // 无局部色表
 
-    const indices = quantizeFrame(frame, lookup, transparentIndex);
+    const indices = quantizeFrame(frame, lookup, palette, transparentIndex);
     out.push(minCodeSize);
     out.push(...toSubBlocks(lzwEncode(indices, minCodeSize)));
   }

@@ -5,6 +5,7 @@
 import { makeSymmetric, axisCenteredSize, MODES } from './mirror.js';
 import { makeMark, writeMark } from './payload.js';
 import { encodeGIF } from './gif-encoder.js';
+import { encodePNG } from './png-encoder.js';
 
 const I18N = {
   zh: {
@@ -157,6 +158,8 @@ async function decodeFile(file) {
   if (type === 'image/gif' && 'ImageDecoder' in window) {
     try {
       const decoder = new ImageDecoder({ data: buffer, type });
+      // 必须先等 tracks.ready，否则 selectedTrack 还是 null，帧数会被当成 1
+      await decoder.tracks.ready;
       await decoder.completed;
       const track = decoder.tracks.selectedTrack;
       const count = track?.frameCount || 1;
@@ -173,14 +176,14 @@ async function decodeFile(file) {
         frames.push({ data, delay: Math.max(20, Math.round((image.duration || 100000) / 1000)) });
         image.close();
       }
-      if (frames.length) return { width, height, frames, name: file.name, multi: frames.length > 1 };
+      if (frames.length) return { width, height, frames, name: file.name, type, multi: frames.length > 1 };
     } catch (err) {
       console.warn('ImageDecoder failed, falling back to first frame', err);
     }
   }
   const img = await fileToImage(file);
   const data = canvasFromImage(img);
-  return { width: data.width, height: data.height, frames: [{ data: data.data, delay: 100 }], name: file.name, multi: false };
+  return { width: data.width, height: data.height, frames: [{ data: data.data, delay: 100 }], name: file.name, type, multi: false, fallback: true };
 }
 
 /* ------------------------------------------------------------ 镜像计算 */
@@ -274,10 +277,16 @@ function schedule() {
 /* ---------------------------------------------------------------- 导出 */
 async function markFor(frames, width, height) {
   const total = frames.reduce((sum, f) => sum + (f.delay || 100), 0);
-  return makeMark({
-    width, height, frameCount: frames.length, totalMs: total,
-    firstFrameRGBA: frames[0].data,
-  });
+  try {
+    return await makeMark({
+      width, height, frameCount: frames.length, totalMs: total,
+      firstFrameRGBA: frames[0].data,
+    });
+  } catch (err) {
+    // 非安全上下文（没有 crypto.subtle）等情况下不阻塞导出，只是不带站点标记
+    console.warn('生成站点标记失败，导出时不带标记', err);
+    return null;
+  }
 }
 
 function download(blob, filename) {
@@ -295,28 +304,53 @@ function stamp() {
 
 async function exportPNG() {
   if (!state.source) return status(t('noImage'));
-  const out = mirroredFrames()[state.frameIndex];
-  const frames = mirroredFrames();
-  const mark = await markFor(frames, out.width, out.height);
-  const data = writeMark(out.data, mark);
-  const c = document.createElement('canvas');
-  c.width = out.width; c.height = out.height;
-  c.getContext('2d').putImageData(new ImageData(data, out.width, out.height), 0, 0);
-  c.toBlob((blob) => {
-    download(blob, `mirror-symmetry_${state.mode}_${stamp()}.png`);
-    status(t('exportedPng'));
-  }, 'image/png');
+  try {
+    const frames = mirroredFrames();
+    const out = frames[state.frameIndex];
+    const mark = await markFor(frames, out.width, out.height);
+    let data = out.data;
+    if (mark) {
+      try {
+        data = writeMark(out.data, mark);
+      } catch (err) {
+        // 图太小，塞不下标记：照常导出，不让整次导出失败
+        console.warn('图片太小，跳过站点标记', err);
+      }
+    }
+    const filename = `mirror-symmetry_${state.mode}_${stamp()}.png`;
+    const bytes = await encodePNG({ width: out.width, height: out.height, data });
+    if (bytes) {
+      download(new Blob([bytes], { type: 'image/png' }), filename);
+      status(t('exportedPng'));
+      return;
+    }
+    // 老浏览器没有 CompressionStream：退回 canvas 编码（透明区域的低位标记会被预乘 alpha 抹掉）
+    const c = document.createElement('canvas');
+    c.width = out.width; c.height = out.height;
+    c.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(data), out.width, out.height), 0, 0);
+    await new Promise((resolve, reject) => {
+      c.toBlob((blob) => {
+        if (!blob) return reject(new Error('PNG 编码失败'));
+        download(blob, filename);
+        status(t('exportedPng'));
+        resolve();
+      }, 'image/png');
+    });
+  } catch (err) {
+    console.error(err);
+    status(String(err.message || err));
+  }
 }
 
 async function exportGIF() {
   if (!state.source || state.source.frames.length < 2) return status(t('noImage'));
   status(t('exportingGif'));
-  const frames = mirroredFrames();
-  const width = frames[0].width, height = frames[0].height;
-  const mark = await markFor(frames, width, height);
-  await new Promise((r) => setTimeout(r, 10));
   try {
-    const bytes = encodeGIF({ width, height, frames, loop: 0, label: mark });
+    const frames = mirroredFrames();
+    const width = frames[0].width, height = frames[0].height;
+    const mark = await markFor(frames, width, height);
+    await new Promise((r) => setTimeout(r, 10));
+    const bytes = encodeGIF({ width, height, frames, loop: 0, label: mark || undefined });
     download(new Blob([bytes], { type: 'image/gif' }), `mirror-symmetry_${state.mode}_${stamp()}.gif`);
     status(t('exportedGif', { n: frames.length }));
   } catch (err) {
@@ -397,13 +431,13 @@ async function loadFile(file) {
     state.source = src;
     state.frameIndex = 0;
     invalidate();
-    if (file.type === 'image/gif' && src.frames.length === 1 && !('ImageDecoder' in window)) {
+    render();
+    schedule();
+    if (src.type === 'image/gif' && src.frames.length === 1 && src.fallback) {
       status(t('gifUnsupported'));
     } else {
       status(t('loaded', { name: file.name || 'clipboard', w: src.width, h: src.height, n: src.frames.length }));
     }
-    render();
-    schedule();
   } catch (err) {
     console.error(err);
     status(`${t('openFail')}: ${err.message || err}`);
