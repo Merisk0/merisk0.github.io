@@ -143,6 +143,7 @@ tags: [随笔, Markdown]
 - **字体自托管**在 `public/fonts/`：Inter 与 Cormorant Garamond 各一个 variable woff2（共约 84 KB），由 `style.css` 顶部的 `@font-face` 引用。**不要改回 Google Fonts**——国内不可达，而且 `<link rel="stylesheet">` 是渲染阻塞的，会让首屏一直卡在等字体。中文标题走系统无衬线（见 `--font-serif` 里的 PingFang / 鸿蒙 / 雅黑）。
 - 首页横幅里的头像靠 `margin-top: -4rem` 压边；它必须带 `position: relative; z-index: 1`，否则深色下会被横幅 `img` 的 `filter` 生成的层叠上下文盖住。
 - 归档页那条大号月日水印是 `.archive-date`（绝对定位 + 低透明度 + `pointer-events: none`）。
+- 文章目录有两套，由 `[slug].astro` 用同一份 headings 渲染：宽屏（≥1360px）是右侧固定的 `.toc-side`（小字、72% 透明度、滚动高亮当前小节），中窄屏是正文上方的折叠框 `.toc-inline`。改断点要同时看 `style.css` 里的 `@media (min-width: 1360px)`（要保证容器两侧放得下 11rem 宽的目录）。
 - 状态页的环形图是构建期算好的 SVG 路径（`status.astro` 顶部的 `arcPath`），悬浮气泡逻辑在 `theme.js` 的「悬浮详情气泡」一段。
 
 ## 目录结构

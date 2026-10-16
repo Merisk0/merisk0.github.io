@@ -414,14 +414,15 @@ body.dark .profile_inner > img { border-color: var(--bg); }
 .post-meta { color: var(--text-muted); font-size: 0.9rem; }
 .post-meta a { color: var(--text-muted); }
 
-.toc {
+/* 目录（窄屏/中屏：正文上方的折叠框） */
+.toc-inline {
   margin: 1.1rem 0;
   border: 1px solid color-mix(in srgb, var(--line) 90%, transparent);
   border-radius: var(--radius-sm);
   background: transparent;
   overflow: hidden;
 }
-.toc summary {
+.toc-inline summary {
   cursor: pointer;
   padding: 0.7rem 0.9rem;
   font-weight: 600;
@@ -432,8 +433,8 @@ body.dark .profile_inner > img { border-color: var(--bg); }
   justify-content: space-between;
   list-style: none;
 }
-.toc summary::-webkit-details-marker { display: none; }
-.toc summary::after {
+.toc-inline summary::-webkit-details-marker { display: none; }
+.toc-inline summary::after {
   content: "";
   width: 0.5rem;
   height: 0.5rem;
@@ -443,13 +444,41 @@ body.dark .profile_inner > img { border-color: var(--bg); }
   transition: transform 0.2s ease;
   margin-right: 0.1rem;
 }
-.toc details[open] summary::after { transform: rotate(225deg); margin-top: 0.2rem; }
-.toc .inner { border-top: 1px solid var(--line); padding: 0.6rem 0.95rem 0.75rem; }
-.toc ul { margin: 0.25rem 0 0; padding-left: 0; list-style: none; }
-.toc li { margin: 0.22rem 0; }
-.toc li li { margin-left: 0.9rem; }
-.toc a { color: var(--text-muted); font-size: 0.88rem; text-decoration: none; }
-.toc a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 0.15em; }
+.toc-inline details[open] summary::after { transform: rotate(225deg); margin-top: 0.2rem; }
+.toc-inline .inner { border-top: 1px solid var(--line); padding: 0.6rem 0.95rem 0.75rem; }
+.toc-inline ul { margin: 0.25rem 0 0; padding-left: 0; list-style: none; }
+.toc-inline li { margin: 0.22rem 0; }
+.toc-inline li li { margin-left: 0.9rem; }
+.toc-inline a { color: var(--text-muted); font-size: 0.88rem; text-decoration: none; }
+.toc-inline a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 0.15em; }
+
+/* 目录（宽屏：固定在右侧，参考 xbmlz.github.io 文章页的 post-toc） */
+.toc-side { display: none; }
+@media (min-width: 1360px) {
+  .toc-inline { display: none; }
+  .toc-side {
+    display: block;
+    position: fixed;
+    top: calc(var(--nav-h) + 1.8rem);
+    right: 1.25rem;
+    z-index: 20;
+    width: 11rem;
+    max-height: calc(100vh - var(--nav-h) - 3.6rem);
+    overflow-y: auto;
+    opacity: 0.72;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    transition: opacity 0.16s ease;
+  }
+  .toc-side:hover { opacity: 1; }
+  .toc-side ul { margin: 0; padding: 0; list-style: none; }
+  .toc-side li { margin: 0.32rem 0; }
+  .toc-side li li { margin-left: 0.7rem; }
+  .toc-side a { display: block; color: var(--text-muted); text-decoration: none; }
+  .toc-side a:hover { color: var(--text); }
+  .toc-side a.is-active { color: var(--text); font-weight: 600; }
+  .toc-side::-webkit-scrollbar { width: 0; height: 0; }
+}
 
 .post-content { font-size: 1rem; line-height: 1.8; }
 .post-content p { margin: 0 0 1.1em; }
@@ -457,6 +486,8 @@ body.dark .profile_inner > img { border-color: var(--bg); }
   margin: 1.8em 0 0.7em;
   letter-spacing: -0.01em;
 }
+/* 目录跳转时别被吸顶导航盖住 */
+.post-content h2, .post-content h3, .post-content h4 { scroll-margin-top: calc(var(--nav-h) + 1rem); }
 .post-content h1 { font-size: 1.6rem; }
 .post-content h2 { font-size: 1.35rem; }
 .post-content h3 { font-size: 1.15rem; }

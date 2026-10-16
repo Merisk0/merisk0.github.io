@@ -79,27 +79,48 @@ for (const heading of headings) {
       </header>
 
       {tocItems.length > 0 && (
-        <div class="toc">
-          <details>
-            <summary><span class="details">目录</span></summary>
-            <div class="inner">
-              <ul>
-                {tocItems.map((item) => (
-                  <li>
-                    <a href={`#${item.slug}`}>{item.text}</a>
-                    {item.children.length > 0 && (
-                      <ul>
-                        {item.children.map((child) => (
-                          <li><a href={`#${child.slug}`}>{child.text}</a></li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </details>
-        </div>
+        <>
+          {/* 宽屏：右侧固定目录 */}
+          <nav class="toc-side" data-toc-side aria-label="文章目录">
+            <ul>
+              {tocItems.map((item) => (
+                <li>
+                  <a href={`#${item.slug}`}>{item.text}</a>
+                  {item.children.length > 0 && (
+                    <ul>
+                      {item.children.map((child) => (
+                        <li><a href={`#${child.slug}`}>{child.text}</a></li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* 中窄屏：正文上方的折叠目录 */}
+          <div class="toc-inline">
+            <details>
+              <summary><span class="details">目录</span></summary>
+              <div class="inner">
+                <ul>
+                  {tocItems.map((item) => (
+                    <li>
+                      <a href={`#${item.slug}`}>{item.text}</a>
+                      {item.children.length > 0 && (
+                        <ul>
+                          {item.children.map((child) => (
+                            <li><a href={`#${child.slug}`}>{child.text}</a></li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          </div>
+        </>
       )}
 
       {isProtected ? (

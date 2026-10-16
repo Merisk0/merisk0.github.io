@@ -556,6 +556,31 @@
       else window.addEventListener('load', function () { window.setTimeout(loadGitHubStats, 1000); });
     }
 
+    /* ---- 宽屏右侧目录：滚动时高亮当前小节 ---- */
+    const sideToc = document.querySelector('[data-toc-side]');
+    if (sideToc) {
+      const tocLinks = [].slice.call(sideToc.querySelectorAll('a[href^="#"]'));
+      const tocTargets = tocLinks.map(function (link) {
+        const id = link.getAttribute('href').slice(1);
+        try { return document.getElementById(decodeURIComponent(id)) || document.getElementById(id); }
+        catch (error) { return document.getElementById(id); }
+      });
+      const markCurrent = function () {
+        // 以视口 28% 处为基准线，落在它上方的最后一个小节即为当前小节
+        const line = window.pageYOffset + window.innerHeight * 0.28;
+        let current = -1;
+        tocTargets.forEach(function (target, index) {
+          if (target && target.getBoundingClientRect().top + window.pageYOffset <= line) current = index;
+        });
+        tocLinks.forEach(function (link, index) {
+          link.classList.toggle('is-active', index === current);
+        });
+      };
+      window.addEventListener('scroll', markCurrent, { passive: true });
+      window.addEventListener('resize', markCurrent);
+      markCurrent();
+    }
+
     /* ---- 评论：滚到评论区附近才注入 giscus（giscus.app 在国内可能很慢/不通）---- */
     const giscusHost = document.querySelector('[data-giscus]');
     if (giscusHost) {

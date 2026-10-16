@@ -19,3 +19,6 @@ _private/
 .env.*
 *.pem
 *.key
+
+# 本地临时截图 / 无头浏览器 profile（不要提交）
+.shot/
