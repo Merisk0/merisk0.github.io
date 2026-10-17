@@ -41,8 +41,8 @@
   --accent: #111111;
   --post-link: #416b8f;
   --accent-soft: #f2f2f2;
-  /* 站点自己的绿色：只在少数几处点缀（logo 圆点、引用条、最新标记） */
-  --brand: #4f7b59;
+  /* 站点主题色：低饱和蓝（和正文链接同族），用在 logo 圆点、引用条、最新标记、状态页图表 */
+  --brand: #416b8f;
   --radius: 8px;
   --radius-sm: 6px;
   --shadow: none;
@@ -55,17 +55,18 @@
 body.dark {
   color-scheme: dark;
 
-  --bg: #151415;
-  --surface: #252525;
-  --surface-soft: #2f2f2f;
-  --surface-soft-strong: #262626;
-  --text: #f2f2f2;
-  --text-muted: #c4c4c4;
-  --line: #3e3e3e;
-  --accent: #f2f2f2;
+  /* 深色：不用纯黑，改成带蓝调的黑，和主题蓝呼应 */
+  --bg: #131b24;
+  --surface: #1b2530;
+  --surface-soft: #232f3c;
+  --surface-soft-strong: #1c2630;
+  --text: #e8eef5;
+  --text-muted: #a6b5c4;
+  --line: #2b3742;
+  --accent: #e8eef5;
   --post-link: #9bb6d0;
-  --accent-soft: #303030;
-  --brand: #8fbfa0;
+  --accent-soft: #26323e;
+  --brand: #9bb6d0;
   --shadow: none;
 }
 
@@ -557,7 +558,7 @@ body.dark .profile_inner > img { border-color: var(--bg); }
   font-size: 0.82rem;
   line-height: 1.5;
 }
-body.dark .post-content pre { background: #1e1e1e; }
+body.dark .post-content pre { background: #1b2530; }
 .post-content pre code { font-size: 0.82rem; line-height: 1.5; background: none; border: 0; padding: 0; }
 .post-content pre.astro-code { background-color: var(--shiki-light-bg, var(--surface-soft)) !important; }
 body.dark .post-content pre.astro-code { background-color: var(--shiki-dark-bg, #1e1e1e) !important; }
@@ -807,7 +808,7 @@ body.dark .archive-date { opacity: 0.16; }
   border-radius: 10px;
   background: #efefef;
 }
-body.dark .search-box { background: #1f1f1f; }
+body.dark .search-box { background: #1b2530; }
 .search-box > span { color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; }
 .search-box input {
   flex: 1;
@@ -831,7 +832,7 @@ body.dark .search-box { background: #1f1f1f; }
   padding: 0.72rem 0.8rem;
   font: inherit;
 }
-body.dark #searchInput { background: #1f1f1f; }
+body.dark #searchInput { background: #1b2530; }
 #searchInput:focus { outline: 2px solid var(--line); border-color: var(--text-muted); }
 .search-status { color: var(--text-muted); font-size: 0.9rem; margin: 0.65rem 0 0.2rem; }
 #searchResults { margin: 0.6rem 0 0; padding: 0; list-style: none; }

@@ -139,7 +139,8 @@ tags: [随笔, Markdown]
 - **设计令牌**集中在 `public/style.css` 顶部的 `:root` 与 `body.dark` 两组变量里（背景 / 表面 / 文字 / 分隔线 / 链接蓝 / 站点绿 / 圆角）。换配色只改这里。
 - **主题**：`body.dark` class + `localStorage['pref-theme']`，默认跟随系统；`<body>` 之后有一段内联脚本先定色，避免首屏闪白。
 - **页面骨架**统一为 `main.container` + 标题区 + `.post-content`；首页例外，是「横幅 + profile」。
-- **站点绿** `--brand` 只在三处点缀：导航站名后的小圆点、首页引用条的左边框、状态页的环形图与「最新」标记。
+- **主题色** `--brand`（低饱和蓝 `#416b8f`，深色 `#9bb6d0`，和正文链接同族）只用在少数几处点缀：导航站名后的小圆点、首页引用条的左边框、状态页的环形图与「最新」标记。
+- **深色模式**不是纯黑，而是带蓝调的 `#131b24`（表面色 / 分隔线 / 灰阶都跟着偏冷），改背景时要一并同步 `BaseLayout.astro` 里的 `theme-color` 和 `manifest.webmanifest` 的 `background_color`。
 - **字体自托管**在 `public/fonts/`：Inter 与 Cormorant Garamond 各一个 variable woff2（共约 84 KB），由 `style.css` 顶部的 `@font-face` 引用。**不要改回 Google Fonts**——国内不可达，而且 `<link rel="stylesheet">` 是渲染阻塞的，会让首屏一直卡在等字体。中文标题走系统无衬线（见 `--font-serif` 里的 PingFang / 鸿蒙 / 雅黑）。
 - 首页横幅里的头像靠 `margin-top: -4rem` 压边；它必须带 `position: relative; z-index: 1`，否则深色下会被横幅 `img` 的 `filter` 生成的层叠上下文盖住。
 - 归档页那条大号月日水印是 `.archive-date`（绝对定位 + 低透明度 + `pointer-events: none`）。
