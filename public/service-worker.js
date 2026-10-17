@@ -1,4 +1,4 @@
-const CACHE_NAME = 'merisk-blog-v10';
+const CACHE_NAME = 'merisk-blog-v11';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -9,7 +9,7 @@ const APP_SHELL = [
   '/favicon.png',
   '/fonts/inter-latin-var.woff2',
   '/fonts/cormorant-garamond-latin-var.woff2',
-  '/img/head2.webp',
+  '/img/banner-night.webp',
   '/img/portrait.webp',
   '/img/icon-192.png',
   '/img/icon-512.png',

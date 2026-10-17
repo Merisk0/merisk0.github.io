@@ -140,8 +140,8 @@ tags: [随笔, Markdown]
 - **主题**：`body.dark` class + `localStorage['pref-theme']`，默认跟随系统；`<body>` 之后有一段内联脚本先定色，避免首屏闪白。
 - **页面骨架**统一为 `main.container` + 标题区 + `.post-content`；首页例外，是「横幅 + profile」。
 - **主题色** `--brand`（低饱和蓝 `#416b8f`，深色 `#9bb6d0`，和正文链接同族）只用在少数几处点缀：导航站名后的小圆点、首页引用条的左边框、状态页的环形图与「最新」标记。
-- **深色模式**不是纯黑，而是带蓝调的 `#131b24`（表面色 / 分隔线 / 灰阶都跟着偏冷），改背景时要一并同步 `BaseLayout.astro` 里的 `theme-color` 和 `manifest.webmanifest` 的 `background_color`。
-- **字体自托管**在 `public/fonts/`：Inter 与 Cormorant Garamond 各一个 variable woff2（共约 84 KB），由 `style.css` 顶部的 `@font-face` 引用。**不要改回 Google Fonts**——国内不可达，而且 `<link rel="stylesheet">` 是渲染阻塞的，会让首屏一直卡在等字体。中文标题走系统无衬线（见 `--font-serif` 里的 PingFang / 鸿蒙 / 雅黑）。
+- **深色模式**不是纯黑，而是带蓝调的 `#0f151c`（表面色 / 分隔线 / 灰阶都跟着偏冷），改背景时要一并同步 `BaseLayout.astro` 里的 `theme-color` 和 `manifest.webmanifest` 的 `background_color`。
+- **字体**：正文 Inter、标题 Cormorant Garamond，两者都是 `public/fonts/` 里的自托管 variable woff2（共约 84 KB）；中文标题的中文部分走系统衬线（`--font-serif` 里的 Noto Serif SC / 宋体 / Songti），**不下载任何中文字体**。**不要改回 Google Fonts**——国内不可达，而且 `<link rel="stylesheet">` 是渲染阻塞的，会让首屏一直卡在等字体。
 - 首页横幅里的头像靠 `margin-top: -4rem` 压边；它必须带 `position: relative; z-index: 1`，否则深色下会被横幅 `img` 的 `filter` 生成的层叠上下文盖住。
 - 归档页那条大号月日水印是 `.archive-date`（绝对定位 + 低透明度 + `pointer-events: none`）。
 - 文章目录有两套，由 `[slug].astro` 用同一份 headings 渲染：宽屏（≥1360px）是右侧固定的 `.toc-side`（小字、72% 透明度、滚动高亮当前小节），中窄屏是正文上方的折叠框 `.toc-inline`。改断点要同时看 `style.css` 里的 `@media (min-width: 1360px)`（要保证容器两侧放得下 11rem 宽的目录）。
@@ -154,7 +154,7 @@ tags: [随笔, Markdown]
 │  ├─ style.css            # 全站样式（含各页面级样式）
 │  ├─ fonts/               # 自托管字体（Inter / Cormorant Garamond variable woff2）
 │  ├─ theme.js             # 主题切换、菜单、灯箱、搜索、悬浮气泡等
-│  ├─ img/                 # 图片（portrait.webp 为首页头像）
+│  ├─ img/                 # 图片（banner-night.webp 首页横幅、portrait.webp 头像）
 │  ├─ admin/               # Decap CMS 配置
 │  ├─ CNAME                # 自定义域名
 │  ├─ manifest.webmanifest

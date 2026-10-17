@@ -28,7 +28,8 @@
   color-scheme: light;
 
   --font-sans: Inter, "SF Pro Text", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --font-serif: "Cormorant Garamond", "PingFang SC", "HarmonyOS Sans SC", "Hiragino Sans GB", "Microsoft YaHei", serif;
+  /* 标题用衬线：拉丁是自托管的 Cormorant，中文走系统里的衬线（Noto Serif SC / 宋体 / Songti），不额外下载字体 */
+  --font-serif: "Cormorant Garamond", "Noto Serif SC", "Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
   --bg: #ffffff;
@@ -55,17 +56,17 @@
 body.dark {
   color-scheme: dark;
 
-  /* 深色：不用纯黑，改成带蓝调的黑，和主题蓝呼应 */
-  --bg: #131b24;
-  --surface: #1b2530;
-  --surface-soft: #232f3c;
-  --surface-soft-strong: #1c2630;
+  /* 深色：带蓝调的黑，尽量深，和主题蓝呼应 */
+  --bg: #0f151c;
+  --surface: #161e26;
+  --surface-soft: #1c2530;
+  --surface-soft-strong: #171f28;
   --text: #e8eef5;
   --text-muted: #a6b5c4;
-  --line: #2b3742;
+  --line: #242d37;
   --accent: #e8eef5;
   --post-link: #9bb6d0;
-  --accent-soft: #26323e;
+  --accent-soft: #1c2530;
   --brand: #9bb6d0;
   --shadow: none;
 }
@@ -268,7 +269,7 @@ body:not(.dark) #moon, body.dark #sun { display: none; }
 .home-banner { border-bottom: 1px solid var(--line); }
 .home-banner img { display: block; width: 100%; height: clamp(150px, 24vw, 230px); object-fit: cover; }
 /* 深色下压一点亮度，免得横幅在暗色界面里太扎眼 */
-body.dark .home-banner img { filter: brightness(0.82) saturate(0.94); }
+body.dark .home-banner img { filter: brightness(0.92) saturate(1); }
 
 .profile { margin-top: 1rem; padding: 0 0.8rem; }
 body.profile .profile { margin-top: 0; margin-bottom: 2.2rem; }
@@ -362,6 +363,7 @@ body.dark .profile_inner > img { border-color: var(--bg); }
   transition: background-color 0.16s ease;
 }
 .post-entry:hover { background: var(--surface-soft); }
+.post-entry h2 { font-family: var(--font-serif); letter-spacing: 0; }
 .post-entry.has-cover {
   display: grid;
   grid-template-columns: clamp(96px, 24vw, 180px) minmax(0, 1fr);
@@ -558,7 +560,7 @@ body.dark .profile_inner > img { border-color: var(--bg); }
   font-size: 0.82rem;
   line-height: 1.5;
 }
-body.dark .post-content pre { background: #1b2530; }
+body.dark .post-content pre { background: var(--surface); }
 .post-content pre code { font-size: 0.82rem; line-height: 1.5; background: none; border: 0; padding: 0; }
 .post-content pre.astro-code { background-color: var(--shiki-light-bg, var(--surface-soft)) !important; }
 body.dark .post-content pre.astro-code { background-color: var(--shiki-dark-bg, #1e1e1e) !important; }
@@ -808,7 +810,7 @@ body.dark .archive-date { opacity: 0.16; }
   border-radius: 10px;
   background: #efefef;
 }
-body.dark .search-box { background: #1b2530; }
+body.dark .search-box { background: var(--surface); }
 .search-box > span { color: var(--text-muted); font-size: 0.8rem; white-space: nowrap; }
 .search-box input {
   flex: 1;
@@ -832,7 +834,7 @@ body.dark .search-box { background: #1b2530; }
   padding: 0.72rem 0.8rem;
   font: inherit;
 }
-body.dark #searchInput { background: #1b2530; }
+body.dark #searchInput { background: var(--surface); }
 #searchInput:focus { outline: 2px solid var(--line); border-color: var(--text-muted); }
 .search-status { color: var(--text-muted); font-size: 0.9rem; margin: 0.65rem 0 0.2rem; }
 #searchResults { margin: 0.6rem 0 0; padding: 0; list-style: none; }
