@@ -42,7 +42,7 @@ summary: "记录博客功能、样式与文章系统的变更（Astro 迁移、�
 - **移除 RSS**：删除 `src/pages/feed.xml.ts`、`<link rel="alternate">`、页脚与关于页的入口，并卸载 `@astrojs/rss`；`/feed.xml` 现在 404（Sitemap 保留）。
 - 加密文章不再显示 🔒 emoji，统一为纯文字「已加密，需要密码查看」。
 - 删除 `public/Articles/Articles.css`，样式合并进 `public/style.css`。
-- 文章页面包屑补全为「首页 › 文章 › 标题」，并修掉「文章」指向 `/#posts` 的死链（首页改版后已没有这个锚点，改为指向 `/posts.html`）。
+- 修掉文章页「文章」面包屑指向 `/#posts` 的死链（首页改版后已没有这个锚点），改为指向 `/posts.html`；面包屑只显示到上一级、不重复当前页：文章详情页是「首页 › 文章」，文章列表页只有「首页」。
 - 新增头像 `public/img/portrait.webp`（由 `head.jpg` 居中裁切为 420×420）。
 - PWA 缓存版本升级到 `merisk-blog-v8`，预缓存加入 `/posts.html` 与头像。
 
