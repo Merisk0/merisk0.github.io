@@ -65,7 +65,11 @@ for (const heading of headings) {
           <span class="crumb-separator" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"></path></svg>
           </span>
-          <a href="/#posts">文章</a>
+          <a href="/posts.html">文章</a>
+          <span class="crumb-separator" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"></path></svg>
+          </span>
+          <span class="crumb-current" aria-current="page">{entry.data.title}</span>
         </div>
         <h1 class="post-title">{entry.data.title}</h1>
         <div class="post-meta">

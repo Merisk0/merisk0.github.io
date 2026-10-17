@@ -154,6 +154,14 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.25; letter-spacing: -0.02em; }
 .breadcrumbs a:hover { color: var(--text); }
 .crumb-separator { display: inline-flex; align-items: center; justify-content: center; line-height: 1; }
 .crumb-separator svg { width: 0.85rem; height: 0.85rem; }
+/* 面包屑最后一级：当前页面，不带动线、过长省略 */
+.crumb-current {
+  max-width: min(28rem, 60vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+}
 
 /* 4. 页头导航 ------------------------------------------------------------ */
 .header {
