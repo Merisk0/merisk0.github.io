@@ -5,6 +5,8 @@ import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { SITE } from '../../site';
 import { getPosts, postSlug, postUrl, formatDate } from '../../utils';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import TocList from '../../components/TocList.astro';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -60,13 +62,7 @@ for (const heading of headings) {
   <main class="main container" id="main-content">
     <article class="post-single">
       <header class="post-header">
-        <div class="breadcrumbs">
-          <a href="/">首页</a>
-          <span class="crumb-separator" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"></path></svg>
-          </span>
-          <a href="/posts.html">文章</a>
-        </div>
+        <Breadcrumbs parents={[{ href: '/posts.html', label: '文章' }]} />
         <h1 class="post-title">{entry.data.title}</h1>
         <div class="post-meta">
           <span>{formatDate(entry.data.date)}</span>
@@ -82,20 +78,7 @@ for (const heading of headings) {
         <>
           {/* 宽屏：右侧固定目录 */}
           <nav class="toc-side" data-toc-side aria-label="文章目录">
-            <ul>
-              {tocItems.map((item) => (
-                <li>
-                  <a href={`#${item.slug}`}>{item.text}</a>
-                  {item.children.length > 0 && (
-                    <ul>
-                      {item.children.map((child) => (
-                        <li><a href={`#${child.slug}`}>{child.text}</a></li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <TocList items={tocItems} />
           </nav>
 
           {/* 中窄屏：正文上方的折叠目录 */}
@@ -103,20 +86,7 @@ for (const heading of headings) {
             <details>
               <summary><span class="details">目录</span></summary>
               <div class="inner">
-                <ul>
-                  {tocItems.map((item) => (
-                    <li>
-                      <a href={`#${item.slug}`}>{item.text}</a>
-                      {item.children.length > 0 && (
-                        <ul>
-                          {item.children.map((child) => (
-                            <li><a href={`#${child.slug}`}>{child.text}</a></li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <TocList items={tocItems} />
               </div>
             </details>
           </div>

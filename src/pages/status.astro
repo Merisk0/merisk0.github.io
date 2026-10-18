@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getPosts, postUrl, formatDate, formatYear, groupByTag } from '../utils';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const posts = await getPosts();
 const total = posts.length;
@@ -69,9 +70,7 @@ const yearSlices = toSlices(
 <BaseLayout title="状态" description="Merisk'B1og 的内容数据与构成。" bodyClass="single scholar">
   <main class="main container" id="main-content">
     <header class="page-header">
-      <div class="breadcrumbs">
-        <a href="/">首页</a>
-      </div>
+      <Breadcrumbs />
       <h1>状态</h1>
       <p class="scholar-note">
         <span class="status-dot" aria-hidden="true"></span>

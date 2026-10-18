@@ -1,0 +1,27 @@
+---
+/**
+ * 面包屑：只渲染「上级」，不渲染当前页（当前页由页面自己的标题表达）。
+ *
+ *   <Breadcrumbs />                                          → 首页
+ *   <Breadcrumbs parents={[{ href: '/posts.html', label: '文章' }]} />   → 首页 › 文章
+ *
+ * 上级层级可以继续往后加，越靠右越接近当前页。
+ */
+interface Props {
+  parents?: Array<{ href: string; label: string }>;
+}
+
+const { parents = [] } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label="面包屑">
+  <a href="/">首页</a>
+  {parents.map((parent) => (
+    <>
+      <span class="crumb-separator" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"></path></svg>
+      </span>
+      <a href={parent.href}>{parent.label}</a>
+    </>
+  ))}
+</nav>

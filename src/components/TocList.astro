@@ -1,0 +1,31 @@
+---
+/**
+ * 文章目录的列表本体，供右侧固定目录与正文上方折叠目录共用。
+ */
+interface TocItem {
+  slug: string;
+  text: string;
+  children: Array<{ slug: string; text: string }>;
+}
+
+interface Props {
+  items: TocItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul>
+  {items.map((item) => (
+    <li>
+      <a href={`#${item.slug}`}>{item.text}</a>
+      {item.children.length > 0 && (
+        <ul>
+          {item.children.map((child) => (
+            <li><a href={`#${child.slug}`}>{child.text}</a></li>
+          ))}
+        </ul>
+      )}
+    </li>
+  ))}
+</ul>

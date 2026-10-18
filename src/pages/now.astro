@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 ---
 <BaseLayout title="近况" description="最近在做什么。">
   <main id="main-content" class="main container">
-    <header class="page-header"><div class="breadcrumbs"><a href="/">首页</a><span class="crumb-separator" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"></path></svg></span><a href="/pages.html">更多</a></div>
+    <header class="page-header"><Breadcrumbs parents={[{ href: '/pages.html', label: '更多' }]} />
       <h1>近况</h1><p>更新于 2026/10/04</p></header>
     <div class="now-card">
       <section class="now-section"><h2>正在做</h2><p>继续完善个人博客，整理旧文章，并尝试把项目记录长期维护下去。</p></section>

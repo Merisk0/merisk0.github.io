@@ -104,38 +104,6 @@
       updateTopLink();
     }
 
-    /* ---- 滚动位置记忆（返回时恢复）---- */
-    const backStateKey = 'merisk-back-state-v3';
-    const restoreStateKey = 'merisk-restore-state-v3';
-
-    function pageUrl(value) {
-      try { return new URL(value, window.location.href).href; } catch (e) { return ''; }
-    }
-    function readState(key) {
-      try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; }
-    }
-    (function restoreBackState() {
-      const state = readState(restoreStateKey);
-      if (!state || pageUrl(state.url) !== pageUrl(window.location.href)) return;
-      localStorage.removeItem(restoreStateKey);
-      const y = Number(state.scrollY) || 0;
-      const restore = function () { window.scrollTo({ top: y, left: 0, behavior: 'auto' }); };
-      requestAnimationFrame(function () { requestAnimationFrame(restore); });
-      window.addEventListener('load', function () { window.setTimeout(restore, 0); }, { once: true });
-    })();
-
-    document.addEventListener('click', function (event) {
-      const link = event.target && event.target.closest ? event.target.closest('a[href]') : null;
-      if (!link) return;
-      const target = new URL(link.href, window.location.href);
-      const sameDocument = target.pathname === window.location.pathname && target.search === window.location.search;
-      if (target.origin === window.location.origin && !sameDocument) {
-        try {
-          localStorage.setItem(backStateKey, JSON.stringify({ url: window.location.href, scrollY: Math.round(window.scrollY) }));
-        } catch (e) {}
-      }
-    });
-
     /* ---- 灯箱 ---- */
     let lightboxNode = null;
     let lightboxLastFocused = null;

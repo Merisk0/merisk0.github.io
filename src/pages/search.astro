@@ -1,13 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 ---
 
 <BaseLayout title="搜索" description="搜索 Merisk'B1og 的全部文章。">
   <main class="main container" id="main-content">
     <header class="page-header">
-      <div class="breadcrumbs">
-        <a href="/">首页</a>
-      </div>
+      <Breadcrumbs />
       <h1>搜索</h1>
       <p>按标题、摘要或标签搜索全部文章。</p>
     </header>

@@ -37,6 +37,15 @@ summary: "记录博客功能、样式与文章系统的变更（Astro 迁移、�
 - 状态页的 GitHub API 请求延后到页面空闲（`requestIdleCallback`）再发，不再和首屏抢带宽。
 - 文章页的 giscus 评论改为**滚到评论区附近才注入**，不再一进文章页就请求 `giscus.app`。
 
+### 整理
+
+- 清掉全站 **16 个不再使用的 CSS 类**（`article-tags`、`data-row-bar`、`entry-cover`、`has-cover`、`section-head`、`status-grid`、`status-live`、`tag-title-wrap` 等）及其规则，并删掉整块只剩死规则的 `@media (max-width: 520px)`。
+- `theme.js` 删掉「滚动位置记忆」这段只写不读的死代码（`backStateKey` 从来没被读取过，来自早已下线的站内返回键）。
+- 面包屑抽成 `src/components/Breadcrumbs.astro`，15 个页面共用，顺便把容器从 `div` 改成 `<nav aria-label="面包屑">`。
+- 文章目录的列表抽成 `src/components/TocList.astro`，宽屏右侧目录与正文上方的折叠目录共用同一份渲染，不再各自复制一遍嵌套 `<ul>`。
+- 删除三个无人引用的文件：`public/img/head.jpg`（736 KB）、`public/texture/*.zip`（4.1 MB，旧主题留下的贴图包）、`src/data/tags.ts`（标签图标已不渲染），以及 `formatDate` 之类不再使用的 import。
+- 体积变化：`style.css` 1165 → 1135 行（39.5 → 38.2 KB）、`theme.js` 641 → 609 行（28.2 → 26.7 KB）、构建产物 `dist/` 6.66 → 1.91 MB。
+
 ### 调整
 
 - **移除 RSS**：删除 `src/pages/feed.xml.ts`、`<link rel="alternate">`、页脚与关于页的入口，并卸载 `@astrojs/rss`；`/feed.xml` 现在 404（Sitemap 保留）。

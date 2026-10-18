@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getPosts, postUrl, listingSummary, formatDate } from '../utils';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const posts = await getPosts();
 ---
@@ -8,9 +9,7 @@ const posts = await getPosts();
 <BaseLayout title="文章" description="Merisk'B1og 的全部文章，按时间倒序。">
   <main class="main container" id="main-content">
     <header class="page-header">
-      <div class="breadcrumbs">
-        <a href="/">首页</a>
-      </div>
+      <Breadcrumbs />
       <h1>文章</h1>
       <p>共 {posts.length} 篇 · 按时间倒序。</p>
     </header>

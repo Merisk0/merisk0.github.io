@@ -132,7 +132,7 @@ tags: [随笔, Markdown]
 
 首页、归档页、标签页和状态页都会自动读取 `tags`，新增标签无需修改任何代码。
 
-标签页目前只渲染**标签名 + 篇数**，不显示图标和颜色。`src/data/tags.ts` 里的 `TAG_META`（每个标签的图标 / 颜色）暂时没有被引用，想恢复彩色图标可以在 `tags.astro` 里重新取用。
+标签页目前只渲染**标签名 + 篇数**，不显示图标和颜色（原先 `TAG_META` 那套图标 / 颜色已随代码整理一起删除，需要的话可以新建一份）。
 
 ## 版式
 
@@ -163,8 +163,8 @@ tags: [随笔, Markdown]
 ├─ scripts/lock.mjs        # 加密文章：明文 → 壳文件 + 密文
 ├─ src/
 │  ├─ content/posts/       # 文章 Markdown（加密文章只留 front matter）
-│  ├─ data/tags.ts         # 标签图标/颜色（当前未渲染）
 │  ├─ data/protected/      # 加密文章的密文 JSON
+│  ├─ components/          # 面包屑、文章目录等复用组件
 │  ├─ layouts/BaseLayout.astro
 │  ├─ pages/               # 页面与路由
 │  │  ├─ index.astro       # 首页（profile）

@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 ---
 <BaseLayout title="离线" description="网络连接恢复后即可继续浏览文章。">
   <header class="main container page-header" id="main-content">
-    <div class="breadcrumbs"><a href="/">首页</a></div>
+    <Breadcrumbs />
       <h1>当前离线</h1>
     <p>网络连接恢复后即可继续浏览文章。</p>
     <p><a class="btn" href="/">重新连接</a></p>
