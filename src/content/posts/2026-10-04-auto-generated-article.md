@@ -58,6 +58,7 @@ summary: "记录博客功能、样式与文章系统的变更（Astro 迁移、�
 - 深色背景再压深到 **`#0f151c`**，`--surface` / `--line` 跟着下调，深色下的搜索框与代码块底色改用 token。
 - **首页横幅换成新的夜景照片**（`/img/banner-night.webp`，1600×900 WebP、78 KB，原来那张 `head2.webp` 已删除），深色下的压暗从 0.82 收到 0.92，避免夜景再被压死。
 - **文章标题改用衬线体**：`--font-serif` 的中文回退从无衬线换成 Noto Serif SC / 宋体 / Songti（不额外下载字体），文章页 h1 与 `/posts.html` 列表标题都跟着变。
+- **站点图标重做**：原来的 Minecraft 像素头像换成「夜光」方案——深蓝圆角方标 + 一点蓝色光 + 地平线，取自首页横幅那张夜景。矢量源是 `public/favicon.svg`，`favicon.png` / `apple-touch-icon.png` / `img/icon-192.png` / `img/icon-512.png` 都由它渲染；`BaseLayout.astro` 同时声明 SVG 与 PNG 两条 `<link rel="icon">`，老的浏览器退回 PNG。
 - 新增头像 `public/img/portrait.webp`（由 `head.jpg` 居中裁切为 420×420）。
 - PWA 缓存版本升级到 `merisk-blog-v8`，预缓存加入 `/posts.html` 与头像。
 

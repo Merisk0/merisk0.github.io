@@ -154,11 +154,13 @@ tags: [随笔, Markdown]
 │  ├─ style.css            # 全站样式（含各页面级样式）
 │  ├─ fonts/               # 自托管字体（Inter / Cormorant Garamond variable woff2）
 │  ├─ theme.js             # 主题切换、菜单、灯箱、搜索、悬浮气泡等
-│  ├─ img/                 # 图片（banner-night.webp 首页横幅、portrait.webp 头像）
+│  ├─ img/                 # 图片（banner-night.webp 首页横幅、portrait.webp 头像、icon-192/512.png）
 │  ├─ admin/               # Decap CMS 配置
 │  ├─ CNAME                # 自定义域名
+│  ├─ favicon.svg          # 站点图标（矢量，PNG 由它渲染：favicon.png / apple-touch-icon.png）
 │  ├─ manifest.webmanifest
 │  ├─ service-worker.js    # PWA
+│  ├─ texture/             # 旧主题贴图包（无引用，仅存档）
 │  └─ robots.txt
 ├─ scripts/lock.mjs        # 加密文章：明文 → 壳文件 + 密文
 ├─ src/
