@@ -104,6 +104,47 @@
       updateTopLink();
     }
 
+    /* ---- 滚动位置记忆：后退 / 前进 / 刷新回到原来的位置 ---- */
+    const scrollStateKey = 'merisk-scroll-v1';
+    const scrollPageKey = function () {
+      return window.location.pathname + window.location.search;
+    };
+
+    // 离开页面前（点链接、后退、前进、刷新、关标签）记下当前位置
+    window.addEventListener('pagehide', function () {
+      let state = {};
+      try { state = JSON.parse(sessionStorage.getItem(scrollStateKey) || '{}') || {}; } catch (error) { return; }
+      state[scrollPageKey()] = Math.round(window.scrollY);
+      try { sessionStorage.setItem(scrollStateKey, JSON.stringify(state)); } catch (error) { /* 隐私模式忽略 */ }
+    });
+
+    (function restoreScrollPosition() {
+      // 只有「返回 / 前进 / 刷新」才恢复；从别的页面点进来的不跳位置
+      let type = 'navigate';
+      try {
+        const entry = performance.getEntriesByType('navigation')[0];
+        if (entry) type = entry.type;
+      } catch (error) { /* 老浏览器保守处理 */ }
+      if (type !== 'back_forward' && type !== 'reload') return;
+      // 带锚点时以锚点为准（标签页的 #tag-xxx、文章目录等）
+      if (window.location.hash) return;
+
+      let y = 0;
+      try {
+        const state = JSON.parse(sessionStorage.getItem(scrollStateKey) || '{}') || {};
+        y = Number(state[scrollPageKey()]) || 0;
+      } catch (error) { return; }
+      if (y <= 0) return;
+
+      const restore = function () {
+        try { window.scrollTo({ top: y, left: 0, behavior: 'instant' }); }
+        catch (error) { window.scrollTo(0, y); }
+      };
+      // 双 rAF 让布局先落定，再在 load 后补一次（图片撑高页面时位置会偏）
+      requestAnimationFrame(function () { requestAnimationFrame(restore); });
+      window.addEventListener('load', function () { window.setTimeout(restore, 0); }, { once: true });
+    })();
+
     /* ---- 灯箱 ---- */
     let lightboxNode = null;
     let lightboxLastFocused = null;

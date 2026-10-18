@@ -40,7 +40,7 @@ summary: "记录博客功能、样式与文章系统的变更（Astro 迁移、�
 ### 整理
 
 - 清掉全站 **16 个不再使用的 CSS 类**（`article-tags`、`data-row-bar`、`entry-cover`、`has-cover`、`section-head`、`status-grid`、`status-live`、`tag-title-wrap` 等）及其规则，并删掉整块只剩死规则的 `@media (max-width: 520px)`。
-- `theme.js` 删掉「滚动位置记忆」这段只写不读的死代码（`backStateKey` 从来没被读取过，来自早已下线的站内返回键）。
+- **滚动位置记忆重做**：原来那段是只写不读的死代码（`backStateKey` 有人写、`restoreStateKey` 从来没人写），实际从没生效过。现在改成离开页面时把位置按路径存进 `sessionStorage`，**后退 / 前进 / 刷新**时恢复原位；带 `#` 锚点（标签页的 `#tag-xxx`、文章目录）或从别的页面点进来时不跳位置。
 - 面包屑抽成 `src/components/Breadcrumbs.astro`，15 个页面共用，顺便把容器从 `div` 改成 `<nav aria-label="面包屑">`。
 - 文章目录的列表抽成 `src/components/TocList.astro`，宽屏右侧目录与正文上方的折叠目录共用同一份渲染，不再各自复制一遍嵌套 `<ul>`。
 - 删除三个无人引用的文件：`public/img/head.jpg`（736 KB）、`public/texture/*.zip`（4.1 MB，旧主题留下的贴图包）、`src/data/tags.ts`（标签图标已不渲染），以及 `formatDate` 之类不再使用的 import。
