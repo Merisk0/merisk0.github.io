@@ -267,7 +267,12 @@ body:not(.dark) #moon, body.dark #sun { display: none; }
 /* 深色下压一点亮度，免得横幅在暗色界面里太扎眼 */
 body.dark .home-banner img { filter: brightness(0.92) saturate(1); }
 
-.profile { margin-top: 1rem; padding: 0 0.8rem; }
+/* 注意：<body> 本身也带 class="profile"，所以这条必须限定到里面的那个 .profile div，
+   写成裸 .profile 会把 1rem 上边距和左右内边距一起套到 body 上：
+   顶部因此多出 16px，导航下移；滚动后粘性导航贴回 0，看着就像导航高度在变。
+   body 自己只要保留左右内边距（横幅两侧那两条底色）。 */
+.main > .profile { margin-top: 1rem; padding: 0 0.8rem; }
+body.profile { margin-top: 0; padding: 0 0.8rem; }
 body.profile .profile { margin-top: 0; margin-bottom: 2.2rem; }
 .profile_inner { background: transparent; border: 0; border-radius: 0; padding: 0; box-shadow: var(--shadow); }
 /* 首页：文字收成一栏（40rem），行距和间距都收紧，读起来更集中 */
