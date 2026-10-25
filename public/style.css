@@ -51,6 +51,9 @@
   --nav-h: 64px;
   --content-w: 920px;
   --shell-w: 980px;
+
+  /* 标题下面那一行简介 / 元信息的字号，正文里所有"比正文小一档"的东西都从这里派生 */
+  --text-sm: 0.9rem;
 }
 
 body.dark {
@@ -399,7 +402,7 @@ body.dark .profile_inner > img { border-color: var(--bg); }
 /* 7. 文章页 -------------------------------------------------------------- */
 .post-single { background: var(--bg); border: 0; border-radius: var(--radius); padding: 1.6rem; box-shadow: none; }
 .post-title { margin: 0.2rem 0 0.55rem; letter-spacing: -0.02em; line-height: 1.2; font-family: var(--font-serif); font-weight: 700; }
-.post-meta { color: var(--text-muted); font-size: 0.9rem; }
+.post-meta { color: var(--text-muted); font-size: var(--text-sm); }
 .post-meta a { color: var(--text-muted); }
 
 /* 目录（窄屏/中屏：正文上方的折叠框） */
@@ -574,14 +577,13 @@ body.dark .post-content pre.astro-code span { color: var(--shiki-dark) !importan
 
 .post-footer { margin-top: 1.4rem; }
 .post-tags { margin: 1rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 0.45rem; }
+/* 文章页底部的标签：字号比简介（--text-sm）再小一档，跟着简介一起缩放；
+   边框/底色/内边距由第 14 节的「胶囊扁平化」统一接管，这里只留字号和颜色 */
 .post-tags li a {
   display: inline-flex;
-  font-size: 0.82rem;
-  background: color-mix(in srgb, var(--surface-soft) 35%, var(--bg));
-  border: 1px solid var(--line);
+  font-size: calc(var(--text-sm) * 0.82);
   color: var(--text-muted);
-  border-radius: 999px;
-  padding: 0.14rem 0.6rem;
+  line-height: 1.5;
   text-decoration: none;
 }
 .post-tags li a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 0.15em; }
