@@ -58,6 +58,7 @@ summary: "记录博客功能、样式与文章系统的变更（Astro 迁移、�
 - 深色背景再压深到 **`#0f151c`**，`--surface` / `--line` 跟着下调，深色下的搜索框与代码块底色改用 token。
 - **首页横幅换成新的夜景照片**（`/img/banner-night.webp`，1600×900 WebP、78 KB，原来那张 `head2.webp` 已删除），深色下的压暗从 0.82 收到 0.92，避免夜景再被压死。
 - **文章标题改用衬线体**：`--font-serif` 的中文回退从无衬线换成 Noto Serif SC / 宋体 / Songti（不额外下载字体），文章页 h1 与 `/posts.html` 列表标题都跟着变。
+- **导航不再和横幅糊成一条**：深色模式下页面底色和夜景横幅都是深蓝，粘性导航（本来就固定 64px）在顶部会和横幅连成一大片深色，看着像导航高度随滚动变化。现在导航底色提亮一档、下边线改亮，滚动前后都收成边界清楚的 64px 横条。
 - **站点图标重做**：原来的 Minecraft 像素头像换成「像素蕨叶」——深蓝圆角方标上一片用 32×32 方块画的蕨叶（弯叶轴 + 18 对小叶，三档蕨绿 + 叶尖一点亮），结构取自头像那张蕨类照片，画法保留原头像的像素网格。矢量源是 `public/favicon.svg`，`favicon.png` / `apple-touch-icon.png` / `img/icon-192.png` / `img/icon-512.png` 都由它渲染；`BaseLayout.astro` 同时声明 SVG 与 PNG 两条 `<link rel="icon">`，老的浏览器退回 PNG。
 - 新增头像 `public/img/portrait.webp`（由 `head.jpg` 居中裁切为 420×420）。
 - PWA 缓存版本升级到 `merisk-blog-v8`，预缓存加入 `/posts.html` 与头像。

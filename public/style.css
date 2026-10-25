@@ -162,6 +162,14 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.25; letter-spacing: -0.02em; }
   border-bottom: 1px solid var(--line);
 }
 
+/* 深色模式里页面底色和横幅（夜景）都是深蓝，导航会和横幅糊成一条，
+   看起来像"导航条高度随滚动变化"。这里把导航整体提亮一档、下边线加亮，
+   让 64px 的导航条在顶部也始终有明确的边界。 */
+body.dark .header {
+  background: color-mix(in srgb, var(--bg) 90%, var(--text) 10%);
+  border-bottom-color: color-mix(in srgb, var(--text) 18%, transparent);
+}
+
 .nav {
   width: min(var(--shell-w), calc(100% - 2rem));
   margin: 0 auto;
