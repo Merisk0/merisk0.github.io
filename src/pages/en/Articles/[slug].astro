@@ -1,0 +1,33 @@
+---
+import { getEntry } from 'astro:content';
+import ArticleView from '../../../views/ArticleView.astro';
+import { getPosts, postSlug } from '../../../utils';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+
+  return posts.map((entry, index) => {
+    const pageTag = entry.data.tags[0];
+    const related = pageTag
+      ? posts.filter((post) => post.id !== entry.id && post.data.tags.includes(pageTag)).slice(0, 3)
+      : [];
+    return {
+      params: { slug: postSlug(entry) },
+      props: {
+        entry,
+        previous: posts[index + 1] ?? null,
+        next: posts[index - 1] ?? null,
+        related,
+        payload: null,
+      },
+    };
+  });
+}
+
+const props = Astro.props;
+// 译文文件按 URL slug 命名；带 permalink 的文章也可以用原始 id 命名
+const entryEn =
+  (await getEntry('postsEn', postSlug(props.entry))) ?? (await getEntry('postsEn', props.entry.id));
+---
+
+<ArticleView {...props} entryEn={entryEn} lang="en" />

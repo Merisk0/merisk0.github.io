@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { getPosts, postUrl, formatDate, postStats, thousands, listingSummary, postTitle } from '../utils';
+import { dict, localePath, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'zh' } = Astro.props;
+const d = dict(lang);
+const posts = await getPosts();
+const description =
+  lang === 'en'
+    ? "All posts on Merisk'B1og, newest first."
+    : "Merisk'B1og 的全部文章，按时间倒序。";
+const pageSize = 8;
+---
+
+<BaseLayout
+  title={d.list.title}
+  description={description}
+  lang={lang}
+  altHref={localePath(lang === 'zh' ? 'en' : 'zh', '/posts.html')}
+>
+  <main class="main container" id="main-content">
+    <header class="page-header">
+      <Breadcrumbs lang={lang} />
+      <h1>{d.list.title}</h1>
+      <p>{d.list.subtitle(posts.length)}</p>
+    </header>
+
+    <ul class="entry-list" id="article-grid">
+        {posts.map((post, index) => {
+          const stats = postStats(post);
+          return (
+            <li class="entry-item">
+              <h2 class="entry-title">
+                {index === 0 && <span class="entry-badge">{d.list.latest}</span>}
+                <a href={postUrl(post, lang)}>{postTitle(post, lang)}</a>
+              </h2>
+              {!post.data.protected && <p class="entry-summary">{listingSummary(post, lang)}</p>}
+              <p class="entry-meta">
+                <span>{formatDate(post.data.date)}</span>
+                {post.data.protected ? (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <span>{d.list.encrypted}</span>
+                  </>
+                ) : (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <span>{d.list.chars(thousands(stats.chars))}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>{d.list.minutes(stats.minutes)}</span>
+                  </>
+                )}
+                <span class="entry-reads" data-reads={post.id} hidden></span>
+              </p>
+            </li>
+          );
+        })}
+    </ul>
+    <p class="load-status" id="load-status" aria-live="polite"></p>
+
+
+    <div class="load-more-wrap">
+      <button class="button" id="load-more" type="button">{d.list.loadMore}</button>
+      <button class="button" id="load-less" type="button" hidden>{lang === 'en' ? 'Show less' : '加载更少'}</button>
+    </div>
+  </main>
+
+  <script is:inline define:vars={{ pageSize, shownPrefix: lang === 'en' ? 'Showing ' : '已显示 ', shownSuffix: lang === 'en' ? '' : ' 篇', shownJoiner: ' / ', readsSuffix: lang === 'en' ? ' views' : ' 次阅读' }}>
+  (function () {
+    var items = Array.from(document.querySelectorAll('#article-grid .entry-item'));
+    var status = document.getElementById('load-status');
+    var loadMore = document.getElementById('load-more');
+    var loadLess = document.getElementById('load-less');
+    var limit = pageSize;
+
+    function render() {
+      items.forEach(function (item, i) { item.hidden = i >= limit; });
+      if (loadMore) loadMore.hidden = limit >= items.length;
+      if (loadLess) loadLess.hidden = limit <= pageSize;
+      if (status) {
+        status.textContent =
+          shownPrefix + Math.min(limit, items.length) + shownJoiner + items.length + shownSuffix;
+      }
+    }
+
+    if (loadMore) loadMore.addEventListener('click', function () { limit += pageSize; render(); });
+    if (loadLess) loadLess.addEventListener('click', function () { limit = Math.max(pageSize, limit - pageSize); render(); });
+    render();
+
+    /* 阅读次数：每个条目单独查一次计数服务，失败就保持隐藏，不影响其它内容 */
+    var readNodes = Array.from(document.querySelectorAll('.entry-reads[data-reads]'));
+    if (readNodes.length && 'fetch' in window) {
+      readNodes.forEach(function (node) {
+        var key = node.getAttribute('data-reads');
+        fetch('https://abacus.jasoncameron.dev/get/merisk-blog/' + encodeURIComponent(key), { signal: AbortSignal.timeout(8000) })
+          .then(function (res) { return res.ok ? res.json() : null; })
+          .then(function (data) {
+            if (!data || typeof data.value !== 'number' || data.value <= 0) return;
+            node.textContent = ' · ' + data.value + readsSuffix;
+            node.hidden = false;
+          })
+          .catch(function () {});
+      });
+    }
+  })();
+  </script>
+</BaseLayout>

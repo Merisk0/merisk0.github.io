@@ -1,0 +1,251 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../site';
+import { postUrl, formatDate, postTitle } from '../utils';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import TocList from '../components/TocList.astro';
+import { dict, localePath, type Lang } from '../i18n';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'posts'>;
+  entryEn?: CollectionEntry<'postsEn'> | null;
+  previous: CollectionEntry<'posts'> | null;
+  next: CollectionEntry<'posts'> | null;
+  related: CollectionEntry<'posts'>[];
+  payload: unknown;
+  lang?: Lang;
+}
+
+const { entry, entryEn = null, previous, next, related, payload, lang = 'zh' } = Astro.props;
+const d = dict(lang);
+const isProtected = Boolean(entry.data.protected);
+const title = postTitle(entry, lang);
+
+// 英文页优先渲染英文正文；没有译文就显示提示并引导去看中文原文
+const bodyEntry = lang === 'en' ? entryEn : entry;
+const hasBody = Boolean(bodyEntry) && !isProtected;
+const rendered = hasBody && bodyEntry ? await render(bodyEntry) : null;
+const Content = rendered?.Content ?? null;
+const headings = rendered?.headings ?? [];
+
+const author = entry.data.author ?? SITE.author;
+const rawBody = (bodyEntry?.body ?? entry.body ?? '').replace(/<[^>]*>/g, '').replace(/\n/g, '');
+const contentChars = rawBody.length;
+const wordCount = rawBody.trim() ? rawBody.trim().split(/\s+/).length : 0;
+const readingMinutes = Math.max(1, Math.ceil((lang === 'en' ? wordCount : contentChars) / 400));
+
+// 目录：h2 为一级，h3 挂在最近的一级下面
+const tocItems: Array<{ slug: string; text: string; children: Array<{ slug: string; text: string }> }> = [];
+for (const heading of headings) {
+  if (heading.depth === 2) {
+    tocItems.push({ slug: heading.slug, text: heading.text, children: [] });
+  } else if (heading.depth === 3) {
+    const last = tocItems[tocItems.length - 1];
+    if (last) last.children.push({ slug: heading.slug, text: heading.text });
+    else tocItems.push({ slug: heading.slug, text: heading.text, children: [] });
+  }
+}
+
+const s =
+  lang === 'en'
+    ? {
+        description: isProtected ? 'Encrypted - password required' : entry.data.summaryEn ?? entry.data.summary ?? SITE.description,
+        encryptedShort: 'Encrypted',
+        minutes: `${readingMinutes} min read`,
+        words: `${wordCount.toLocaleString('en-US')} words`,
+        none: 'None',
+        copy: 'Copy link',
+        share: 'Share',
+        noTranslation: 'This post has no English translation yet.',
+        readZh: 'Read the Chinese original',
+      }
+    : {
+        description: isProtected ? '已加密，需要密码查看' : entry.data.summary ?? SITE.description,
+        encryptedShort: '已加密',
+        minutes: `约 ${readingMinutes} 分钟`,
+        words: `${contentChars} 字`,
+        none: '没有了',
+        copy: '复制链接',
+        share: '分享',
+        noTranslation: '这篇文章还没有英文译文。',
+        readZh: '阅读中文原文',
+      };
+---
+
+<BaseLayout
+  title={title}
+  description={s.description}
+  type="article"
+  bodyClass="single"
+  lang={lang}
+  altHref={localePath(lang === 'zh' ? 'en' : 'zh', postUrl(entry))}
+>
+  <main class="main container" id="main-content">
+    <article class="post-single">
+      <header class="post-header">
+        <Breadcrumbs lang={lang} parents={[{ href: localePath(lang, '/posts.html'), label: d.nav.posts }]} />
+        <h1 class="post-title">{title}</h1>
+        <div class="post-meta">
+          <span>{formatDate(entry.data.date)}</span>
+          &nbsp;·&nbsp;
+          {isProtected
+            ? <span>{s.encryptedShort}</span>
+            : hasBody
+              ? <><span>{s.minutes}</span>&nbsp;·&nbsp;<span>{s.words}</span>&nbsp;·&nbsp;<span>{author}</span></>
+              : <span>{lang === 'en' ? 'Chinese original' : author}</span>}
+        </div>
+      </header>
+
+      {tocItems.length > 0 && (
+        <>
+          {/* 宽屏：右侧固定目录 */}
+          <nav class="toc-side" data-toc-side aria-label={d.article.toc}>
+            <TocList items={tocItems} />
+          </nav>
+
+          {/* 中窄屏：正文上方的折叠目录 */}
+          <div class="toc-inline">
+            <details>
+              <summary><span class="details">{lang === 'en' ? 'Contents' : '目录'}</span></summary>
+              <div class="inner">
+                <TocList items={tocItems} />
+              </div>
+            </details>
+          </div>
+        </>
+      )}
+
+      {isProtected ? (
+        lang === 'en' ? (
+          <div class="article-lock" id="article-lock">
+            <div class="article-lock-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="10.5" width="16" height="10" rx="2.6"></rect>
+                <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"></path>
+                <circle cx="12" cy="15.6" r="1.25"></circle>
+              </svg>
+            </div>
+            <h2>This post is encrypted</h2>
+            <p>The body is only available in the Chinese original.</p>
+            <p><a class="button" href={postUrl(entry)}>{s.readZh}</a></p>
+          </div>
+        ) : (
+          <>
+            <div class="article-lock" id="article-lock">
+              <div class="article-lock-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="4" y="10.5" width="16" height="10" rx="2.6"></rect>
+                  <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"></path>
+                  <circle cx="12" cy="15.6" r="1.25"></circle>
+                </svg>
+              </div>
+              <h2>这篇文章已加密</h2>
+              <p>请输入访问密码查看正文</p>
+              <form class="article-lock-form" id="article-lock-form">
+                <input id="article-lock-password" type="password" autocomplete="current-password" placeholder="输入密码" aria-label="访问密码" required>
+                <button type="submit">解锁</button>
+              </form>
+              <p class="article-lock-error" id="article-lock-error" hidden>密码不正确，请重试</p>
+            </div>
+            <div class="post-content" id="article-content" hidden></div>
+            <script type="application/json" id="article-lock-payload" set:html={JSON.stringify(payload)}></script>
+          </>
+        )
+      ) : hasBody ? (
+        <div class="post-content">
+          {Content && <Content />}
+        </div>
+      ) : (
+        <div class="post-content">
+          <p>{s.noTranslation}</p>
+          <p><a class="button" href={postUrl(entry)}>{s.readZh}</a></p>
+        </div>
+      )}
+
+      <footer class="post-footer">
+        <div class="article-share" aria-label={lang === 'en' ? 'Share this post' : '分享文章'}>
+          <button type="button" data-share="copy">{s.copy}</button>
+          <button type="button" data-share="native">{s.share}</button>
+          <button type="button" data-share="qq">QQ</button>
+        </div>
+        {entry.data.tags.length > 0 && (
+          <ul class="post-tags">
+            {entry.data.tags.map((tag) => (
+              <li><a href={`${localePath(lang, '/tags.html')}#tag-${tag}`}>#{tag}</a></li>
+            ))}
+          </ul>
+        )}
+      </footer>
+
+      <nav class="post-nav" aria-label={lang === 'en' ? 'Post navigation' : '文章导航'}>
+        {previous ? (
+          <a class="post-nav-button prev" href={postUrl(previous, lang)}>
+            <span>{d.article.prev}</span>
+            <strong>{postTitle(previous, lang)}</strong>
+          </a>
+        ) : (
+          <span class="post-nav-button prev disabled">
+            <span>{d.article.prev}</span>
+            <strong>{s.none}</strong>
+          </span>
+        )}
+        {next ? (
+          <a class="post-nav-button next" href={postUrl(next, lang)}>
+            <span>{d.article.next}</span>
+            <strong>{postTitle(next, lang)}</strong>
+          </a>
+        ) : (
+          <span class="post-nav-button next disabled">
+            <span>{d.article.next}</span>
+            <strong>{s.none}</strong>
+          </span>
+        )}
+      </nav>
+
+      {related.length > 0 && (
+        <section class="related-posts" aria-labelledby="related-posts-title">
+          <div class="related-head">
+            <h2 id="related-posts-title">{d.article.related}</h2>
+          </div>
+          <div class="related-grid">
+            {related.map((post) => (
+              <a class="related-card" href={postUrl(post, lang)}>
+                <small>{formatDate(post.data.date)}</small>
+                <strong>{postTitle(post, lang)}</strong>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {SITE.giscus.enabled && SITE.giscus.categoryId && (
+        <div
+          class="giscus-wrap"
+          data-giscus="1"
+          data-giscus-repo={SITE.giscus.repo}
+          data-giscus-repo-id={SITE.giscus.repoId}
+          data-giscus-category={SITE.giscus.category}
+          data-giscus-category-id={SITE.giscus.categoryId}
+          data-giscus-mapping={SITE.giscus.mapping}
+          data-giscus-strict={SITE.giscus.strict}
+          data-giscus-reactions-enabled={SITE.giscus.reactionsEnabled}
+          data-giscus-emit-metadata={SITE.giscus.emitMetadata}
+          data-giscus-input-position={SITE.giscus.inputPosition}
+          data-giscus-lang={lang === 'en' ? 'en' : SITE.giscus.lang}
+          data-giscus-loading={SITE.giscus.loading}
+        ></div>
+      )}
+    </article>
+  </main>
+
+  {/* 阅读次数：打开文章时给计数服务 +1（本地预览不计数，免得把测试算进真实数据） */}
+  <script is:inline define:vars={{ counterKey: entry.id }}>
+    if (location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+      try {
+        fetch('https://abacus.jasoncameron.dev/hit/merisk-blog/' + encodeURIComponent(counterKey), { keepalive: true }).catch(function () {});
+      } catch (e) {}
+    }
+  </script>
+</BaseLayout>

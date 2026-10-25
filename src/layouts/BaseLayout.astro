@@ -1,5 +1,6 @@
 ---
-import { SITE, NAV_LINKS, FOOTER_LINKS } from '../site';
+import { SITE, FOOTER_LINKS } from '../site';
+import { dict, localePath, type Lang } from '../i18n';
 
 interface Props {
   title?: string;
@@ -8,9 +9,22 @@ interface Props {
   noindex?: boolean;
   /** body 上的语义类名：profile（首页）/ list（列表页）/ single（文章页） */
   bodyClass?: string;
+  /** 页面语言；默认中文 */
+  lang?: Lang;
+  /** 另一语言的同页地址；不给就不显示语言切换器 */
+  altHref?: string;
 }
 
-const { title, description, type = 'website', noindex = false, bodyClass = 'list' } = Astro.props;
+const {
+  title,
+  description,
+  type = 'website',
+  noindex = false,
+  bodyClass = 'list',
+  lang = 'zh',
+  altHref,
+} = Astro.props;
+const d = dict(lang);
 const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
 const desc = description ?? SITE.description;
 const rawPath = Astro.url.pathname;
@@ -23,14 +37,44 @@ const path = rawPath.endsWith('/index.html') ? rawPath.slice(0, -'index.html'.le
 const isActive = (href: string) => {
   // 带 # 的锚点是首页内部跳转，不参与 active 判定，避免同时高亮两项
   if (href.includes('#')) return false;
-  if (href === '/') return path === '/' || path === '';
+  const home = localePath(lang, '/');
+  if (href === home) return path === home || path === `${home}index.html`;
   const clean = href.replace(/\.html$/, '');
-  return path === href || path === clean || path.startsWith(`${clean}/`);
+  return path === href || path === clean || path.startsWith(`${clean}/`) || path.startsWith(`${clean}.html`);
 };
+
+const navLinks = [
+  { href: localePath(lang, '/'), label: d.nav.home },
+  { href: localePath(lang, '/posts.html'), label: d.nav.posts },
+  { href: localePath(lang, '/archive.html'), label: d.nav.archive },
+  { href: localePath(lang, '/tags.html'), label: d.nav.tags },
+  { href: localePath(lang, '/AboutMe.html'), label: d.nav.about },
+  { href: localePath(lang, '/status.html'), label: d.nav.status },
+  { href: localePath(lang, '/pages.html'), label: d.nav.more },
+];
+
+const footerLinks = FOOTER_LINKS.map((link) => ({
+  ...link,
+  label:
+    link.href === '/archive.html'
+      ? d.footer.archive
+      : link.href === '/tags.html'
+        ? d.footer.tags
+        : link.href === '/search.html'
+          ? d.footer.search
+          : link.href === '/pages.html'
+            ? d.footer.more
+            : link.label,
+  href: link.external ? link.href : localePath(lang, link.href),
+}));
+
+const altLang: Lang = lang === 'zh' ? 'en' : 'zh';
+const altUrl = altHref ? new URL(altHref, SITE.url).href : undefined;
+const selfUrl = canonical;
 ---
 
 <!doctype html>
-<html lang={SITE.lang}>
+<html lang={d.htmlLang}>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -38,11 +82,15 @@ const isActive = (href: string) => {
   <meta name="description" content={desc}>
   <link rel="canonical" href={canonical}>
   {noindex && <meta name="robots" content="noindex">}
+  {altUrl && <link rel="alternate" hreflang={d.htmlLang} href={selfUrl}>}
+  {altUrl && <link rel="alternate" hreflang={dict(altLang).htmlLang} href={altUrl}>}
+  {altUrl && <link rel="alternate" hreflang="x-default" href={lang === 'zh' ? selfUrl : altUrl}>}
   <meta property="og:type" content={type}>
   <meta property="og:title" content={pageTitle}>
   <meta property="og:description" content={desc}>
   <meta property="og:url" content={canonical}>
   <meta property="og:site_name" content={SITE.title}>
+  <meta property="og:locale" content={d.htmlLang.replace('-', '_')}>
   <meta name="twitter:card" content="summary">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0f151c" media="(prefers-color-scheme: dark)">
@@ -53,8 +101,8 @@ const isActive = (href: string) => {
   <link rel="stylesheet" href={`/style.css?v=${buildVersion}`}>
   <script defer is:inline src={`/theme.js?v=${buildVersion}`}></script>
 </head>
-<body class={bodyClass} id="top">
-<a class="skip-link" href="#main-content">跳到主要内容</a>
+<body class={bodyClass} id="top" data-lang={lang} data-alt-lang-href={altHref}>
+<a class="skip-link" href="#main-content">{d.skip}</a>
 <script is:inline>
   // 尽早决定主题，避免首屏闪白：localStorage 优先，其次跟随系统
   try {
@@ -65,13 +113,13 @@ const isActive = (href: string) => {
   } catch (e) {}
 </script>
 <header class="header">
-  <nav class="nav" aria-label="站点导航">
+  <nav class="nav" aria-label={d.nav.home}>
     <div class="logo">
-      <a href="/" accesskey="h" title={`${SITE.title} (Alt + H)`}>{SITE.title}</a>
+      <a href={localePath(lang, '/')} accesskey="h" title={`${SITE.title} (Alt + H)`}>{SITE.title}</a>
     </div>
     <div class="nav-right">
       <ul id="menu">
-        {NAV_LINKS.map((link) => (
+        {navLinks.map((link) => (
           <li>
             <a href={link.href} class="menu-link" aria-label={link.label} title={link.label}>
               <span class={isActive(link.href) ? 'active' : ''}>{link.label}</span>
@@ -79,19 +127,19 @@ const isActive = (href: string) => {
           </li>
         ))}
         <li>
-          <a href="/search.html" class="menu-link menu-link-icon" aria-label="搜索" title="搜索">
+          <a href={localePath(lang, '/search.html')} class="menu-link menu-link-icon" aria-label={d.nav.search} title={d.nav.search}>
             <span>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.6-3.6"></path></svg>
-              <span class="sr-only">搜索</span>
+              <span class="sr-only">{d.nav.search}</span>
             </span>
           </a>
         </li>
       </ul>
-      <button id="theme-toggle" type="button" aria-label="切换深浅色" aria-pressed="false" title="切换深浅色">
+      <button id="theme-toggle" type="button" aria-label={d.theme.toggle} aria-pressed="false" title={d.theme.toggle}>
         <svg id="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79"></path></svg>
         <svg id="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
       </button>
-      <button id="menu-toggle" class="menu-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="menu">
+      <button id="menu-toggle" class="menu-toggle" type="button" aria-label={d.nav.more} aria-expanded="false" aria-controls="menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
       </button>
     </div>
@@ -100,7 +148,7 @@ const isActive = (href: string) => {
 <slot />
 <footer class="footer">
   <div class="footer-links">
-    {FOOTER_LINKS.map((link) => (
+    {footerLinks.map((link) => (
       <a
         href={link.href}
         target={link.external ? '_blank' : undefined}
@@ -108,12 +156,43 @@ const isActive = (href: string) => {
       >{link.label}</a>
     ))}
   </div>
+  {altHref && (
+    <div class="footer-lang" aria-label={d.footer.langLabel}>
+      <span class="footer-lang-current" aria-current="true">{d.selfName}</span>
+      <span aria-hidden="true">·</span>
+      <a href={altHref} data-set-lang={altLang} lang={dict(altLang).htmlLang}>{d.otherName}</a>
+    </div>
+  )}
   <div>
-    <span>© 2020–2026 <a href="/">{SITE.title}</a></span>&nbsp;·&nbsp;<span>Powered by <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a></span>
+    <span>© 2020–2026 <a href={localePath(lang, '/')}>{SITE.title}</a></span>&nbsp;·&nbsp;<span>{d.footer.poweredBy} <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a></span>
   </div>
 </footer>
-<a href="#top" id="top-link" class="top-link" aria-label="回到顶部" title="回到顶部 (Alt + G)" accesskey="g">
+<a href="#top" id="top-link" class="top-link" aria-label={d.footer.top} title={`${d.footer.top} (Alt + G)`} accesskey="g">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V5"></path><path d="m5 12 7-7 7 7"></path></svg>
 </a>
+<script is:inline>
+  // 语言偏好：最下方切换器点一下即记住；下次访问自动跳到对应语言版本
+  (function () {
+    try {
+      var pref = localStorage.getItem('pref-lang');
+      var lang = document.body.getAttribute('data-lang');
+      var alt = document.body.getAttribute('data-alt-lang-href');
+      var guard = sessionStorage.getItem('lang-guard');
+      if (pref && lang && pref !== lang && alt && guard !== lang + '>' + pref) {
+        sessionStorage.setItem('lang-guard', lang + '>' + pref);
+        location.replace(alt);
+        return;
+      }
+      sessionStorage.removeItem('lang-guard');
+    } catch (e) {}
+    document.querySelectorAll('[data-set-lang]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        try {
+          localStorage.setItem('pref-lang', a.getAttribute('data-set-lang'));
+        } catch (e) {}
+      });
+    });
+  })();
+</script>
 </body>
 </html>

@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPosts, postUrl, formatMonthDay, formatYear, listingSummary, postTitle } from '../utils';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { dict, localePath, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'zh' } = Astro.props;
+const d = dict(lang);
+const posts = await getPosts();
+const yearNames = [...new Set(posts.map((post) => formatYear(post.data.date)))];
+const postsByYear = yearNames.map((year) => ({
+  year,
+  items: posts.filter((post) => formatYear(post.data.date) === year),
+}));
+const tagCount = new Set(posts.flatMap((post) => post.data.tags)).size;
+const taggedCount = posts.filter((post) => post.data.tags.length > 0).length;
+
+const s =
+  lang === 'en'
+    ? {
+        description: "Browse every post on Merisk'B1og by year.",
+        years: (n: number) => `${n} years`,
+        tags: (n: number) => `${n} tags`,
+        tagged: (n: number) => `${n} tagged`,
+        searchLabel: 'Search',
+        placeholder: 'Search title, summary or tag…',
+        count: (n: number) => `${n} posts`,
+        yearFilter: 'Filter by year',
+        emptyTitle: 'No posts matched',
+        emptyHint: 'Try another keyword or pick a different year.',
+        reset: 'Reset filters',
+      }
+    : {
+        description: "按年份浏览 Merisk'B1og 的全部文章。",
+        years: (n: number) => `${n} 个年份`,
+        tags: (n: number) => `${n} 个标签`,
+        tagged: (n: number) => `${n} 篇已标记`,
+        searchLabel: '搜索',
+        placeholder: '搜索标题、摘要或标签…',
+        count: (n: number) => `${n} 篇文章`,
+        yearFilter: '年份筛选',
+        emptyTitle: '没有找到匹配的文章',
+        emptyHint: '试试更换关键词或选择其他年份。',
+        reset: '重置筛选',
+      };
+---
+
+<BaseLayout
+  title={d.archive.title}
+  description={s.description}
+  bodyClass="single"
+  lang={lang}
+  altHref={localePath(lang === 'zh' ? 'en' : 'zh', '/archive.html')}
+>
+  <main class="main container" id="main-content">
+    <article class="post-single">
+      <header class="post-header">
+        <Breadcrumbs lang={lang} />
+        <h1 class="post-title">{d.archive.title}</h1>
+        <div class="post-meta">
+          <span>{lang === 'en' ? `${posts.length} posts` : `共 ${posts.length} 篇文章`}</span>
+          &nbsp;·&nbsp;<span>{s.years(postsByYear.length)}</span>
+          &nbsp;·&nbsp;<span>{s.tags(tagCount)}</span>
+          &nbsp;·&nbsp;<span>{s.tagged(taggedCount)}</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+        <div class="search-toolbar">
+          <label class="search-box">
+            <span>{s.searchLabel}</span>
+            <input id="archive-search" type="search" placeholder={s.placeholder} autocomplete="off">
+          </label>
+          <div class="search-count" id="archive-count">{s.count(posts.length)}</div>
+        </div>
+
+        <div class="archive-year-filter" id="archive-year-filter" aria-label={s.yearFilter}>
+          <button class="tag-filter year-filter active" type="button" data-year="all">{d.archive.all}</button>
+          {postsByYear.map((group) => (
+            <button class="tag-filter year-filter" type="button" data-year={group.year}>{group.year}</button>
+          ))}
+        </div>
+
+        <div class="archive-results">
+          {postsByYear.map((group) => (
+            <section class="archive-year" data-year={group.year}>
+              <h2>{group.year}</h2>
+              <div class="archive-list">
+                {group.items.map((post) => (
+                  <a
+                    class="archive-entry"
+                    href={postUrl(post, lang)}
+                    data-year={group.year}
+                    data-search={`${postTitle(post, lang)} ${listingSummary(post, lang)} ${post.data.tags.join(' ')}`.toLowerCase()}
+                  >
+                    <span class="archive-date" aria-hidden="true">{formatMonthDay(post.data.date)}</span>
+                    <span class="archive-main">
+                      <span class="archive-entry-title">{postTitle(post, lang)}</span>
+                      {(post.data.summary || post.data.protected) && <small>{listingSummary(post, lang)}</small>}
+                      {post.data.tags.length > 0 && (
+                        <span class="archive-meta">
+                          {post.data.tags.map((tag) => <span class="archive-tag">#{tag}</span>)}
+                        </span>
+                      )}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        <div class="archive-empty" id="archive-empty" hidden>
+          <strong>{s.emptyTitle}</strong>
+          <span>{s.emptyHint}</span>
+          <button class="button" id="archive-reset" type="button">{s.reset}</button>
+        </div>
+      </div>
+    </article>
+  </main>
+</BaseLayout>

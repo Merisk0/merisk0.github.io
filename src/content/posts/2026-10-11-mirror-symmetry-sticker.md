@@ -1,9 +1,11 @@
 ---
 title: "对称表情包：把图片和 GIF 从中间镜像一下"
+titleEn: "Mirror Symmetry: Flipping Images and GIFs Across the Centre"
 date: 2026-10-11
 author: "Merisk"
 tags: [工具, Python, 科技]
 summary: "为了给 QQ 群做对称表情包，写了一个能把图片和 GIF 从中间镜像的桌面小工具。顺手记一下镜像算法、GIF 逐帧处理和踩过的坑。"
+summaryEn: "A small desktop tool that mirrors an image or GIF across its centre axis, built for QQ sticker packs - with notes on the mirroring maths, frame-by-frame GIF handling and the pitfalls along the way."
 ---
 
 最近在QQ群聊天时,经常需要对表情包对称来获得一些更有趣味性的表情。

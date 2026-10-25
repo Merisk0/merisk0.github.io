@@ -9,9 +9,10 @@ export function postSlug(entry: PostEntry): string {
   return entry.id.replace(/^\d{4}-\d{2}-\d{2}-/, '');
 }
 
-/** 文章最终地址，例如 /Articles/6.html */
-export function postUrl(entry: PostEntry): string {
-  return `/Articles/${postSlug(entry)}.html`;
+/** 文章最终地址，例如 /Articles/6.html；英文版加 /en 前缀 */
+export function postUrl(entry: PostEntry, lang: 'zh' | 'en' = 'zh'): string {
+  const prefix = lang === 'en' ? '/en' : '';
+  return `${prefix}/Articles/${postSlug(entry)}.html`;
 }
 
 function pad(n: number): string {
@@ -40,8 +41,14 @@ export function formatYear(date: Date): string {
   return String(date.getFullYear());
 }
 
+/** 文章标题：英文版优先 titleEn，没有就回落到中文标题。 */
+export function postTitle(entry: PostEntry, lang: 'zh' | 'en' = 'zh'): string {
+  return lang === 'en' ? entry.data.titleEn ?? entry.data.title : entry.data.title;
+}
+
 /** 首页卡片摘要：优先 summary，其次从正文截取。 */
-export function excerpt(entry: PostEntry, max = 90): string {
+export function excerpt(entry: PostEntry, max = 90, lang: 'zh' | 'en' = 'zh'): string {
+  if (lang === 'en' && entry.data.summaryEn) return entry.data.summaryEn;
   if (entry.data.summary) return entry.data.summary;
   const text = (entry.body ?? '')
     .replace(/```[\s\S]*?```/g, ' ')
@@ -55,9 +62,20 @@ export function excerpt(entry: PostEntry, max = 90): string {
 }
 
 /** 列表用的摘要：加密文章不暴露摘要文案。 */
-export function listingSummary(entry: PostEntry): string {
-  if (entry.data.protected) return '已加密，需要密码查看';
-  return excerpt(entry);
+export function listingSummary(entry: PostEntry, lang: 'zh' | 'en' = 'zh'): string {
+  if (entry.data.protected) return lang === 'en' ? 'Encrypted - password required' : '已加密，需要密码查看';
+  return excerpt(entry, 90, lang);
+}
+
+/** 正文统计：字数（去掉 HTML 标签与换行）与预估阅读时间（400 字 / 分钟）。 */
+export function postStats(entry: PostEntry): { chars: number; minutes: number } {
+  const chars = (entry.body ?? '').replace(/<[^>]*>/g, '').replace(/\n/g, '').length;
+  return { chars, minutes: Math.max(1, Math.ceil(chars / 400)) };
+}
+
+/** 给数字加千分位，例如 3189 → 3,189。 */
+export function thousands(n: number): string {
+  return n.toLocaleString('en-US');
 }
 /** 所有已发布文章，按时间倒序（新 → 旧）。 */
 export async function getPosts(): Promise<PostEntry[]> {

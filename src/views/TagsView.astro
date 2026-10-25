@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPosts, postUrl, groupByTag, listingSummary, postTitle } from '../utils';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { dict, localePath, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'zh' } = Astro.props;
+const d = dict(lang);
+const posts = await getPosts();
+const tagGroups = groupByTag(posts);
+const taggedCount = posts.filter((post) => post.data.tags.length > 0).length;
+
+const s =
+  lang === 'en'
+    ? {
+        description: "Browse every post on Merisk'B1og by tag.",
+        tags: (n: number) => `${n} tags`,
+        tagged: (n: number) => `${n} tagged`,
+        posts: (n: number) => `${n} posts`,
+        searchLabel: 'Search',
+        placeholder: 'Search tags…',
+        overview: 'Tag overview',
+        count: (n: number) => `${n}`,
+        emptyTitle: 'No tags yet',
+        emptyHint: 'Tags appear here once posts are tagged.',
+      }
+    : {
+        description: "按标签浏览 Merisk'B1og 的全部文章。",
+        tags: (n: number) => `${n} 个标签`,
+        tagged: (n: number) => `${n} 篇已标记`,
+        posts: (n: number) => `${n} 篇文章`,
+        searchLabel: '搜索',
+        placeholder: '搜索标签…',
+        overview: '标签概览',
+        count: (n: number) => `${n} 个标签`,
+        emptyTitle: '暂无标签',
+        emptyHint: '给文章添加 tags 后会自动显示。',
+      };
+---
+
+<BaseLayout
+  title={d.tags.title}
+  description={s.description}
+  bodyClass="single"
+  lang={lang}
+  altHref={localePath(lang === 'zh' ? 'en' : 'zh', '/tags.html')}
+>
+  <main class="main container" id="main-content">
+    <article class="post-single">
+      <header class="post-header">
+        <Breadcrumbs lang={lang} />
+        <h1 class="post-title">{d.tags.title}</h1>
+        <div class="post-meta">
+          <span>{s.tags(tagGroups.length)}</span>
+          &nbsp;·&nbsp;<span>{s.tagged(taggedCount)}</span>
+          &nbsp;·&nbsp;<span>{s.posts(posts.length)}</span>
+        </div>
+      </header>
+
+      <div class="post-content">
+        <div class="search-toolbar">
+          <label class="search-box">
+            <span>{s.searchLabel}</span>
+            <input id="tag-search" type="search" placeholder={s.placeholder} autocomplete="off">
+          </label>
+          <div class="search-count" id="tag-count">{s.count(tagGroups.length)}</div>
+        </div>
+
+        <div class="tag-overview" aria-label={s.overview}>
+          {tagGroups.map(([tag, items]) => (
+            <a class="tag-chip" data-tag-name={tag} href={`#tag-${tag}`}>
+              <span>{tag}</span>
+              <b>{items.length}</b>
+            </a>
+          ))}
+        </div>
+
+        {tagGroups.length > 0 ? tagGroups.map(([tag, items]) => (
+          <section class="tag-section" id={`tag-${tag}`} data-tag-name={tag}>
+            <div class="tag-section-head">
+              <h2>{tag}</h2>
+              <span class="tag-count">{d.tags.posts(items.length)}</span>
+            </div>
+            <div class="tag-post-list">
+              {items.map((post) => (
+                <a class="tag-post" href={postUrl(post, lang)}>
+                  <span class="tag-post-main">
+                    <strong>{postTitle(post, lang)}</strong>
+                    {(post.data.summary || post.data.protected) && <small>{listingSummary(post, lang)}</small>}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )) : (
+          <div class="archive-empty"><strong>{s.emptyTitle}</strong><span>{s.emptyHint}</span></div>
+        )}
+      </div>
+    </article>
+  </main>
+</BaseLayout>

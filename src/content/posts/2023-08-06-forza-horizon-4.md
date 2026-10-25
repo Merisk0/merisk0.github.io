@@ -1,9 +1,11 @@
 ---
 title: "睿频地平线4"
+titleEn: "Turbo-Boost Horizon 4"
 date: 2023-08-06
 author: "Arrowa"
 tags: [游戏]
 summary: "关于 Forza Horizon 4 的记录。"
+summaryEn: "Notes on Forza Horizon 4."
 permalink: /Articles/7.html
 ---
 

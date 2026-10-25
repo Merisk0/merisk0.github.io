@@ -7,15 +7,20 @@
  *
  * 上级层级可以继续往后加，越靠右越接近当前页。
  */
+import { localePath, type Lang } from '../i18n';
+
 interface Props {
   parents?: Array<{ href: string; label: string }>;
+  lang?: Lang;
 }
 
-const { parents = [] } = Astro.props;
+const { parents = [], lang = 'zh' } = Astro.props;
+const homeLabel = lang === 'en' ? 'Home' : '首页';
+const navLabel = lang === 'en' ? 'Breadcrumb' : '面包屑';
 ---
 
-<nav class="breadcrumbs" aria-label="面包屑">
-  <a href="/">首页</a>
+<nav class="breadcrumbs" aria-label={navLabel}>
+  <a href={localePath(lang, '/')}>{homeLabel}</a>
   {parents.map((parent) => (
     <>
       <span class="crumb-separator" aria-hidden="true">

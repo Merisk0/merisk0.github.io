@@ -1,10 +1,34 @@
 ---
 title: "博客更新日志"
+titleEn: "Blog Changelog"
 date: 2026-10-16
 author: "Merisk"
 tags: [更新日志]
 summary: "记录博客功能、样式与文章系统的变更（Astro 迁移、自定义域名、文章加密等）。"
+summaryEn: "Changes to this blog's features, styling and article system (Astro migration, custom domain, post encryption)."
 ---
+
+## 2026-10-25
+
+### 新增
+
+- **整站中英双语**：新增 `src/i18n.ts` 文案词典，英文版挂在 `/en` 路径下（`/en.html`、`/en/posts.html`、`/en/archive.html`、`/en/tags.html`、`/en/Articles/*.html`），根路径保持中文。`<html lang>`、`hreflang`（zh-CN / en / x-default）、`og:locale` 随语言输出，导航、页脚、面包屑、按钮文案全部由词典提供。
+- **页脚语言切换**：`English · 中文` 一行，点一下记住到 `localStorage['pref-lang']`，之后访问任何页面都会自动跳到对应语言（带一次性防回环守卫）。
+- 文章 front matter 新增可选字段 **`titleEn` / `summaryEn`**（11 篇均已填写），英文页优先用英文、缺省回落到中文；正文译文单独放在 `src/content/posts-en/`（`postsEn` 集合），目前译好 3 篇公开文章：博客更新日志、对称表情包、睿频地平线4。
+- **列表页阅读次数**：每条元信息末尾显示 `N 次阅读`，用的是第三方计数服务 `abacus.jasoncameron.dev`；打开文章时给对应计数 +1（本地预览不计数），接口失败就整段隐藏，不影响其它内容。
+
+### 调整
+
+- **文章列表页改版**：从「卡片 + 左栏」改成纯底色的单栏列表，每条是「标题 → 简介 → 日期 · 字数 · 时长」三行；去掉左栏的 About Me、搜索框、标签胶囊，也去掉了「文章目录」标题，行距收紧。
+- 列表条目的层次重新拉开：标题 1.16rem / 700 衬线，简介 0.95rem 用 muted 灰，元信息 0.8rem 再淡一档；「最新」标记改回紧凑胶囊（33×16px），不再是一行裸字。
+- 摘要字号统一到 `--text-summary` 变量（桌面 0.95rem、手机 0.88rem），「最新」胶囊跟着它一起缩放。
+- 加密文章不再在列表里输出重复的摘要行，只在元信息里标一个「已加密」。
+- 英文版的加密文章只显示锁定提示与「阅读中文原文」按钮——密文与解密脚本只挂在中文页。
+
+### 验证
+
+- `npm run build` 通过，共 41 页（中文 26 + 英文 15），`/en.html`、`/en/posts.html`、`/en/archive.html`、`/en/tags.html`、`/en/Articles/mirror-symmetry-sticker.html` 等全部生成。
+- 无头 Chrome 截图核对中英两种语言、浅色 / 深色、桌面与 420px 移动端；交互回归覆盖列表分页、归档年份筛选、标签搜索、阅读次数、语言切换与 `pref-lang` 记忆。
 
 ## 2026-10-17
 

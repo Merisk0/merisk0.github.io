@@ -59,6 +59,21 @@ summary: "首页显示的文章摘要。"
 
 保存后首页、`/posts.html`、归档、标签、状态和搜索页都会自动更新。
 
+### 英文标题与译文
+
+站点是双语的：根路径是中文，`/en` 下是英文。中英对照靠两部分：front matter 里的英文标题/摘要，加上单独的正文译文文件。
+
+```yaml
+titleEn: "My New Article"
+summaryEn: "English summary shown on the English list."
+```
+
+- 这两个字段都可选。英文页面优先用它们；如果没填，就回落到中文的 `title` / `summary`。
+- 正文译文单独放在 `src/content/posts-en/`，文件名与中文文章对应：常规文章用「去掉日期的那段」，带 `permalink` 的老文章用 `entry.id`（例如 `2023-08-06-forza-horizon-4.md`）。文件里只写正文，不需要 front matter。
+- 没有译文的文章，英文页显示「This post has no English translation yet.」并给一个跳回中文原文的按钮。
+- 加密文章的英文页只显示锁定提示——密文与解密脚本只挂在中文页上。
+- 新增别的翻译字段时，记得同时在 `src/content.config.ts` 里加进 schema，否则构建时字段会被丢弃。
+
 ### 固定文章地址
 
 默认地址是 `/Articles/<文件名去掉日期>.html`。如果想保留旧站那样的编号地址，在 front matter 里加一行：
