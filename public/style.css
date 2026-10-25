@@ -261,17 +261,8 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.25; letter-spacing: -0.02em; }
 body:not(.dark) #moon, body.dark #sun { display: none; }
 
 /* 5. 首页 profile -------------------------------------------------------- */
-/* 顶部横幅 + 头像压边，给首页一点自己的样子。
-   横幅内缩成一块：四周留出页面底色，导航坐在底色上、不再贴着照片边，
-   深色下也就不会和夜景横幅糊成一片。 */
-.home-banner {
-  width: min(1100px, calc(100% - 2rem));
-  margin: 0.9rem auto 0;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  overflow: hidden;
-  background: var(--surface-soft);
-}
+/* 顶部横幅 + 头像压边，给首页一点自己的样子 */
+.home-banner { border-bottom: 1px solid var(--line); }
 .home-banner img { display: block; width: 100%; height: clamp(150px, 24vw, 230px); object-fit: cover; }
 /* 深色下压一点亮度，免得横幅在暗色界面里太扎眼 */
 body.dark .home-banner img { filter: brightness(0.92) saturate(1); }
