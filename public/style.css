@@ -1079,14 +1079,19 @@ body.scholar .page-header h1 { font-size: clamp(22px, 3vw, 28px); }
 .button:hover,
 .btn:hover { background: var(--surface-soft); }
 .entry-badge {
-  border: 0;
-  background: transparent;
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
   margin-right: 0.5rem;
-  /* 跟着列表摘要（--text-summary）缩放，比摘要小一档 */
-  font-size: calc(var(--text-summary) * 0.7);
+  /* 紧凑胶囊：字号不动，只把盒子收紧（内边距用 em，跟着字号走） */
+  padding: 0.04em 0.42em;
+  border-radius: 999px;
+  border: 0;
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
+  color: var(--brand);
+  font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.02em;
+  line-height: 1.35;
 }
 .archive-year-filter .tag-filter { border: 0; background: transparent; }
 .archive-year-filter .tag-filter.active {
